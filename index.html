@@ -1401,9 +1401,13 @@ img { display: block; -webkit-user-drag: none; user-select: none; }
 .xaway i { width: 8px; height: 8px; border-radius: 50%; background: #ffd36a; animation: xawp 1s ease-in-out infinite; } @keyframes xawp { 50% { opacity: .25 } }
 .xaway b { padding: 5px 10px 4px; border-radius: 999px; background: #ff5a6a; color: #fff; font-style: normal; cursor: pointer; }
 
-/* after the spin: your hand glows softly until you pick a card — so the order reads SPIN → CARD (Or: "אחרי ספין… הקלפים שלך יזהרו קצת") */
-.hand.xhint .cc:not(.xlocked):not(.pickme):not(.sel) { animation: xHint 1.6s ease-in-out infinite; }
-@keyframes xHint { 0%, 100% { filter: drop-shadow(0 0 2px rgba(255,214,90,.35)); } 50% { filter: drop-shadow(0 0 10px rgba(255,214,90,.8)); } }
+/* SPIN → CARD, v26 — a bit louder and cooler than a glow, never a light sweep (Or: "לא מספיק בולט… אבל גם לא מוגזם… טיפה יותר בולט ומגניב"):
+   SPIN sends a sonar ring out every 0.8 s on top of its breathing glow; after the spin a soft wave runs through your hand — each card lifts and lights in turn */
+.xspin.go::before, .xspin.go::after { content: ''; position: absolute; inset: -5px; border-radius: 50%; border: 2.5px solid rgba(255,207,90,.95); pointer-events: none; animation: xPing 1.6s cubic-bezier(.2,.6,.3,1) infinite; }
+.xspin.go::after { animation-delay: .8s; }
+@keyframes xPing { 0% { transform: scale(1); opacity: .95; } 100% { transform: scale(1.9); opacity: 0; } }
+.hand.xhint .cc:not(.xlocked):not(.pickme):not(.sel) { animation: xWave 1.9s ease-in-out infinite; animation-delay: calc(var(--i, 0) * .14s); }
+@keyframes xWave { 0%, 55%, 100% { translate: 0 0; filter: drop-shadow(0 0 3px rgba(255,214,90,.45)); } 22% { translate: 0 -9px; filter: drop-shadow(0 0 9px rgba(255,214,90,.95)) drop-shadow(0 0 18px rgba(255,150,40,.5)); } }
 
 </style>
 </head>
@@ -3637,7 +3641,7 @@ function paintFive(g, side, hl) { const box = side === 'me' ? g.meB : g.opB, y =
     g.fEls[side][p] = { sl, c, v, x, y } }) }
 function paintHand(g, fresh = []) { g.hB.innerHTML = ''; g.hEls = []; const h = g.me.hand, n = h.length, w = n >= 5 ? 70 : n === 4 ? 86 : 100, gap = n >= 5 ? 6 : 10, x0 = (390 - (n * w + (n - 1) * gap)) / 2   // max 5 in hand → the cards can be big (Or: "וככה הם יהיו יותר גדולים")
   h.forEach((id, i) => { const x = x0 + i * (w + gap), y = 784 - w * CH, c = CARD(g.hB, id, x, y, w), chip = el(g.hB, 'div', 'xhv', `left:${x}px;top:${y - 22}px;width:${w}px`, '+' + cardFP(id).toFixed(1))
-    c.classList.toggle('sel', g.sel === id); c.onclick = () => g.onCard && g.onCard(id); { const lk = g.onCard && g.me.forceWorst ? worstCard(g.me) : null; if (lk && id !== lk) c.classList.add('xlocked'); if (lk && id === lk && g.sel !== id) c.classList.add('pickme') }
+    c.style.setProperty('--i', i); c.classList.toggle('sel', g.sel === id); c.onclick = () => g.onCard && g.onCard(id); { const lk = g.onCard && g.me.forceWorst ? worstCard(g.me) : null; if (lk && id !== lk) c.classList.add('xlocked'); if (lk && id === lk && g.sel !== id) c.classList.add('pickme') }
     const k = fresh.indexOf(id); if (k >= 0) c.animate([{ transform: `translate(${30 - x}px,${800 - y}px) scale(.3) rotate(-18deg)`, opacity: 0 }, { transform: 'none', opacity: 1 }], { duration: 420, delay: k * 110, easing: 'cubic-bezier(.2,.8,.3,1)', fill: 'backwards' })
     g.hEls.push({ id, c }) }) }
 function paintOpHand(g, fresh = []) { g.ohB.innerHTML = ''; g.ohEls = []; const n = g.op.hand.length, w = 26, x0 = 195 - (n * (w + 3)) / 2
@@ -4529,7 +4533,7 @@ SCREENS.pack = (s, a = {}) => {
 
 /* ════════════════ DEV (side panel on desktop · ☰ on the phone) ════════════════ */
 function openDevSheet() { ov((o) => { o.querySelector('.dim').onclick = () => closeOv(); const sh = el(o, 'div', 'sheet'); el(sh, 'div', 'dev'); renderDev() }) }
-function devHTML() { return `<h3>DRAFT CHAOS · POC v25</h3>
+function devHTML() { return `<h3>DRAFT CHAOS · POC v26</h3>
 <p>Screens</p><div class="seg"><button data-dev="go:hub">HUB</button><button data-dev="go:mm">MATCHMAKING</button><button data-dev="go:chaos">MATCH</button><button data-dev="go:deck">MY DECK</button><button data-dev="go:cards">MY CARDS</button><button data-dev="go:store">PACKS</button></div>
 <p>Your next spin lands on</p><div class="seg">${XEV.map(e => `<button data-dev="ev:${e.k}">${e.lab}</button>`).join('')}</div>
 <p>Their next spin lands on</p><div class="seg">${XEV.map(e => `<button data-dev="eo:${e.k}">${e.lab}</button>`).join('')}</div>
