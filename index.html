@@ -3642,22 +3642,28 @@ function resolveEv(g, side, ev, tg) { const me = g[side], op = g[foe(side)], out
   if (ev.k === 'showtime') { const f = filled(g, side); if (!f.length) out.fizz = true; else { f.forEach(p2 => dbl(me.five[p2])); out.showtime = f.length } }
   if (ev.k === 'defense') { const f = open5(g, foe(side)).filter(p2 => !op.five[p2].half); if (!f.length) out.fizz = true; else { f.forEach(p2 => { op.five[p2].half = true }); out.defense = f.length } }
   /* v33 COIN FLIPS — every coin is GRNG, so two phones flip the same coin */
-  if (ev.k === 'dornot') { const o = me.five[tg.me], hit = GRNG() < .5; if (hit) dbl(o); else o.half = true; out.flips = [hit]; out.dornot = { pos: tg.me, hit } }
+  if (ev.k === 'dornot' && !(tg && me.five[tg.me])) out.fizz = true
+  else if (ev.k === 'dornot') { const o = me.five[tg.me], hit = GRNG() < .5; if (hit) dbl(o); else o.half = true; out.flips = [hit]; out.dornot = { pos: tg.me, hit } }
   if (ev.k === 'ft') { const p = weakestOf(g, side, true); if (!p) out.fizz = true; else { const f = [GRNG() < .5, GRNG() < .5], made = f.filter(Boolean).length; me.five[p].flat = (me.five[p].flat || 0) + 8 * made; out.flips = f; out.ft = { pos: p, made } } }
   if (ev.k === 'triflip') { const f = [GRNG() < .5, GRNG() < .5, GRNG() < .5], got = [0, 0]; f.forEach(h => { const sd = h ? side : foe(side), p = weakestOf(g, sd, true); if (p) { g[sd].five[p].flat = (g[sd].five[p].flat || 0) + 10; got[h ? 0 : 1]++ } }); out.flips = f; out.triflip = got }
   if (ev.k === 'cturn') { const hit = GRNG() < .5; g[hit ? side : foe(side)].extra = true; out.flips = [hit]; out.cturn = hit }
   if (ev.k === 'allin') { const hit = GRNG() < .5, ps = open5(g, side); ps.forEach(p => { if (hit) dbl(me.five[p]); else me.five[p].half = true }); out.flips = [hit]; out.allin = { hit, n: ps.length } }
   /* v33 TRADES (Or: "כל מיני טריידים זה דווקא כיף - להחליף שחקן שלי עם שחקן שלו - להחליף שחקן מהבורד שלי עם ראנדום מהיד שלו") */
-  if (ev.k === 'blindtr') { const i = GRNG() * op.hand.length | 0, id = op.hand.splice(i, 1)[0], o = me.five[tg.me]; op.hand.push(o.cid); me.five[tg.me] = mkSlot(id); out.blind = { got: id, gave: o.cid, pos: tg.me } }
-  if (ev.k === 'signtr') { const B = op.five[tg.op], emp = XP5.filter(p => !me.five[p]), pos = B.ps.find(p => emp.includes(p)) || emp[0], i = GRNG() * me.hand.length | 0, id = me.hand.splice(i, 1)[0]
+  /* every v33 event re-checks its own preconditions here: REPLAY / a steal / 82-0 can fire it when the drum's readiness no longer holds — it fizzles, never crashes (the sim caught TRADE DEADLINE reading an empty spot) */
+  if (ev.k === 'blindtr' && !(tg && me.five[tg.me] && op.hand.length)) out.fizz = true
+  else if (ev.k === 'blindtr') { const i = GRNG() * op.hand.length | 0, id = op.hand.splice(i, 1)[0], o = me.five[tg.me]; op.hand.push(o.cid); me.five[tg.me] = mkSlot(id); out.blind = { got: id, gave: o.cid, pos: tg.me } }
+  if (ev.k === 'signtr' && !(tg && op.five[tg.op] && me.hand.length && XP5.some(p => !me.five[p]))) out.fizz = true
+  else if (ev.k === 'signtr') { const B = op.five[tg.op], emp = XP5.filter(p => !me.five[p]), pos = B.ps.find(p => emp.includes(p)) || emp[0], i = GRNG() * me.hand.length | 0, id = me.hand.splice(i, 1)[0]
     op.five[tg.op] = mkSlot(id); me.five[pos] = B; out.sign = { got: B.cid, gave: id, pos } }
-  if (ev.k === 'deadline') { const hit = GRNG() < .5, a = hit ? weakestOf(g, side, true) : bestOfS(g, side, true), b = hit ? bestOfS(g, foe(side), true) : weakestOf(g, foe(side), true), A = me.five[a], B = op.five[b]
+  if (ev.k === 'deadline' && !(open5(g, side).length && open5(g, foe(side)).length)) out.fizz = true
+  else if (ev.k === 'deadline') { const hit = GRNG() < .5, a = hit ? weakestOf(g, side, true) : bestOfS(g, side, true), b = hit ? bestOfS(g, foe(side), true) : weakestOf(g, foe(side), true), A = me.five[a], B = op.five[b]
     me.five[a] = B; op.five[b] = A; out.flips = [hit]; out.deadline = { hit, a, b, got: B.cid, gave: A.cid }; out.moves = [{ id: A.cid, from: { sd: side, p: a }, to: { sd: foe(side), p: b } }, { id: B.cid, from: { sd: foe(side), p: b }, to: { sd: side, p: a } }]; out.movesStamp = 'TRADED!' }
   /* v33 UNICORNS */
   if (ev.k === 'cstorm') { const L = []; for (const sd of SIDES()) for (const p of XP5) { const o = g[sd].five[p]; if (!o || o.lock) continue; const yes = GRNG() < .5; if (yes) { if (sd === side) dbl(o); else o.half = true } L.push({ sd, p, yes }) } out.storm = L }
   if (ev.k === 'lottery82') { const cards = [], spots = []; for (const sd of SIDES()) for (const p of XP5) { const o = g[sd].five[p]; if (o && o.lock) continue; spots.push({ sd, p }); if (o) { cards.push({ o, from: { sd, p } }); g[sd].five[p] = null } }
     shuffle(spots); out.lot = cards.map((c, i) => { const to = spots[i]; g[to.sd].five[to.p] = c.o; return { id: c.o.cid, from: c.from, to } }) }
-  if (ev.k === 'dyn82') { const b = bestOfS(g, side, true), B = me.five[b], to = []; for (const p of open5(g, side)) { if (p === b) continue; const o = me.five[p]
+  if (ev.k === 'dyn82' && open5(g, side).length < 2) out.fizz = true
+  else if (ev.k === 'dyn82') { const b = bestOfS(g, side, true), B = me.five[b], to = []; for (const p of open5(g, side)) { if (p === b) continue; const o = me.five[p]
       for (const k2 of ['s', 'flat', 'mvp', 'hot', 'trip', 'half', 'prime']) o[k2] = k2 === 's' ? { ...B.s } : B[k2]; to.push(p) } out.dyn = { from: b, to } }
   if (ev.k === 'allstarwk') { /* the headless path (the game plays it out in allStar()): three legendaries in a row, random targets */
     const rt = e => { const pk = a => a.length ? a[GRNG() * a.length | 0] : null, t = {}; if (e.tgt === 'me' || e.tgt === 'both') { t.me = pk(filled(g, side).filter(p => !me.five[p].lock)); if (!t.me) return null } if (e.tgt === 'op' || e.tgt === 'both') { t.op = pk(open5(g, foe(side))); if (!t.op) return null } return t }
@@ -4697,7 +4703,7 @@ function howTo() { ov((o) => { o.querySelector('.dim').onclick = () => closeOv()
    same taps = the same game on both screens. The CPU's decisions become the friend's.
    why: Or "אם אני רוצה מולטיפלייר" — option 2, the room code ════ */
 let MPG = null
-const MP_VER = '33'   /* the GAME protocol, not the build: two phones whose engine, dice or wire differ would roll different games, so the room refuses
+const MP_VER = '35'   /* the GAME protocol, not the build: two phones whose engine, dice or wire differ would roll different games, so the room refuses
    them — bump it only when one of those changes (v23 → '23'; v25 → '25': TIME OUT now plays on the last turn; v27 → '27': both play the opener's deck; v28 → '28': 29 new events). A UI-only update (v24: chat) keeps it, so nobody has to reopen together */
 /* the phones meet in OUR room server (build/server/worker.js on Cloudflare): a plain WebSocket, so it gets through any network (office Wi-Fi
    included — Bella could not get a direct WebRTC link through hers). Every tap carries a sequence number; after any drop the phone reconnects to
@@ -4982,7 +4988,7 @@ SCREENS.pack = (s, a = {}) => {
 
 /* ════════════════ DEV (side panel on desktop · ☰ on the phone) ════════════════ */
 function openDevSheet() { ov((o) => { o.querySelector('.dim').onclick = () => closeOv(); const sh = el(o, 'div', 'sheet'); el(sh, 'div', 'dev'); renderDev() }) }
-function devHTML() { return `<h3>DRAFT CHAOS · POC v34</h3>
+function devHTML() { return `<h3>DRAFT CHAOS · POC v35</h3>
 <p>Screens</p><div class="seg"><button data-dev="go:hub">HUB</button><button data-dev="go:mm">MATCHMAKING</button><button data-dev="go:chaos">MATCH</button><button data-dev="go:deck">MY DECK</button><button data-dev="go:cards">MY CARDS</button><button data-dev="go:store">PACKS</button></div>
 <p>Your next spin lands on</p><div class="seg">${XEV.map(e => `<button data-dev="ev:${e.k}">${e.lab}</button>`).join('')}</div>
 <p>Their next spin lands on</p><div class="seg">${XEV.map(e => `<button data-dev="eo:${e.k}">${e.lab}</button>`).join('')}</div>
