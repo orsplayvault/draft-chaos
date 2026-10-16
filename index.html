@@ -1409,6 +1409,8 @@ img { display: block; -webkit-user-drag: none; user-select: none; }
 .hand.xhint .cc:not(.xlocked):not(.pickme):not(.sel) { animation: xWave 1.9s ease-in-out infinite; animation-delay: calc(var(--i, 0) * .14s); }
 @keyframes xWave { 0%, 55%, 100% { translate: 0 0; filter: drop-shadow(0 0 3px rgba(255,214,90,.45)); } 22% { translate: 0 -9px; filter: drop-shadow(0 0 9px rgba(255,214,90,.95)) drop-shadow(0 0 18px rgba(255,150,40,.5)); } }
 
+.xmpb.wait { opacity: .55; pointer-events: none; }
+
 </style>
 </head>
 <body>
@@ -3520,7 +3522,10 @@ SCREENS.chaos = (s, a = {}) => {
   const opp = a.mp ? { name: a.mp.name || 'FRIEND', deck: a.mp.deck } : a.opp || { name: rnd(RIVALS), deck: rivalDeck() }, pot = a.pot || PRIZE(ENTRY)
   el(s, 'div', 'mbg'); el(s, 'div', 'xfloor')
   const mk = d => ({ deck: shuffle(d.filter(xok)), hand: [], used: [], five: {}, frozen: false, picks: 1, turns: 0, seen: new Set() })
-  let d1, d2; if (a.mp && a.mp.guest) { d2 = mk(opp.deck); d1 = mk(ST.deck) } else { d1 = mk(ST.deck); d2 = mk(opp.deck) }
+  /* a FRIEND match: both play the SAME 10 cards — the room opener's deck — each in its own random order (dealt host first, so both phones agree)
+     why: Or "של2 השחקנים יש את אותו הקלפים בדק בשאפל · כאילו ראנדום אבל אותו דק" — everyone beat him, a deck edge decides too much */
+  let d1, d2; if (a.mp) { const hostDeck = a.mp.guest ? opp.deck : ST.deck; if (a.mp.guest) { d2 = mk(hostDeck); d1 = mk(hostDeck) } else { d1 = mk(hostDeck); d2 = mk(hostDeck) } }
+  else { d1 = mk(ST.deck); d2 = mk(opp.deck) }
   G = { s, opp, pot, me: d1, op: d2, turn: null, over: false, log: [], busy: false, rot: 0, sel: null, force: null, mp: !!a.mp }
   const g = G
   // header — back · the two players and their LIVE team number · the pile
@@ -4296,8 +4301,8 @@ function howTo() { ov((o) => { o.querySelector('.dim').onclick = () => closeOv()
    same taps = the same game on both screens. The CPU's decisions become the friend's.
    why: Or "אם אני רוצה מולטיפלייר" — option 2, the room code ════ */
 let MPG = null
-const MP_VER = '25'   /* the GAME protocol, not the build: two phones whose engine, dice or wire differ would roll different games, so the room refuses
-   them — bump it only when one of those changes (v23 → '23'; v25 → '25': TIME OUT now plays on the last turn, a rule change). A UI-only update (v24: chat) keeps it, so nobody has to reopen together */
+const MP_VER = '27'   /* the GAME protocol, not the build: two phones whose engine, dice or wire differ would roll different games, so the room refuses
+   them — bump it only when one of those changes (v23 → '23'; v25 → '25': TIME OUT now plays on the last turn; v27 → '27': both play the opener's deck). A UI-only update (v24: chat) keeps it, so nobody has to reopen together */
 /* the phones meet in OUR room server (build/server/worker.js on Cloudflare): a plain WebSocket, so it gets through any network (office Wi-Fi
    included — Bella could not get a direct WebRTC link through hers). Every tap carries a sequence number; after any drop the phone reconnects to
    the same room and both sides ask each other for what they missed (ack → resend), so a lost tap can never freeze the lockstep.
@@ -4329,7 +4334,9 @@ const NET = (() => { const URL0 = 'wss://draftchaos.orsplayvault.workers.dev/roo
   /* back from the background / the network came back: don't wait for the backoff */
   addEventListener('online', () => { if (!closed && (!ws || ws.readyState > 1)) { retry = 0; clearTimeout(tmRe); connect() } })
   document.addEventListener('visibilitychange', () => { if (!document.hidden && !closed && (!ws || ws.readyState > 1)) { retry = 0; clearTimeout(tmRe); connect() } })
-  const start = (r, c, o) => { NETreset(); role = r; code = c; sid = Array.from({ length: 12 }, () => 'abcdefghijkmnpqrstuvwxyz23456789'[Math.random() * 32 | 0]).join(''); cb = o; closed = false; connect() }
+  const start = (r, c, o) => { NETreset(); role = r; code = c; sid = SID; cb = o; closed = false; connect() }
+  /* one id for this page: a second JOIN from the same phone is the SAME player to the server, never a "third player" (Yuval tapped JOIN twice → refused, Or left alone in the match) */
+  const SID = Array.from({ length: 12 }, () => 'abcdefghijkmnpqrstuvwxyz23456789'[Math.random() * 32 | 0]).join('')
   const NETreset = () => { closed = true; clearInterval(tmPing); clearTimeout(tmRe); try { ws && ws.close() } catch (e) {} ws = null; q = {}; w = {}; out = []; seq = 0; got = 0; peerOn = false; peerSeen = false; ready = false; retry = 0 }
   return {
     _ws: () => ws,
@@ -4384,7 +4391,7 @@ function mpLobby(pre) { SND('y_select'); ov(o => { const h = el(o, 'div', 'howto
   const fail = t => { msg.textContent = t; msg.classList.add('err'); SND('y_back') }
   const me = mpMe(), friendOf = hi => ({ id: String((hi && hi.id) || '').replace(/[^a-z0-9]/g, '').slice(0, 16) || 'anon', name: mpName(hi && hi.name) || 'FRIEND' })
   const deckOf = hi => (Array.isArray(hi && hi.deck) ? hi.deck : []).filter(id => typeof id === 'string' && CARDS[id]).slice(0, 12)
-  const joined = f => { const [w, l] = mpRecord(f.id); msg.textContent = `${f.name} IS IN · ${w || l ? `YOU ${w} – ${l}` : 'FIRST MATCH'} · DEALING…` }
+  const joined = f => { const [w, l] = mpRecord(f.id); msg.textContent = `${f.name} IS IN · ${w || l ? `YOU ${w} – ${l}` : 'FIRST MATCH'} · SAME DECK FOR BOTH · DEALING…` }
   const start = (guest, hi, seed) => { MPG = { guest, friend: friendOf(hi), fdeck: deckOf(hi) }; mpBegin(seed) }
   const myDeck = () => ST.deck.slice(), hello = () => NET.send('hello', { deck: myDeck(), id: me.id, name: me.name, ver: MP_VER })
   const sameVer = hi => { if (hi && hi.ver === MP_VER) return true; fail('YOU ARE ON DIFFERENT VERSIONS — BOTH CLOSE AND REOPEN THE GAME'); later(4000, () => mpLeave()); return false }
@@ -4413,8 +4420,9 @@ function mpLobby(pre) { SND('y_select'); ov(o => { const h = el(o, 'div', 'howto
   retry.onclick = () => { SND('y_select'); openRoom() }
   bOpen.onclick = () => { SND('y_select'); row.style.display = 'none'; who.style.display = 'none'; recs.style.display = 'none'; openRoom() }
   bJoin.onclick = () => { SND('y_select'); row.style.display = 'none'; who.style.display = 'none'; recs.style.display = 'none'; inp.style.display = ''; go2.style.display = ''; msg.textContent = 'TYPE YOUR FRIEND’S CODE'; inp.focus() }
-  go2.onclick = async () => { const code = inp.value.trim().toUpperCase(); if (code.length !== 4) return fail('THE CODE IS 4 LETTERS'); SND('y_select'); msg.classList.remove('err'); msg.textContent = 'CONNECTING…'; NET.reset(); if (!await NET.load()) return fail('NO CONNECTION — TRY AGAIN ONLINE')
-    NET.join(code, async () => { msg.textContent = 'IN THE ROOM — DEALING…'; hello(); const hi = await NET.recv('hello'); if (!sameVer(hi)) return; joined(friendOf(hi)); const st = await NET.recv('start'); start(true, hi, st.seed) }, e => fail(e && e.type === 'peer-unavailable' ? 'NO ROOM WITH THAT CODE' : e && e.type === 'full' ? 'THAT ROOM ALREADY HAS TWO PLAYERS' : 'NO CONNECTION RIGHT NOW — TAP JOIN ROOM AGAIN'),
+  let joining = false; const unlock = () => { joining = false; go2.classList.remove('wait') }   /* JOIN ROOM is dead while an attempt runs — a double tap used to start a second connection */
+  go2.onclick = async () => { if (joining) return; const code = inp.value.trim().toUpperCase(); if (code.length !== 4) return fail('THE CODE IS 4 LETTERS'); joining = true; go2.classList.add('wait'); SND('y_select'); msg.classList.remove('err'); msg.textContent = 'CONNECTING…'; NET.reset(); if (!await NET.load()) { unlock(); return fail('NO CONNECTION — TRY AGAIN ONLINE') }
+    NET.join(code, async () => { msg.textContent = 'IN THE ROOM — DEALING…'; hello(); const hi = await NET.recv('hello'); if (!sameVer(hi)) { unlock(); return } joined(friendOf(hi)); const st = await NET.recv('start'); start(true, hi, st.seed) }, e => { unlock(); fail(e && e.type === 'peer-unavailable' ? 'NO ROOM WITH THAT CODE' : e && e.type === 'full' ? 'THAT ROOM ALREADY HAS TWO PLAYERS' : 'NO CONNECTION RIGHT NOW — TAP JOIN ROOM AGAIN') },
       st => { msg.classList.remove('err'); msg.textContent = st === 'reconnecting' ? 'RECONNECTING…' : 'CONNECTING…' }) }
   if (me.name) preJoin()
   h.animate([{ opacity: 0, transform: 'scale(.9)' }, { opacity: 1, transform: 'none' }], { duration: 220 }) }) }
@@ -4533,7 +4541,7 @@ SCREENS.pack = (s, a = {}) => {
 
 /* ════════════════ DEV (side panel on desktop · ☰ on the phone) ════════════════ */
 function openDevSheet() { ov((o) => { o.querySelector('.dim').onclick = () => closeOv(); const sh = el(o, 'div', 'sheet'); el(sh, 'div', 'dev'); renderDev() }) }
-function devHTML() { return `<h3>DRAFT CHAOS · POC v26</h3>
+function devHTML() { return `<h3>DRAFT CHAOS · POC v27</h3>
 <p>Screens</p><div class="seg"><button data-dev="go:hub">HUB</button><button data-dev="go:mm">MATCHMAKING</button><button data-dev="go:chaos">MATCH</button><button data-dev="go:deck">MY DECK</button><button data-dev="go:cards">MY CARDS</button><button data-dev="go:store">PACKS</button></div>
 <p>Your next spin lands on</p><div class="seg">${XEV.map(e => `<button data-dev="ev:${e.k}">${e.lab}</button>`).join('')}</div>
 <p>Their next spin lands on</p><div class="seg">${XEV.map(e => `<button data-dev="eo:${e.k}">${e.lab}</button>`).join('')}</div>
