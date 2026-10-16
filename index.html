@@ -3270,13 +3270,13 @@ const XEV = [
   { k: 'ballhog', lab: 'BALL HOG',ic: 'c_hot',       tone: 'gold',   h: 'BALL HOG',      d: 'BEST ×2 · WORST → HAND' },
   { k: 'rivalry', lab: 'RIVALRY', ic: 'mm_vs',       tone: 'purple', h: 'RIVALRY NIGHT', d: 'BOTH BESTS ×2' },
   { k: 'clutch',  lab: 'CLUTCH',  ic: 'hex_time',    tone: 'gold',   h: 'CLUTCH GENE',   d: 'BEHIND? YOUR BEST ×2' },
-  { k: 'second2', lab: '2ND UNIT',ic: 'hex_swap',    tone: 'blue',   h: 'SECOND UNIT',   d: 'YOUR WORST COPIES YOUR BEST' },
-  { k: 'pnr',     lab: 'P&R',     ic: 'boost_ast',   tone: 'blue',   h: 'PICK & ROLL',   d: 'YOURS TO THEIR BEST SPOTS' },
+  { k: 'second2', lab: '2ND UNIT',ic: 'hex_swap',    tone: 'blue',   h: 'SECOND UNIT',   d: 'YOUR FIVE: WORST COPIES BEST' },
+  { k: 'pnr',     lab: 'P&R',     ic: 'boost_ast',   tone: 'blue',   h: 'PICK & ROLL',   d: 'YOUR PLAYERS MOVE TO THE BEST SPOTS' },
   { k: 'scramble',lab: 'CHAOS',   ic: 'c_straight',  tone: 'red',    h: 'FULL-COURT CHAOS', d: 'THEIRS SCRAMBLED' },
   { k: 'quake',   lab: 'QUAKE',   ic: 'c_straight',  tone: 'red',    h: 'EARTHQUAKE',    d: 'EVERYONE SCRAMBLED', w: .6 },
   { k: 'posswap', lab: 'MATCHUP', ic: 'mm_vs',       tone: 'purple', h: 'MATCHUP',       d: 'SWAP ONE POSITION' },
   { k: 'callup',  lab: 'CALL-UP', ic: 'c_respin',    tone: 'blue',   h: 'CALL-UP',       d: 'A USED CARD → COURT' },
-  { k: 'trash',   lab: 'TRASH',   ic: 'boost_blk',   tone: 'red',    h: 'TRASH TALK',    d: 'THEY TOSS THEIR BEST CARD' },
+  { k: 'trash',   lab: 'TRASH',   ic: 'boost_blk',   tone: 'red',    h: 'TRASH TALK',    d: 'THEIR BEST CARD IS TOSSED' },
   { k: 'homect',  lab: 'HOME',    ic: 'c_home',      tone: 'gold',   h: 'HOME COURT',    d: 'HOME +3 IS YOURS' },
   { k: 'dribble', lab: 'DRIBBLE', ic: 'c_blind',     tone: 'red',    h: 'DOUBLE DRIBBLE',d: 'YOU SKIP A SPIN' },
   { k: 'choose3', lab: 'PICK 1/3',ic: 'c_double',    tone: 'gold',   h: 'PICK YOUR PLAY', d: 'PICK 1 OF 3 EVENTS' },
@@ -3290,7 +3290,7 @@ const XEV = [
   { k: 'quicksubs',lab: 'SUBS',   ic: 'c_bench',     tone: 'blue',   h: 'QUICK SUBS',    d: 'BOTH PLAY A CARD NOW' },
   { k: 'fastbreak',lab: 'BREAK',  ic: 'boost_ast',   tone: 'gold',   h: 'FAST BREAK',    d: 'YOUR BEST CARD JUMPS ON' },
   { k: 'pick3',   lab: 'PLAY 3',  ic: 'c_double',    tone: 'gold',   h: 'TRIPLE PLAY',   d: 'PLAY 3 CARDS', w: .5 },
-  { k: 'shotclock',lab: 'CLOCK',  ic: 'hex_time',    tone: 'red',    h: 'SHOT CLOCK',    d: 'THEY PLAY THEIR WORST' },
+  { k: 'shotclock',lab: 'CLOCK',  ic: 'hex_time',    tone: 'red',    h: 'SHOT CLOCK',    d: 'THEY MUST PLAY THE WORST CARD' },
   { k: 'anywhere',lab: 'ANYWHERE',ic: 'hex_swap',    tone: 'blue',   h: 'ANYWHERE',      d: 'NEXT CARD — ANY SPOT' },
   { k: 'defector',lab: 'DEFECT',  ic: 'mm_vs',       tone: 'purple', h: 'DEFECTOR',      d: 'ONE OF THEIRS JOINS YOU', tgt: 'op' },
   { k: 'expansion',lab: 'EXPAND', ic: 'pack_b',      tone: 'purple', h: 'EXPANSION DRAFT', d: 'ONE OF THEIRS → YOUR HAND', tgt: 'op' },
@@ -3343,7 +3343,7 @@ const XEV = [
   { k: 'defense',  lab: 'DEFENSE',   ic: 'boost_stl',   tone: 'red',    h: 'LOCKDOWN DEFENSE',  d: 'THEIR WHOLE FIVE ½' },
   { k: 'heave2',   lab: 'HEAVE',     ic: 'coin1',       tone: 'purple', h: 'HALF-COURT HEAVE',  d: '50/50 — NEXT CARD ×3 OR ½' },
   { k: 'tradeup',  lab: 'TRADE UP',  ic: 'c_reshuffle', tone: 'blue',   h: 'TRADE UP',          d: 'YOUR WORST → A BETTER PLAYER' },
-  { k: 'poster2',  lab: 'POSTER',    ic: 'boost_blk',   tone: 'red',    h: 'POSTERIZED',        d: 'YOUR BEST COPIES THEIR BEST · THEIRS ½' },
+  { k: 'poster2',  lab: 'POSTER',    ic: 'boost_blk',   tone: 'red',    h: 'POSTERIZED',        d: 'YOUR BEST COPIES THEIR BEST, WHICH DROPS ½' },
   { k: 'goat',     lab: 'GOAT',      ic: 'c_legends',   tone: 'gold',   h: 'THE GOAT',          d: 'A LEGEND JUMPS ONTO YOUR COURT' },
   { k: 'and1',     lab: 'AND-ONE',   ic: 'boost_pts',   tone: 'gold',   h: 'AND-ONE',           d: 'DRAW 1 · NEXT CARD ×2' },
   /* ── v28 · DISCOVER · MERGE · CHAOS — 29 more, 150 in all. Discover = Hearthstone's pick 1 of 3; MERGE = one player swallows another's stats and the eaten card is gone.
@@ -3357,8 +3357,8 @@ const XEV = [
   { k: 'coach',     lab: 'COACH',     ic: 'boost_ast',   tone: 'gold',   h: "COACH'S CALL",      d: 'CHOOSE 1 OF 3 BOOSTS' },
   { k: 'gameplan',  lab: 'GAMEPLAN',  ic: 'boost_stl',   tone: 'red',    h: 'GAME PLAN',         d: 'CHOOSE 1 OF 3 HITS ON THEM' },
   { k: 'nightcall', lab: 'PICK ERA',  ic: 'hex_time',    tone: 'blue',   h: 'CALL THE NIGHT',    d: 'YOU CHOOSE THE ERA NIGHT' },
-  { k: 'supplement',lab: 'FEED',      ic: 'hex_swap',    tone: 'purple', h: 'FEED THE STAR',     d: 'A CARD FROM YOUR HAND MERGES INTO YOUR WEAKEST' },
-  { k: 'absorb',    lab: 'ABSORB',    ic: 'hex_swap',    tone: 'purple', h: 'ABSORB',            d: 'YOUR WEAKEST EATS YOUR NEXT DRAW' },
+  { k: 'supplement',lab: 'FEED',      ic: 'hex_swap',    tone: 'purple', h: 'FEED THE STAR',     d: 'A HAND CARD MERGES INTO YOUR WEAKEST' },
+  { k: 'absorb',    lab: 'ABSORB',    ic: 'hex_swap',    tone: 'purple', h: 'ABSORB',            d: 'YOUR WEAKEST EATS THE NEXT DRAW' },
   { k: 'dynasty',   lab: 'DYNASTY',   ic: 'trophy',      tone: 'gold',   h: 'DYNASTY',           d: 'YOU CHOOSE THE TEAM NIGHT' },
   { k: 'golden',    lab: 'GOLDEN',    ic: 'pack_s',      tone: 'gold',   h: 'GOLDEN TICKET',     d: 'DISCOVER A TOP PLAYER' },
   { k: 'blockbuster',lab: 'BLOCKBST', ic: 'mm_vs',       tone: 'purple', h: 'BLOCKBUSTER TRADE', d: 'PICK ONE OF THEIRS → SWAP WITH YOUR WEAKEST' },
@@ -3369,12 +3369,12 @@ const XEV = [
   { k: 'hofvote',   lab: 'HOF VOTE',  ic: 'c_legends',   tone: 'gold',   h: 'HALL OF FAME VOTE', d: 'PICK ONE OF YOURS → +20' },
   { k: 'fortress',  lab: 'FORTRESS',  ic: 'hex_lock',    tone: 'blue',   h: 'FORTRESS',          d: 'YOUR WHOLE FIVE LOCKED' },
   { k: 'alleypass', lab: 'LOB',       ic: 'c_double',    tone: 'gold',   h: 'ALLEY-OOP PASS',    d: 'DISCOVER A PLAYER → ONTO THE COURT ×2' },
-  { k: 'fusion',    lab: 'FUSION',    ic: 'hex_swap',    tone: 'purple', h: 'FUSION',            d: 'PICK ONE OF YOURS → IT SWALLOWS YOUR WEAKEST' },
+  { k: 'fusion',    lab: 'FUSION',    ic: 'hex_swap',    tone: 'purple', h: 'FUSION',            d: 'PICK ONE OF YOURS → IT SWALLOWS THE WEAKEST' },
   { k: 'cannibal',  lab: 'CANNIBAL',  ic: 'hex_swap',    tone: 'red',    h: 'CANNIBAL',          d: 'PICK ONE OF THEIRS → YOUR 2 WORST EAT HIM' },
   { k: 'split',     lab: 'SPLIT',     ic: 'hex_5050',    tone: 'purple', h: 'SPLIT',             d: 'YOUR BEST SPLITS IN TWO → AN EMPTY SPOT' },
   { k: 'vampire',   lab: 'VAMPIRE',   ic: 'boost_blk',   tone: 'red',    h: 'VAMPIRE',           d: 'ALL THEIRS −3 · YOUR WEAKEST DRINKS IT ALL' },
   { k: 'goatdebate',lab: 'GOAT?',     ic: 'trophy',      tone: 'gold',   h: 'THE GOAT DEBATE',   d: 'DISCOVER 1 OF THE 3 GREATEST → YOUR COURT ×2' },
-  { k: 'wish',      lab: 'WISH',      ic: 'trophy',      tone: 'gold',   h: 'THE WISH',          d: 'FILL YOUR FIVE · ×2 YOUR FIVE · OR TAKE THEIR BEST' },
+  { k: 'wish',      lab: 'WISH',      ic: 'trophy',      tone: 'gold',   h: 'THE WISH',          d: 'YOUR FIVE: FILL IT · ×2 IT · TAKE THEIR BEST' },
   { k: 'pocketace', lab: 'ACE',       ic: 'c_legends',   tone: 'gold',   h: 'POCKET ACE',        d: 'DISCOVER A LEGENDARY EVENT → IT HAPPENS NOW' },
   { k: 'bigthree',  lab: 'BIG 3',     ic: 'c_legends',   tone: 'gold',   h: 'THE BIG THREE',     d: 'YOUR 3 BEST MERGE INTO ONE ×2' },
   { k: 'takeover',  lab: 'TAKEOVER',  ic: 'hex_swap',    tone: 'gold',   h: 'HOSTILE TAKEOVER',  d: 'YOUR BEST SWALLOWS THEIR BEST — HE IS GONE' },
@@ -3391,10 +3391,10 @@ XEV.push(
   { k: 'allin',     lab: 'ALL IN',    ic: 'hex_5050',    tone: 'red',    h: 'ALL IN',            d: 'ONE FLIP — YOUR WHOLE FIVE ×2 OR ½' },
   { k: 'cstorm',    lab: 'STORM',     ic: 'coin1',       tone: 'gold',   h: 'COIN STORM',        d: 'A COIN ON EVERY CARD — YOURS ×2 · THEIRS ½', big: 'COIN STORM' },
   { k: 'lottery82', lab: 'LOTTERY',   ic: 'hex_swap',    tone: 'gold',   h: 'DRAFT LOTTERY',     d: 'EVERY CARD FLIES — LANDS ANYWHERE', big: 'LOTTERY' },
-  { k: 'dyn82',     lab: 'SUPER 5', ic: 'trophy',      tone: 'gold',   h: 'SUPERTEAM',         d: 'YOUR WHOLE FIVE BECOMES YOUR BEST PLAYER', big: 'SUPERTEAM' },
+  { k: 'dyn82',     lab: 'SUPER 5', ic: 'trophy',      tone: 'gold',   h: 'SUPERTEAM',         d: 'YOUR WHOLE FIVE BECOMES ITS BEST PLAYER', big: 'SUPERTEAM' },
   { k: 'blindtr',   lab: 'BLIND',     ic: 'c_reshuffle', tone: 'purple', h: 'BLIND TRADE',       d: 'ONE OF YOURS ↔ A RANDOM CARD FROM THEIR HAND', tgt: 'me' },
   { k: 'signtr',    lab: 'SIGN',      ic: 'mm_vs',       tone: 'purple', h: 'SIGN & TRADE',      d: 'ONE OF THEIRS JOINS YOU — A RANDOM CARD OF YOURS GOES TO THEM', tgt: 'op' },
-  { k: 'deadline',  lab: 'DEADLINE',  ic: 'hex_5050',    tone: 'purple', h: 'TRADE DEADLINE',    d: 'FLIP — YOUR WORST FOR THEIR BEST · OR YOUR BEST FOR THEIR WORST' },
+  { k: 'deadline',  lab: 'DEADLINE',  ic: 'hex_5050',    tone: 'purple', h: 'TRADE DEADLINE',    d: 'FLIP: WIN = YOUR WORST FOR THEIR BEST · LOSE = YOUR BEST FOR THEIR WORST' },
   { k: 'allstarwk', lab: 'ALL-STAR',  ic: 'c_legends',   tone: 'gold',   h: 'ALL-STAR WEEKEND',  d: '3 LEGENDARY EVENTS IN A ROW — ALL YOURS', big: 'ALL-STAR' })
 const XTIER = { L: ['timemac', 'star', 'switch', 'deckswap', 'mirror5', 'clear', 'allstar', 'ko', 'purse', 'legendspin', 'ring', 'showtime', 'defense', 'goat'], E: ['melee', 'jumpball', 'dteam', 'hofclass', 'franchise', 'streak', 'poster2', 'playbook', 'pick1', 'ddouble', 'ot', 'sudden', 'mayhem', 'reset', 'superspin', 'sswap', 'triple', 'pile2', 'pick3', 'stealshow', 'defector', 'don', 'rivalry', 'quake', 'tornado', 'hands', 'blind3',
   'dynasty', 'golden', 'blockbuster', 'primepick', 'pickpass', 'cursed', 'secret', 'hofvote', 'fortress', 'alleypass', 'fusion', 'cannibal', 'split', 'vampire'] }
@@ -3913,8 +3913,19 @@ async function spinWheel(g, idx, fast) { const e = XEV[idx], t = XTONE[e.tone]; 
   await rollDown(g.drum, e.lab, fast ? 1700 : 1830)
   g.drum.classList.add('fired'); FX.flashAt(195, DRY + 47, 190, t, .9); FXU.ring(195, DRY + 47, 120, t, 420); FXU.shock(195, DRY + 47, 170, t, 520); FX.sparksAt(195, DRY + 47, 170, 70, 26, t); kick(2); SND('y_found', { gain: .75 }); return e }
 /* the big line under the drum is read by YOU: when they spin it, it flips to your side (THEIR NEWEST ½ → YOUR NEWEST ½) */
-function povText(t) { return t.replace(/\b(YOURS|THEIRS|YOUR|THEIR|THEY|THEM|YOU)\b(\s+(SKIP|PLAY|DRAW|LOSE|GET|MUST|DON’T|TRADE|SWAP)\b)?/g, (m, w, rest) => { const r = rest || ''; const map = { YOURS: 'THEIRS', THEIRS: 'YOURS', YOUR: 'THEIR', THEIR: 'YOUR', THEY: 'YOU', THEM: 'YOU', YOU: r ? 'THEY' : 'THEM' }; return map[w] + r }).replace(/(^|[·,—]\s*)THEM\b/g, '$1THEY') }
-function setBanner(g, ev, who) { g.lastEv = ev; g.evIc.src = IMG[ev.ic]; g.evH.textContent = ev.h; g.evD.textContent = who === 'op' ? povText(ev.d) : ev.d; g.evb.style.setProperty('--g', XTONE[ev.tone]); g.evb.dataset.tier = ev.tier || 'C'; g.evb.classList.remove('res'); g.evb.classList.add('on')
+/* NAMES, NOT PRONOUNS (Or v38: "their yours הזה מבלבל של החיים · שים שמות של השחקנים"): every event line on screen names the two players —
+   "ONE OF THEIRS JOINS YOU" reads "ONE OF FILUTZ’S JOINS OR". a = the side the line is written for (its YOU), b = the other side (its THEY).
+   The verb after a subject agrees (SKIP → SKIPS), and the word OR between options becomes "/" so it never reads like a player called OR */
+const XVERB = { THROW: 'THROWS', SEE: 'SEES', SEND: 'SENDS', MOVE: 'MOVES', NEED: 'NEEDS', SKIP: 'SKIPS', PLAY: 'PLAYS', DRAW: 'DRAWS', LOSE: 'LOSES', GET: 'GETS', GO: 'GOES', DO: 'DOES', 'DON’T': 'DOESN’T', TOSS: 'TOSSES', CHOOSE: 'CHOOSES', TRADE: 'TRADES', SWAP: 'SWAPS', PICK: 'PICKS', TAKE: 'TAKES', KEEP: 'KEEPS', HAVE: 'HAS', ARE: 'IS', WIN: 'WINS', MUST: 'MUST', CAN: 'CAN' }
+const myNm = () => { try { return mpName(mpMe().name) || 'YOU' } catch (e) { return 'YOU' } }
+function nameText(t, a, b) { const own = n => n === 'YOU' ? 'YOUR' : n + '’S'
+  return String(t || '').replace(/\s+OR\s+/g, ' / ').replace(/\b(YOURS|THEIRS|YOUR|THEIR|THEY|THEM|YOU)\b(\s+([A-Z’]+)\b)?/g, (m, w, rest, v) => {
+    const who = w.startsWith('YOU') ? a : b
+    if (w === 'YOUR' || w === 'THEIR' || w === 'YOURS' || w === 'THEIRS') return own(who) + (rest || '')
+    if ((w === 'YOU' || w === 'THEY') && v && XVERB[v] && who !== 'YOU') return who + ' ' + XVERB[v]
+    return who + (rest || '') }) }
+const evLine = (g, ev, side) => side === 'op' ? nameText(ev.d, g.opp.name, myNm()) : nameText(ev.d, myNm(), g.opp.name)
+function setBanner(g, ev, who) { g.lastEv = ev; g.evIc.src = IMG[ev.ic]; g.evH.textContent = ev.h; g.evD.textContent = evLine(g, ev, who); g.evb.style.setProperty('--g', XTONE[ev.tone]); g.evb.dataset.tier = ev.tier || 'C'; g.evb.classList.remove('res'); g.evb.classList.add('on')
   g.evb.animate([{ opacity: 0, transform: 'translateY(-10px) scale(.8)' }, { opacity: 1, transform: 'scale(1.06)', offset: .6 }, { opacity: 1, transform: 'none' }], { duration: 360, easing: 'cubic-bezier(.2,1.3,.4,1)' }) }
 /* a match with a friend: what I decide is sent the moment I decide it, what they decide is awaited */
 const MPON = () => !!(G && G.mp)
@@ -3963,7 +3974,7 @@ function paintHand(g, fresh = []) { g.hB.innerHTML = ''; g.hEls = []; const h = 
 /* their hand sits where the pot used to be — a held fan, big enough to count at a glance (Or: "הכסף… סתם תקוע שם, ועדיף שאני אראה את הקלפים שלו יותר גדולים") */
 function paintOpHand(g, fresh = []) { g.ohB.innerHTML = ''; g.ohEls = []; const n = g.op.hand.length, w = 38, step = n > 1 ? Math.min(12, 40 / (n - 1)) : 0, x0 = 195 - (w + step * (n - 1)) / 2
   g.op.hand.forEach((id, i) => { const off = i - (n - 1) / 2, x = x0 + i * step, y = 70 + Math.abs(off) * 2.5; const b = g.op.revealed ? CARD(g.ohB, id, x, y, w) : BACK(g.ohB, CARDS[id].r, x, y, w); b.style.rotate = (off * 7) + 'deg'; b.style.transformOrigin = '50% 120%'; g.ohEls.push(b); const k = fresh.indexOf(id); if (k >= 0) b.animate([{ transform: 'translateY(-30px) scale(.5)', opacity: 0 }, { transform: 'none', opacity: 1 }], { duration: 360, delay: k * 90, fill: 'backwards' }) }) }
-function info(g, html, tone) { { const m = html.match(/<span>(.*?)<\/span>/); if (m) g.lastSpan = m[1].replace(/<[^>]+>/g, '') } g.say.innerHTML = html.replace(/<img[^>]*>/g, '').replace(/<b class="h">/g, '<b>'); if (tone) g.say.style.setProperty('--g', XTONE[tone]); g.say.animate([{ opacity: 0, transform: 'translateY(6px)' }, { opacity: 1, transform: 'none' }], { duration: 220 }) }
+function info(g, html, tone) { html = nameText(html, myNm(), g.opp.name); { const m = html.match(/<span>(.*?)<\/span>/); if (m) g.lastSpan = m[1].replace(/<[^>]+>/g, '') } g.say.innerHTML = html.replace(/<img[^>]*>/g, '').replace(/<b class="h">/g, '<b>'); if (tone) g.say.style.setProperty('--g', XTONE[tone]); g.say.animate([{ opacity: 0, transform: 'translateY(6px)' }, { opacity: 1, transform: 'none' }], { duration: 220 }) }
 
 /* your turn: draw · spin · the event · place (one card, two on PICK 2) */
 async function myTurn(g, extra) { const me = g.me; g.turn = 'me'; if (!extra) me.turns++; me.picks = Math.max(1, me.picksNext | 0); me.picksNext = 0; paintGame(g); runLog(g, 'T', 'me', me.turns, extra ? 'EXTRA TURN' : '')
@@ -4026,7 +4037,7 @@ function overSpin(g, side, title, sub, labels, target, col, card) { return new P
   if (side === 'me') { const b = el(o, 'div', 'xogo', '', '<b>SPIN</b>'); b.onclick = () => { if (b._d) return; b._d = 1; SND('y_select'); b.remove(); MPOUT('ospin', 1); roll() } } else if (MPON()) { await MPIN('ospin'); roll() } else { await xnap(700); roll() } }) }
 /* PICK ONE OF THREE: three big cards (or three events), tap one */
 function pick3(g, ev, items, kind) { return new Promise(res => { const o = el(g.s, 'div', 'xpick3'); el(o, 'div', 'xp3t', '', ev.h); el(o, 'div', 'xp3s', '', kind === 'blind' ? 'PICK ONE — BLIND' : kind === 'ev' ? 'CHOOSE YOUR EVENT' : 'CHOOSE ONE'); SND('z_menu_up', { gain: .8 }); SND('s_reveal', { gain: .55, at: 120 })
-  el(o, 'div', 'xp3d', '', ev.d)   /* what this pick does, in its own words */
+  el(o, 'div', 'xp3d', '', evLine(g, ev, 'me'))   /* what this pick does, in its own words — with the two names */
   /* your hand stays in view under the pick, and SEE THE BOARD lifts the pick away until you tap back
      why: Or "אחרי שנבחר איבנט ישר אתה צריך לבחור אחד ואתה לא יכול לראות… שנייה הולך לראות מה יש לך כדי שזה יהיה לך קונטקסט" */
   const pk = el(o, 'div', 'xp3peek', '', '<b>SEE THE BOARD</b>'); pk.onclick = () => { const on = o.classList.toggle('peek'); pk.innerHTML = on ? '<b>BACK TO THE PICK</b>' : '<b>SEE THE BOARD</b>'; SND(on ? 'y_whoosh' : 'y_select', { gain: .5 }) }
@@ -4131,7 +4142,7 @@ async function doEvent(g, side, ev) { let tg = null
 async function quickSubs(g) { if (g.me.hand.length && XP5.some(p => !g.me.five[p])) { g.qsub = true; await placePhase(g, 0, 1); g.qsub = false } if (!xalive(g)) return
   let b = null; if (g.mp) { if (g.op.hand.length && XP5.some(p => !g.op.five[p])) b = await MPIN('qplace') } else b = bestPlace(g, 'op'); if (b) { const S0 = jSnap(g); place(g, 'op', b.id, b.pos); runLog(g, 'P', 'op', CARDS[b.id].n, b.pos, +slotVal(g, 'op', b.pos).toFixed(1)); await jPlay(g, 'op', null, null, S0, { D: 380, lift: 40, place: true }); info(g, `<b class="h">QUICK SUBS</b><span>${g.opp.name} PLAYS ${CARDS[b.id].n} AT ${b.pos}</span>`, 'blue'); await xnap(800) } }
 /* the event says itself big over the board, then settles into the panel */
-async function showEvent(g, side, ev) { setBanner(g, ev, side); runLog(g, 'E', side, ev.h, ev.tier || 'C', side === 'op' ? povText(ev.d) : ev.d); SND(ev.tone === 'red' ? 'kn_l' : 'y_sparkle', { gain: .7 })
+async function showEvent(g, side, ev) { setBanner(g, ev, side); runLog(g, 'E', side, ev.h, ev.tier || 'C', evLine(g, ev, side)); SND(ev.tone === 'red' ? 'kn_l' : 'y_sparkle', { gain: .7 })
   if (ev.tier === 'U') { g.evb.style.visibility = 'hidden'; const bk = el(g.s, 'div', 'xblack'); bk.animate([{ opacity: 0 }, { opacity: .9 }], { duration: 380, fill: 'forwards' }); SND('inhale', { gain: .9 }); SND('swell', { gain: .7 }); SND('m_thunder', { gain: .6 }); await xnap(650)
     const st = el(g.s, 'div', 'x82', `top:${STY - 40}px`), RB = ['255,107,107', '255,217,59', '107,255,154', '90,180,255']
     const word = [...(ev.big || ev.lab)], nL = word.length; if (nL > 4) st.style.fontSize = Math.max(56, Math.min(110, Math.floor(370 / (nL * .5)))) + 'px'
@@ -4412,7 +4423,7 @@ async function playOut(g, side, ev, out, S0) { const who = side === 'me' ? 'YOU'
   if (out.blind) info(g, `<b class="h">BLIND TRADE</b><span>${N2(out.blind.gave)} → ${mine ? 'THEIR' : 'YOUR'} HAND · ${N2(out.blind.got)} ONTO ${mine ? 'YOUR' : 'THEIR'} COURT</span>`, 'purple')
   if (out.sign) info(g, `<b class="h">SIGN & TRADE</b><span>${N2(out.sign.got)} JOINS ${mine ? 'YOU' : 'THEM'} · ${N2(out.sign.gave)} GOES ${mine ? 'TO THEM' : 'TO YOU'}</span>`, 'purple')
   if (out.storm && S0) { info(g, `<b class="h">COIN STORM</b><span>A COIN ON EVERY CARD</span>`, 'gold'); await stormPlay(g, side, out.storm, S0) }
-  if (out.lot) info(g, `<b class="h">DRAFT LOTTERY</b><span>${out.lot.length} CARDS IN THE AIR — THEY LAND ANYWHERE</span>`, 'gold')
+  if (out.lot) info(g, `<b class="h">DRAFT LOTTERY</b><span>${out.lot.length} CARDS IN THE AIR — LANDING ANYWHERE</span>`, 'gold')
   if (out.dyn) info(g, `<b class="h">SUPERTEAM</b><span>${mine ? 'YOUR' : 'THEIR'} WHOLE FIVE IS NOW ${N2(g[side].five[out.dyn.from].cid)}</span>`, 'gold')
   if (out.coin) { const c = el(g.s, 'div', 'xcoin'); el(c, 'img').src = IMG.coin1; SND('tok'); c.animate([{ transform: 'translateY(0) rotateY(0)' }, { transform: 'translateY(-90px) rotateY(900deg)', offset: .5 }, { transform: 'translateY(0) rotateY(1800deg)' }], { duration: 1000, easing: 'cubic-bezier(.3,.6,.4,1)' })
     await xnap(1000); c.remove(); const mine2 = out.coin === 'me'; SND(mine2 ? 'y_trophy' : 'y_down', { gain: .7 }); kick(2); info(g, `<b class="h">COIN FLIP</b><span>+10 TO ${mine2 ? 'YOU' : g.opp.name}</span>`, 'gold') }
@@ -4447,7 +4458,7 @@ async function playOut(g, side, ev, out, S0) { const who = side === 'me' ? 'YOU'
   if (out.second) info(g, `<b class="h">SECOND CHANCE</b><span>${CARDS[out.second].n} IS BACK IN ${mine ? 'YOUR' : 'THEIR'} HAND</span>`, 'blue')
   if (out.ttech) info(g, `<b class="h">TECH ON THEM</b><span>${mine ? 'THEY LOSE' : 'YOU LOSE'} ${CARDS[out.ttech].n}</span>`, 'red')
   if (out.hands) { SND('y_whoosh', { gain: .7 }); kick(2); info(g, '<b class="h">HAND SWAP</b><span>THE TWO HANDS JUST TRADED PLACES</span>', 'purple') }
-  if (out.timemac != null) { FXU.room('255,200,80', .35, 700); info(g, `<b class="h">TIME MACHINE</b><span>${out.timemac} PLAYER${out.timemac === 1 ? '' : 'S'} JUMPED TO THEIR BEST SEASON EVER</span>`, 'gold') }
+  if (out.timemac != null) { FXU.room('255,200,80', .35, 700); info(g, `<b class="h">TIME MACHINE</b><span>${out.timemac} PLAYER${out.timemac === 1 ? '' : 'S'} JUMPED TO A CAREER-BEST SEASON</span>`, 'gold') }
   if (out.star) info(g, `<b class="h">STEAL A STAR</b><span>${CARDS[out.star.cid].n} ${out.star.hand ? 'JOINS ' + (mine ? 'YOUR' : 'THEIR') + ' HAND' : 'NOW PLAYS FOR ' + (mine ? 'YOU' : g.opp.name) + ' AT ' + out.star.pos}</span>`, 'gold')
   if (out.koThem || out.koMe) { SND('boom', { gain: .6 }); kick(3); info(g, `<b class="h">KNOCKOUT</b><span>${[out.koThem && CARDS[out.koThem].n, out.koMe && CARDS[out.koMe].n].filter(Boolean).join(' & ')} — OUT</span>`, 'red') }
   if (out.reset) info(g, '<b class="h">HALFTIME RESET</b><span>EVERY BONUS ON THE BOARD IS GONE — PURE STATS</span>', 'blue')
@@ -4486,7 +4497,7 @@ async function playOut(g, side, ev, out, S0) { const who = side === 'me' ? 'YOU'
   if (out.secondUnit) info(g, `<b class="h">SECOND UNIT</b><span>${N2(g[side].five[out.secondUnit.w].cid)} NOW HAS ${N2(g[side].five[out.secondUnit.b].cid)}’S NUMBER</span>`, 'blue')
   if (out.capped != null) { SND(ev.k === 'cap' ? 'kn_l' : 'y_sparkle'); info(g, `<b class="h">${ev.h}</b><span>${out.capped} PLAYER${out.capped === 1 ? '' : 'S'} ${ev.k === 'cap' ? 'CUT DOWN TO 30' : 'LIFTED TO 15'}</span>`, ev.tone) }
   if (out.moved) { SND('y_whoosh', { gain: .8 }); kick(out.moved === 'quake' ? 3 : 2)
-    info(g, `<b class="h">${ev.h}</b><span>${out.moved === 'pnr' ? (mine ? 'YOUR' : 'THEIR') + ' PLAYERS ARE IN THEIR BEST SPOTS' : out.moved === 'scramble' ? (mine ? 'THEIR' : 'YOUR') + ' PLAYERS — RANDOM SPOTS' : 'EVERYONE — A RANDOM SPOT'}</span>`, ev.tone) }
+    info(g, `<b class="h">${ev.h}</b><span>${out.moved === 'pnr' ? (mine ? 'YOUR' : 'THEIR') + ' PLAYERS ARE IN THE BEST SPOTS' : out.moved === 'scramble' ? (mine ? 'THEIR' : 'YOUR') + ' PLAYERS — RANDOM SPOTS' : 'EVERYONE — A RANDOM SPOT'}</span>`, ev.tone) }
   if (out.posswap) { SND('commit'); kick(2); info(g, `<b class="h">MATCHUP</b><span>${out.posswap} FOR ${out.posswap}: ${N2(g[side].five[out.posswap].cid)} ⇄ ${N2(g[foe(side)].five[out.posswap].cid)}</span>`, 'purple') }
   if (ev.k === 'callup' && out.deep) info(g, `<b class="h">CALL-UP</b><span>${N2(out.deep.id)} IS BACK — STRAIGHT ONTO THE COURT AT ${out.deep.pos}</span>`, 'blue')
   if (out.trash) { SND('kn_l'); info(g, `<b class="h">TRASH TALK</b><span>${mine ? 'THEY THROW AWAY' : 'YOU THROW AWAY'} ${N2(out.trash)}</span>`, 'red') }
@@ -4918,7 +4929,7 @@ document.addEventListener('click', e => { let n = e.target; while (n && n !== do
 { const k0 = kick; kick = (n = 1) => { k0(n); if (SET.vib && n >= 2 && navigator.vibrate) try { navigator.vibrate(n >= 3 ? 28 : 14) } catch (e) {} } }
 
 /* ── the run log ── */
-function runNew(g, a) { const me = mpMe(); g.run = { id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6), v: '38', t: Date.now(), uid: me.id, name: me.name || '', mode: a.mp ? 'friend' : 'ai', opp: g.opp.name, oppId: (a.mp && typeof MPG !== 'undefined' && MPG && MPG.friend && MPG.friend.id) || '', L: [] } }
+function runNew(g, a) { const me = mpMe(); g.run = { id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6), v: '39', t: Date.now(), uid: me.id, name: me.name || '', mode: a.mp ? 'friend' : 'ai', opp: g.opp.name, oppId: (a.mp && typeof MPG !== 'undefined' && MPG && MPG.friend && MPG.friend.id) || '', L: [] } }
 function runLog(g, ...e) { if (g && g.run && !g.run.done && g.run.L.length < 1200) g.run.L.push([Math.round((Date.now() - g.run.t) / 100) / 10, ...e]) }
 const runFive = (g, sd) => XP5.map(p => { const o = g[sd].five[p]; return o ? `${p} ${CARDS[o.cid] ? CARDS[o.cid].n : o.cid} ${slotVal(g, sd, p).toFixed(1)}${o.out ? ' OUT' : ''}` : `${p} —` }).join(' · ')
 function runBoard(g) { if (!g || !g.run) return; runLog(g, 'B', 'me', runFive(g, 'me')); runLog(g, 'B', 'op', runFive(g, 'op')); runLog(g, '=', +scoreOf(g, 'me').toFixed(1), +scoreOf(g, 'op').toFixed(1)) }
@@ -4965,7 +4976,7 @@ function openSettings() { SND('z_menu_up', { gain: .7 }); ov(o => { o.querySelec
     all.forEach(r => { const d = el(list, 'div', 'xrun ' + (r.win ? 'w' : 'l')); el(d, 'em', '', '', r.win ? 'W' : 'L'); const t = el(d, 'span'); el(t, 'b', '', '', 'VS ' + escH(r.opp || '?')); el(t, 'small', '', '', `${r.rec || ''} · ${agoTxt(r.t)}${r.sent ? '' : ' · NOT SENT YET'}`); el(d, 'i', '', '', `${(+r.me || 0).toFixed(1)}–${(+r.op || 0).toFixed(1)}`); d.onclick = e => { e.stopPropagation(); runOpen(r) } }) }
   paint(histAdd(runsLocal()))
   try { fetch(RUNS_URL + me.id).then(x => x.ok ? x.json() : []).then(srv => { if (Array.isArray(srv) && srv.length && rl.isConnected) paint(histAdd(srv.map(x => ({ ...x, sent: true })))) }).catch(() => {}) } catch (e) {}
-  el(h, 'p', 'xsver', '', `DRAFT CHAOS v38`)
+  el(h, 'p', 'xsver', '', `DRAFT CHAOS v39`)
 }) }
 /* one run, move by move */
 function runView(r) { SND('z_menu_up', { gain: .6 }); ov(o => { o.querySelector('.dim').onclick = () => openSettings(); const h = el(o, 'div', 'howto xset xrv'); el(h, 'div', 'x', '', '‹').onclick = e => { e.stopPropagation(); openSettings() }
@@ -5119,7 +5130,7 @@ SCREENS.pack = (s, a = {}) => {
 
 /* ════════════════ DEV (side panel on desktop · ☰ on the phone) ════════════════ */
 function openDevSheet() { ov((o) => { o.querySelector('.dim').onclick = () => closeOv(); const sh = el(o, 'div', 'sheet'); el(sh, 'div', 'dev'); renderDev() }) }
-function devHTML() { return `<h3>DRAFT CHAOS · POC v38</h3>
+function devHTML() { return `<h3>DRAFT CHAOS · POC v39</h3>
 <p>Screens</p><div class="seg"><button data-dev="go:hub">HUB</button><button data-dev="go:mm">MATCHMAKING</button><button data-dev="go:chaos">MATCH</button><button data-dev="go:deck">MY DECK</button><button data-dev="go:cards">MY CARDS</button><button data-dev="go:store">PACKS</button></div>
 <p>Your next spin lands on</p><div class="seg">${XEV.map(e => `<button data-dev="ev:${e.k}">${e.lab}</button>`).join('')}</div>
 <p>Their next spin lands on</p><div class="seg">${XEV.map(e => `<button data-dev="eo:${e.k}">${e.lab}</button>`).join('')}</div>
