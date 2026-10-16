@@ -1528,6 +1528,9 @@ img { display: block; -webkit-user-drag: none; user-select: none; }
 .xswapin { display: inline-block; animation: xswapin .45s cubic-bezier(.2,1.6,.4,1) both; }
 @keyframes xswapin { 0% { transform: scale(2.2); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
 .xgame u.pnr { color: #ff5f6e !important; }
+/* v43 POSITIONS POP (Or: "בא לי לנסות במשחק שהמיקומים של השחקנים - יהיו בצבע אחר - מבאס שהם נבלעים"): the PG/SG/SF/PF/C under the rating took the
+   rarity's own colour and sank into the gold/purple frames — now one electric cyan on a dark chip, on every card */
+.cc .ps { color: #2BE8FF !important; }   /* colour only — Or: "אמרתי לך כולה לשנות להם את הצבע" (no size, no chip) */
 
 </style>
 </head>
@@ -3836,14 +3839,18 @@ const xalive = g => g && G === g && curKey === 'chaos' && !g.over
 const XT = 1.3, xnap = ms => new Promise(r => later(ms * (typeof curKey !== 'undefined' && curKey === 'chaos' ? XT : 1), r))
 const FW = 66, FH = FW * CH, FG = 6, FX0 = (390 - (5 * FW + 4 * FG)) / 2, OPY = 196, MEY = 472, DRY = 314, HY2 = 650, STY = 330
 const fx = i => FX0 + i * (FW + FG)
+const XDECK0 = () => S0().deck.slice()
 SCREENS.chaos = (s, a = {}) => {
   const opp = a.mp ? { name: a.mp.name || 'FRIEND', deck: a.mp.deck } : a.opp || { name: rnd(RIVALS), deck: rivalDeck() }, pot = a.pot || PRIZE(ENTRY)
   el(s, 'div', 'mbg'); el(s, 'div', 'xfloor')
   const mk = d => ({ deck: shuffle(d.filter(xok)), hand: [], used: [], five: {}, frozen: false, picks: 1, turns: 0, seen: new Set() })
   /* a FRIEND match: both play the SAME 10 cards — the room opener's deck — each in its own random order (dealt host first, so both phones agree)
      why: Or "של2 השחקנים יש את אותו הקלפים בדק בשאפל · כאילו ראנדום אבל אותו דק" — everyone beat him, a deck edge decides too much */
-  let d1, d2; if (a.mp) { const hostDeck = a.mp.guest ? opp.deck : ST.deck; if (a.mp.guest) { d2 = mk(hostDeck); d1 = mk(hostDeck) } else { d1 = mk(hostDeck); d2 = mk(hostDeck) } }
-  else { d1 = mk(ST.deck); d2 = mk(opp.deck) }
+  /* SAME CARDS FOR BOTH, for now (Or v42: "פתחתי בטעות pack - אני רוצה שלי וליריב יהיה את אותו קלפים כמו שאמרנו בנתיים - עד שאולי בעתיד נסדר"):
+     every match deals the fixed starter ten (XDECK0) to both sides, each shuffled — packs and owned cards change nothing until the economy is decided.
+     A friend match still uses what the opener SENT, so a v42 opener and a v43 guest stay in sync */
+  let d1, d2; if (a.mp) { const hostDeck = a.mp.guest ? opp.deck : XDECK0(); if (a.mp.guest) { d2 = mk(hostDeck); d1 = mk(hostDeck) } else { d1 = mk(hostDeck); d2 = mk(hostDeck) } }
+  else { d1 = mk(XDECK0()); d2 = mk(XDECK0()) }
   G = { s, opp, pot, me: d1, op: d2, turn: null, over: false, log: [], busy: false, rot: 0, sel: null, force: null, mp: !!a.mp }
   const g = G; runNew(g, a)
   // header — back · the two players and their LIVE team number · the pile
@@ -4710,7 +4717,7 @@ SCREENS.hub = (s) => {
     if (ST.coins < ENTRY) { toast('Not enough coins'); return }
     CFX.play('−' + fmt(ENTRY), false); SND('tok', { gain: .7 }); balRoll(ST.coins - ENTRY); later(380, () => go('mm')) } }), 'a-play', 1250)
   const np = Object.values(ST.packs).reduce((a, b) => a + b, 0)
-  const [sb] = PAIR(s, 672, ['T', 140, 52, 'PACKS', { on: () => go('store') }], ['T', 140, 52, 'MY CARDS', { on: () => go('cards') }])
+  const [sb] = PAIR(s, 672, ['T', 140, 52, '🔒 PACKS', { on: () => go('store') }], ['T', 140, 52, 'MY CARDS', { on: () => go('cards') }])
   $$('.L.btn-b', s).forEach((b, i) => A(b, 'a-play', 1330 + i * 70))
   if (np) A(el(s, 'div', 'pbadge', `left:${sb.offsetLeft + 118}px;top:664px`, np), 'a-pop', 1500)
   const pm = A(el(s, 'div', 'G', 'left:0;top:752px;width:390px;height:40px'), 'a-fade', 1500)
@@ -4785,7 +4792,7 @@ SCREENS.result = (s, a = {}) => {
     later(1700, () => { rn.textContent = RANKS[ST.rank]; rs.innerHTML = stars(ST.stars) }) }
   const np = Object.values(ST.packs).reduce((x, y) => x + y, 0)
   PAIR(s, 764, ['A', 150, 56, 'PLAY AGAIN', { cta: true, on: () => { if (ST.coins < ENTRY) { toast('Not enough coins'); return } CFX.play('−' + fmt(ENTRY), false); SND('tok', { gain: .7 }); balRoll(ST.coins - ENTRY); later(380, () => go('mm')) } }],
-    ['T', 140, 52, np ? `PACKS (${np})` : 'HUB', { on: () => go(np ? 'store' : 'hub', { back: true }) }])
+    ['T', 140, 52, 'HUB', { on: () => go('hub', { back: true }) }])
 }
 
 /* ════════════════ HOW TO PLAY ════════════════ */
@@ -4801,6 +4808,10 @@ function howTo() { ov((o) => { o.querySelector('.dim').onclick = () => closeOv()
   el(h, 'h2', '', 'margin-top:18px', 'EVERY EVENT')
   Object.entries(XGRP).forEach(([grp, ks]) => { el(h, 'div', 'xgl', '', grp); ks.forEach(k => { const e = XEV.find(x => x.k === k); if (!e) return; const r = el(h, 'div', 'hr xgr t' + e.tier); el(r, 'img').src = IMG[e.ic]; const t = el(r, 'div'); el(t, 'b', '', `color:rgb(${XTONE[e.tone]})`, e.h); el(t, 'p', '', '', e.d) }) })
   h.animate([{ opacity: 0, transform: 'translateY(30px)' }, { opacity: 1, transform: 'none' }], { duration: 300, easing: 'cubic-bezier(.2,.9,.3,1)' }) }) }
+
+/* PACKS LOCKED FOR NOW (Or v42: "בוא נשים בלוק גם על האפשרות להכנס לחנות ולפתוח פאקים לבנתיים"): every way into the store or a pack opening
+   (hub PACKS, GET MORE CARDS, a pack screen) stops here with a toast, until the economy is decided */
+{ const go0 = go; go = function (k, args) { if (k === 'store' || k === 'pack') { SND('kn_s', { gain: .5 }); toast('Packs are locked for now'); return } return go0.call(this, k, args) } }
 
 /* ════ PLAY A FRIEND — phone against phone with a room code.
    v20–v22: a direct WebRTC link (PeerJS + its free public broker). v23: our own room server on Cloudflare (a WebSocket relay). Both phones run the SAME game: one seed for the dice
@@ -4900,7 +4911,7 @@ function mpLobby(pre) { SND('y_select'); ov(o => { const h = el(o, 'div', 'howto
   const deckOf = hi => (Array.isArray(hi && hi.deck) ? hi.deck : []).filter(id => typeof id === 'string' && CARDS[id]).slice(0, 12)
   const joined = f => { const [w, l] = mpRecord(f.id); msg.textContent = `${f.name} IS IN · ${w || l ? `YOU ${w} – ${l}` : 'FIRST MATCH'} · SAME DECK FOR BOTH · DEALING…` }
   const start = (guest, hi, seed) => { MPG = { guest, friend: friendOf(hi), fdeck: deckOf(hi) }; mpBegin(seed) }
-  const myDeck = () => ST.deck.slice(), hello = () => NET.send('hello', { deck: myDeck(), id: me.id, name: me.name, ver: MP_VER })
+  const myDeck = () => S0().deck.slice(),   /* v43: the fixed starter ten for everyone, for now — see XDECK0 */ hello = () => NET.send('hello', { deck: myDeck(), id: me.id, name: me.name, ver: MP_VER })
   const sameVer = hi => { if (hi && hi.ver === MP_VER) return true; fail('YOU ARE ON DIFFERENT VERSIONS — BOTH CLOSE AND REOPEN THE GAME'); later(4000, () => mpLeave()); return false }
   /* your name first (once), then your record against every friend you have played */
   const who = el(h, 'p', 'xmpw'), recs = el(h, 'div', 'xmpl')
@@ -4981,7 +4992,7 @@ document.addEventListener('click', e => { let n = e.target; while (n && n !== do
 { const k0 = kick; kick = (n = 1) => { k0(n); if (SET.vib && n >= 2 && navigator.vibrate) try { navigator.vibrate(n >= 3 ? 28 : 14) } catch (e) {} } }
 
 /* ── the run log ── */
-function runNew(g, a) { const me = mpMe(); g.run = { id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6), v: '42', t: Date.now(), uid: me.id, name: me.name || '', mode: a.mp ? 'friend' : 'ai', opp: g.opp.name, oppId: (a.mp && typeof MPG !== 'undefined' && MPG && MPG.friend && MPG.friend.id) || '', L: [] } }
+function runNew(g, a) { const me = mpMe(); g.run = { id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6), v: '43', t: Date.now(), uid: me.id, name: me.name || '', mode: a.mp ? 'friend' : 'ai', opp: g.opp.name, oppId: (a.mp && typeof MPG !== 'undefined' && MPG && MPG.friend && MPG.friend.id) || '', L: [] } }
 function runLog(g, ...e) { if (g && g.run && !g.run.done && g.run.L.length < 1200) g.run.L.push([Math.round((Date.now() - g.run.t) / 100) / 10, ...e]) }
 const runFive = (g, sd) => XP5.map(p => { const o = g[sd].five[p]; return o ? `${p} ${CARDS[o.cid] ? CARDS[o.cid].n : o.cid} ${slotVal(g, sd, p).toFixed(1)}${o.out ? ' OUT' : ''}` : `${p} —` }).join(' · ')
 function runBoard(g) { if (!g || !g.run) return; runLog(g, 'B', 'me', runFive(g, 'me')); runLog(g, 'B', 'op', runFive(g, 'op')); runLog(g, '=', +scoreOf(g, 'me').toFixed(1), +scoreOf(g, 'op').toFixed(1)) }
@@ -5028,7 +5039,7 @@ function openSettings() { SND('z_menu_up', { gain: .7 }); ov(o => { o.querySelec
     all.forEach(r => { const d = el(list, 'div', 'xrun ' + (r.win ? 'w' : 'l')); el(d, 'em', '', '', r.win ? 'W' : 'L'); const t = el(d, 'span'); el(t, 'b', '', '', 'VS ' + escH(r.opp || '?')); el(t, 'small', '', '', `${r.rec || ''} · ${agoTxt(r.t)}${r.sent ? '' : ' · NOT SENT YET'}`); el(d, 'i', '', '', `${(+r.me || 0).toFixed(1)}–${(+r.op || 0).toFixed(1)}`); d.onclick = e => { e.stopPropagation(); runOpen(r) } }) }
   paint(histAdd(runsLocal()))
   try { fetch(RUNS_URL + me.id).then(x => x.ok ? x.json() : []).then(srv => { if (Array.isArray(srv) && srv.length && rl.isConnected) paint(histAdd(srv.map(x => ({ ...x, sent: true })))) }).catch(() => {}) } catch (e) {}
-  el(h, 'p', 'xsver', '', `DRAFT CHAOS v42`)
+  el(h, 'p', 'xsver', '', `DRAFT CHAOS v43`)
 }) }
 /* one run, move by move */
 function runView(r) { SND('z_menu_up', { gain: .6 }); ov(o => { o.querySelector('.dim').onclick = () => openSettings(); const h = el(o, 'div', 'howto xset xrv'); el(h, 'div', 'x', '', '‹').onclick = e => { e.stopPropagation(); openSettings() }
@@ -5182,7 +5193,7 @@ SCREENS.pack = (s, a = {}) => {
 
 /* ════════════════ DEV (side panel on desktop · ☰ on the phone) ════════════════ */
 function openDevSheet() { ov((o) => { o.querySelector('.dim').onclick = () => closeOv(); const sh = el(o, 'div', 'sheet'); el(sh, 'div', 'dev'); renderDev() }) }
-function devHTML() { return `<h3>DRAFT CHAOS · POC v42</h3>
+function devHTML() { return `<h3>DRAFT CHAOS · POC v43</h3>
 <p>Screens</p><div class="seg"><button data-dev="go:hub">HUB</button><button data-dev="go:mm">MATCHMAKING</button><button data-dev="go:chaos">MATCH</button><button data-dev="go:deck">MY DECK</button><button data-dev="go:cards">MY CARDS</button><button data-dev="go:store">PACKS</button></div>
 <p>Your next spin lands on</p><div class="seg">${XEV.map(e => `<button data-dev="ev:${e.k}">${e.lab}</button>`).join('')}</div>
 <p>Their next spin lands on</p><div class="seg">${XEV.map(e => `<button data-dev="eo:${e.k}">${e.lab}</button>`).join('')}</div>
