@@ -1509,7 +1509,7 @@ img { display: block; -webkit-user-drag: none; user-select: none; }
 .cc.xbst.up:not(.sel) { filter: drop-shadow(0 0 7px rgba(80,255,140,.9)); }
 .cc.xbst.dn:not(.sel) { filter: drop-shadow(0 0 7px rgba(255,70,90,.8)) saturate(.8); }
 .xhb.nt span { color: #2a1600; background: linear-gradient(#fff2a8, #ffc23a); box-shadow: 0 0 10px rgba(255,200,60,.7), 0 2px 3px rgba(0,0,0,.6); }
-.xgame em.xot { font-style: normal; color: #7dffa6; text-shadow: 0 0 10px rgba(80,255,140,.7); }   /* +1 OT banked */
+.xgame em.xotb { position: static; font-style: normal; color: #7dffa6; text-shadow: 0 0 10px rgba(80,255,140,.7); }   /* +1 OT banked */
 /* court numbers: green = lifted, red = cut (the jup/jdn flash still plays on the change) */
 .xfp.bup { color: #7dffa6; text-shadow: 0 0 10px rgba(80,255,140,.75), 0 1px 2px rgba(0,0,0,.9); }
 .xfp.bdn { color: #ff8a9a; text-shadow: 0 0 10px rgba(255,70,90,.7), 0 1px 2px rgba(0,0,0,.9); }
@@ -3567,10 +3567,13 @@ function resolvePack(g, side, ev, tg, out) { const me = g[side], op = g[foe(side
   else if (k === 'takeover') { const a = bestOfS(g, side), b = bestOfS(g, foe(side), true); addStats(me.five[a], op.five[b]); op.used.push(op.five[b].cid); op.five[b] = null }
   return out }
 /* resolve an event: returns what happened, for the screen to show */
+/* PLAY 2 / PLAY 3 / SIXTH MAN / HOT STREAK won OFF your turn (stolen from their spin) are banked for your NEXT turn — v37 set picks and the
+   next turn reset it to 1, so a stolen STREAK kept its ×2 but lost the second card (Or: "הייתי אמור לגנוב לו את הplay2 ושיגיע התור שלי אני יקבל לשים 2") */
+function xPicks(g, side, n) { const P = g[side]; if (g.turn === side) P.picks = Math.max(P.picks || 1, n); else P.picksNext = Math.max(P.picksNext | 0, n) }
 function resolveEv(g, side, ev, tg) { const me = g[side], op = g[foe(side)], out = { k: ev.k }
   if (XDISC[ev.k] || XPACK[ev.k]) return resolvePack(g, side, ev, tg, out)
   if (ev.once) (g.usedOnce = g.usedOnce || new Set()).add(ev.k)
-  if (ev.k === 'pick2') me.picks = 2
+  if (ev.k === 'pick2') xPicks(g, side, 2)
   if (ev.k === 'draw2') out.drawn = [draw(me), draw(me)].filter(Boolean)
   if (ev.k === 'shuffle') { me.deck = shuffle([...me.deck, ...me.hand]); const n = me.hand.length; me.hand = []; out.drawn = []; for (let i = 0; i < Math.max(n, 3); i++) { const d = draw(me); if (d) out.drawn.push(d) } }
   if (ev.k === 'steal') { if (op.hand.length) { const id = op.hand.splice(GRNG() * op.hand.length | 0, 1)[0]; if (me.hand.length < XHMAX) { me.hand.push(id); out.stolen = id } else { me.used.push(id); out.burned = id } } else out.fizz = true }
@@ -3602,7 +3605,7 @@ function resolveEv(g, side, ev, tg) { const me = g[side], op = g[foe(side)], out
   if (ev.k === 'three') { const f = filled(g, side); if (!f.length) out.fizz = true; else { f.forEach(p2 => { me.five[p2].flat = (me.five[p2].flat || 0) + 3 }); out.three = f.length } }
   if (ev.k === 'airball') me.airball = true
   if (ev.k === 'rookie') { const p2 = op.lastPos; if (p2 && op.five[p2] && !op.five[p2].lock) { op.five[p2].half = true; out.rookie = p2 } else out.fizz = true }
-  if (ev.k === 'sixth') { const d = draw(me); out.drawn = d ? [d] : []; me.picks = 2 }
+  if (ev.k === 'sixth') { const d = draw(me); out.drawn = d ? [d] : []; xPicks(g, side, 2) }
   if (ev.k === 'press') { const lost = []; for (let i = 0; i < 2 && op.hand.length; i++) { const id = op.hand.splice(GRNG() * op.hand.length | 0, 1)[0]; op.used.push(id); lost.push(id) } if (lost.length) out.press = lost; else out.fizz = true }
   if (ev.k === 'heave') { const hit = GRNG() < .5; me.bonus = Math.round(((me.bonus || 0) + (hit ? 20 : -10)) * 10) / 10; out.heave = hit }
   const best2 = sd => filled(g, sd).filter(p => !g[sd].five[p].lock).sort((x, y) => slotVal(g, sd, y) - slotVal(g, sd, x))
@@ -3667,7 +3670,7 @@ function resolveEv(g, side, ev, tg) { const me = g[side], op = g[foe(side)], out
   if (ev.k === 'franchise') { const b = filled(g, side).sort(desc(side))[0]; if (!b) out.fizz = true; else { dbl(me.five[b]); me.five[b].lock = true; out.franchise = b } }
   if (ev.k === 'nolook') { if (!me.hand.length || !op.hand.length) out.fizz = true; else { const w = worstCard(me), bst = op.hand.slice().sort((a, b) => ovrOf(XLINE[b].s) - ovrOf(XLINE[a].s))[0]; me.hand.splice(me.hand.indexOf(w), 1); op.hand.splice(op.hand.indexOf(bst), 1); me.hand.push(bst); op.hand.push(w); out.nolook = { gave: w, got: bst } } }
   if (ev.k === 'swish') { me.alley = true; me.anywhere = true }
-  if (ev.k === 'streak') { me.picks = Math.max(me.picks || 1, 2); me.streak = 2 }
+  if (ev.k === 'streak') { xPicks(g, side, 2); me.streak = 2 }
   if (ev.k === 'rest') { const b = open5(g, foe(side)).sort(desc(foe(side)))[0]; if (!b) out.fizz = true; else { const id = op.five[b].cid; op.five[b] = null; toHand(op, id); out.rest = id } }
   if (ev.k === 'ring') { g.pot *= 3; out.pile = true }
   if (ev.k === 'showtime') { const f = filled(g, side); if (!f.length) out.fizz = true; else { f.forEach(p2 => dbl(me.five[p2])); out.showtime = f.length } }
@@ -3706,7 +3709,7 @@ function resolveEv(g, side, ev, tg) { const me = g[side], op = g[foe(side)], out
   if (ev.k === 'poster2') { const a = filled(g, side).sort(desc(side))[0], b = open5(g, foe(side)).sort(desc(foe(side)))[0]; if (!a || !b) out.fizz = true; else { me.five[a].s = { ...op.five[b].s }; op.five[b].half = true; out.poster2 = { a, b } } }
   if (ev.k === 'goat') { const pool = leaguePool(g, side, true); if (!pool.length) out.fizz = true; else { const id = pool[GRNG() * pool.length | 0], pos = onCourt(g, side, id); if (pos) out.goat = { id, pos }; else { intoHand(me, id); out.goat = { id }; out.drawn = [id] } } }
   if (ev.k === 'and1') { const d = draw(me); if (d) out.drawn = [d]; me.alley = true }
-  if (ev.k === 'pick3') me.picks = 3
+  if (ev.k === 'pick3') xPicks(g, side, 3)
   if (ev.k === 'shotclock') op.forceWorst = true
   if (ev.k === 'anywhere') me.anywhere = true
   if (ev.k === 'stealshow') op.stealNext = true
@@ -3919,7 +3922,7 @@ const MPOUT = (k, v) => { if (MPON()) NET.send(k, v); return v }
 const MPIN = k => NET.recv(k)
 /* the board */
 function paintAll(g) { paintFive(g, 'op'); paintFive(g, 'me'); paintHand(g); paintOpHand(g); paintScore(g); paintGame(g) }
-function paintGame(g) { const t = Math.max(g.me.turns, g.op.turns), n = sd => XP5.filter(p => g[sd].five[p]).length; g.gm.innerHTML = `${g.otRound ? `<u>OVERTIME${g.otRound > 1 ? ' ' + g.otRound : ''}</u>` : g.lastFor ? '<u>LAST TURN</u>' : `TURN <b>${Math.max(1, t)}</b>`}${g.turn ? `<i>·</i>${g.turn === 'me' ? '<u>YOUR TURN</u>' : g.opp.name + '’S TURN'}` : ''}${g.ot > 0 ? `<i>·</i><em class="xot">+${g.ot} OT</em>` : ''}`
+function paintGame(g) { const t = Math.max(g.me.turns, g.op.turns), n = sd => XP5.filter(p => g[sd].five[p]).length; g.gm.innerHTML = `${g.otRound ? `<u>OVERTIME${g.otRound > 1 ? ' ' + g.otRound : ''}</u>` : g.lastFor ? '<u>LAST TURN</u>' : `TURN <b>${Math.max(1, t)}</b>`}${g.turn ? `<i>·</i>${g.turn === 'me' ? '<u>YOUR TURN</u>' : g.opp.name + '’S TURN'}` : ''}${g.ot > 0 ? `<i>·</i><em class="xotb">+${g.ot} OT</em>` : ''}`
   g.dkN.innerHTML = `DECK<b>${g.me.deck.length}</b>`; paintPiles(g) }
 const scoreOf = (g, side) => teamFP(g, side) + (g.home === side ? XHOME : 0)
 function count1(e, from, to, D = 600) { e.dataset.v = to; const t0 = performance.now(); (function f() { const k = Math.min(1, (performance.now() - t0) / D), v = from + (to - from) * (1 - Math.pow(1 - k, 3)); e.textContent = v.toFixed(1); if (k < 1) requestAnimationFrame(f) })() }
@@ -3963,7 +3966,7 @@ function paintOpHand(g, fresh = []) { g.ohB.innerHTML = ''; g.ohEls = []; const 
 function info(g, html, tone) { { const m = html.match(/<span>(.*?)<\/span>/); if (m) g.lastSpan = m[1].replace(/<[^>]+>/g, '') } g.say.innerHTML = html.replace(/<img[^>]*>/g, '').replace(/<b class="h">/g, '<b>'); if (tone) g.say.style.setProperty('--g', XTONE[tone]); g.say.animate([{ opacity: 0, transform: 'translateY(6px)' }, { opacity: 1, transform: 'none' }], { duration: 220 }) }
 
 /* your turn: draw · spin · the event · place (one card, two on PICK 2) */
-async function myTurn(g, extra) { const me = g.me; g.turn = 'me'; if (!extra) me.turns++; me.picks = 1; paintGame(g); runLog(g, 'T', 'me', me.turns, extra ? 'EXTRA TURN' : '')
+async function myTurn(g, extra) { const me = g.me; g.turn = 'me'; if (!extra) me.turns++; me.picks = Math.max(1, me.picksNext | 0); me.picksNext = 0; paintGame(g); runLog(g, 'T', 'me', me.turns, extra ? 'EXTRA TURN' : '')
   g.evb.classList.remove('on'); const d = draw(me); paintHand(g, d ? [d] : []); if (d) { SND('m_deal', { gain: .9 }); SND('s_flip', { gain: .45, at: 70 }) } paintGame(g)
   if (me.frozen) { const why = me.frozenWhy || 'FROZEN'; me.frozen = false; me.frozenWhy = null; paintScore(g); info(g, `<b class="h">${why}</b><span>NO SPIN THIS TURN</span><em>PLACE A CARD</em>`, 'blue'); SND('m_ice', { gain: .8 }); SND('m_whistle', { gain: .4 }); g.wheel.classList.add('frozen'); jFrozen(g, 'me'); await xnap(1300); g.wheel.classList.remove('frozen') }
   else { info(g, `<b class="h">YOUR TURN</b><span>SPIN!</span>`, 'gold'); g.hub.classList.add('go'); SND('m_turn', { gain: .7 })
@@ -3985,7 +3988,7 @@ async function myTurn(g, extra) { const me = g.me; g.turn = 'me'; if (!extra) me
   if (me.noplace) { me.noplace = false; paintScore(g); info(g, '<b class="h">DELAY OF GAME</b><span>NO CARD FOR YOU THIS TURN</span>', 'red'); SND('m_whistle', { gain: .5 }); jNoCard(g, 'me'); await xnap(1200) }
   else for (let i = 0; i < me.picks && xalive(g); i++) { if (!me.hand.length || XP5.every(p => me.five[p])) break; await placePhase(g, i, me.picks) }
   runBoard(g); g.turn = null }
-async function opTurn(g, extra) { const op = g.op; g.turn = 'op'; if (!extra) op.turns++; op.picks = 1; paintGame(g); runLog(g, 'T', 'op', op.turns, extra ? 'EXTRA TURN' : ''); g.evb.classList.remove('on')
+async function opTurn(g, extra) { const op = g.op; g.turn = 'op'; if (!extra) op.turns++; op.picks = Math.max(1, op.picksNext | 0); op.picksNext = 0; paintGame(g); runLog(g, 'T', 'op', op.turns, extra ? 'EXTRA TURN' : ''); g.evb.classList.remove('on')
   { const A = jSnap(g); draw(op); SND('m_deal', { gain: .5 }); await jPlay(g, 'op', null, null, A, { D: 420 }) } if (!xalive(g)) return
   if (op.frozen) { const why = op.frozenWhy || 'FROZEN'; op.frozen = false; op.frozenWhy = null; paintScore(g); info(g, `<b class="h">${g.opp.name}</b><span>${why} · NO SPIN</span>`, 'blue'); SND('m_ice', { gain: .8 }); g.wheel.classList.add('frozen'); jFrozen(g, 'op'); await xnap(1200); g.wheel.classList.remove('frozen') }
   else { info(g, `<b class="h">${g.opp.name}</b><span>${g.mp ? 'THEIR TURN — WAITING FOR THEIR SPIN…' : 'SPINNING…'}</span>`, 'purple'); if (g.mp) { await MPIN('spin'); if (!xalive(g)) return } else await xnap(400)
@@ -4742,7 +4745,7 @@ function howTo() { ov((o) => { o.querySelector('.dim').onclick = () => closeOv()
    same taps = the same game on both screens. The CPU's decisions become the friend's.
    why: Or "אם אני רוצה מולטיפלייר" — option 2, the room code ════ */
 let MPG = null
-const MP_VER = '35'   /* the GAME protocol, not the build: two phones whose engine, dice or wire differ would roll different games, so the room refuses
+const MP_VER = '38'   /* the GAME protocol, not the build: two phones whose engine, dice or wire differ would roll different games, so the room refuses
    them — bump it only when one of those changes (v23 → '23'; v25 → '25': TIME OUT now plays on the last turn; v27 → '27': both play the opener's deck; v28 → '28': 29 new events). A UI-only update (v24: chat) keeps it, so nobody has to reopen together */
 /* the phones meet in OUR room server (build/server/worker.js on Cloudflare): a plain WebSocket, so it gets through any network (office Wi-Fi
    included — Bella could not get a direct WebRTC link through hers). Every tap carries a sequence number; after any drop the phone reconnects to
@@ -4915,7 +4918,7 @@ document.addEventListener('click', e => { let n = e.target; while (n && n !== do
 { const k0 = kick; kick = (n = 1) => { k0(n); if (SET.vib && n >= 2 && navigator.vibrate) try { navigator.vibrate(n >= 3 ? 28 : 14) } catch (e) {} } }
 
 /* ── the run log ── */
-function runNew(g, a) { const me = mpMe(); g.run = { id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6), v: '37', t: Date.now(), uid: me.id, name: me.name || '', mode: a.mp ? 'friend' : 'ai', opp: g.opp.name, oppId: (a.mp && typeof MPG !== 'undefined' && MPG && MPG.friend && MPG.friend.id) || '', L: [] } }
+function runNew(g, a) { const me = mpMe(); g.run = { id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6), v: '38', t: Date.now(), uid: me.id, name: me.name || '', mode: a.mp ? 'friend' : 'ai', opp: g.opp.name, oppId: (a.mp && typeof MPG !== 'undefined' && MPG && MPG.friend && MPG.friend.id) || '', L: [] } }
 function runLog(g, ...e) { if (g && g.run && !g.run.done && g.run.L.length < 1200) g.run.L.push([Math.round((Date.now() - g.run.t) / 100) / 10, ...e]) }
 const runFive = (g, sd) => XP5.map(p => { const o = g[sd].five[p]; return o ? `${p} ${CARDS[o.cid] ? CARDS[o.cid].n : o.cid} ${slotVal(g, sd, p).toFixed(1)}${o.out ? ' OUT' : ''}` : `${p} —` }).join(' · ')
 function runBoard(g) { if (!g || !g.run) return; runLog(g, 'B', 'me', runFive(g, 'me')); runLog(g, 'B', 'op', runFive(g, 'op')); runLog(g, '=', +scoreOf(g, 'me').toFixed(1), +scoreOf(g, 'op').toFixed(1)) }
@@ -4962,7 +4965,7 @@ function openSettings() { SND('z_menu_up', { gain: .7 }); ov(o => { o.querySelec
     all.forEach(r => { const d = el(list, 'div', 'xrun ' + (r.win ? 'w' : 'l')); el(d, 'em', '', '', r.win ? 'W' : 'L'); const t = el(d, 'span'); el(t, 'b', '', '', 'VS ' + escH(r.opp || '?')); el(t, 'small', '', '', `${r.rec || ''} · ${agoTxt(r.t)}${r.sent ? '' : ' · NOT SENT YET'}`); el(d, 'i', '', '', `${(+r.me || 0).toFixed(1)}–${(+r.op || 0).toFixed(1)}`); d.onclick = e => { e.stopPropagation(); runOpen(r) } }) }
   paint(histAdd(runsLocal()))
   try { fetch(RUNS_URL + me.id).then(x => x.ok ? x.json() : []).then(srv => { if (Array.isArray(srv) && srv.length && rl.isConnected) paint(histAdd(srv.map(x => ({ ...x, sent: true })))) }).catch(() => {}) } catch (e) {}
-  el(h, 'p', 'xsver', '', `DRAFT CHAOS v37`)
+  el(h, 'p', 'xsver', '', `DRAFT CHAOS v38`)
 }) }
 /* one run, move by move */
 function runView(r) { SND('z_menu_up', { gain: .6 }); ov(o => { o.querySelector('.dim').onclick = () => openSettings(); const h = el(o, 'div', 'howto xset xrv'); el(h, 'div', 'x', '', '‹').onclick = e => { e.stopPropagation(); openSettings() }
@@ -5116,7 +5119,7 @@ SCREENS.pack = (s, a = {}) => {
 
 /* ════════════════ DEV (side panel on desktop · ☰ on the phone) ════════════════ */
 function openDevSheet() { ov((o) => { o.querySelector('.dim').onclick = () => closeOv(); const sh = el(o, 'div', 'sheet'); el(sh, 'div', 'dev'); renderDev() }) }
-function devHTML() { return `<h3>DRAFT CHAOS · POC v37</h3>
+function devHTML() { return `<h3>DRAFT CHAOS · POC v38</h3>
 <p>Screens</p><div class="seg"><button data-dev="go:hub">HUB</button><button data-dev="go:mm">MATCHMAKING</button><button data-dev="go:chaos">MATCH</button><button data-dev="go:deck">MY DECK</button><button data-dev="go:cards">MY CARDS</button><button data-dev="go:store">PACKS</button></div>
 <p>Your next spin lands on</p><div class="seg">${XEV.map(e => `<button data-dev="ev:${e.k}">${e.lab}</button>`).join('')}</div>
 <p>Their next spin lands on</p><div class="seg">${XEV.map(e => `<button data-dev="eo:${e.k}">${e.lab}</button>`).join('')}</div>
