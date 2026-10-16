@@ -1383,6 +1383,23 @@ img { display: block; -webkit-user-drag: none; user-select: none; }
 .xh2h b { display: inline-block; min-width: 52px; font-weight: 700; } .xh2h i { font-style: normal; color: #6b7591; margin: 0 6px; }
 .xh2h b.up { color: #ffe862; text-shadow: 0 0 18px rgba(255,200,40,.8); } .xh2h b.dn { color: #ff8a9a; }
 
+/* QUICK CHAT */
+.xchatb { position: absolute; width: 40px; height: 34px; border-radius: 10px; display: grid; place-items: center; font-size: 18px; background: #16203a; box-shadow: inset 0 0 0 1.5px #2a3654, 0 4px 10px rgba(0,0,0,.4); cursor: pointer; z-index: 6; }
+.xchatp { position: absolute; left: 10px; right: 10px; bottom: 64px; display: none; padding: 12px; border-radius: 16px; background: rgba(11,18,33,.97); box-shadow: inset 0 0 0 1.5px #2a3654, 0 20px 40px rgba(0,0,0,.6); z-index: 60; }
+.xchatp.on { display: block; }
+.xchatg { display: flex; flex-wrap: wrap; gap: 7px; justify-content: center; }
+.xchatg b { padding: 8px 12px 7px; border-radius: 999px; background: #1d2a4a; box-shadow: inset 0 0 0 1px #33456e; color: #fff; font: 700 15px/1.1 system-ui, -apple-system, Roboto, Arial, sans-serif; cursor: pointer; unicode-bidi: plaintext; }
+.xchatr { display: flex; gap: 8px; margin-top: 11px; }
+.xchatr input { flex: 1; min-width: 0; font: 600 16px/1.2 system-ui, -apple-system, Roboto, Arial, sans-serif; color: #fff; background: rgba(255,255,255,.08); border: 1.5px solid rgba(255,200,80,.5); border-radius: 10px; padding: 9px 10px; outline: none; }
+.xchatr i { display: grid; place-items: center; padding: 3px 14px 0; border-radius: 10px; font: 700 20px/1 Teko; font-style: normal; letter-spacing: 1px; color: #3a1d00; background: linear-gradient(#ffe27a, #ffad1f 60%, #d77a00); cursor: pointer; }
+.xbub { position: absolute; max-width: 128px; padding: 8px 11px 7px; border-radius: 14px; font: 800 15px/1.25 system-ui, -apple-system, Roboto, Arial, sans-serif; color: #0b1221; background: #fff; box-shadow: 0 8px 22px rgba(0,0,0,.55); unicode-bidi: plaintext; word-break: break-word; pointer-events: none; z-index: 70; }
+.xbub.me { border-top-left-radius: 4px; transform-origin: 0 0; } .xbub.them { background: #ffe27a; border-top-right-radius: 4px; transform-origin: 100% 0; }
+
+/* WAITING FOR RON… */
+.xaway { position: absolute; left: 50%; top: 168px; transform: translateX(-50%); display: flex; align-items: center; gap: 9px; white-space: nowrap; padding: 8px 14px 7px; border-radius: 999px; background: rgba(11,18,33,.96); box-shadow: inset 0 0 0 1.5px #ffd36a, 0 10px 26px rgba(0,0,0,.6); color: #ffd36a; font: italic 900 12px/1 "Fira Sans"; letter-spacing: .8px; z-index: 80; }
+.xaway i { width: 8px; height: 8px; border-radius: 50%; background: #ffd36a; animation: xawp 1s ease-in-out infinite; } @keyframes xawp { 50% { opacity: .25 } }
+.xaway b { padding: 5px 10px 4px; border-radius: 999px; background: #ff5a6a; color: #fff; font-style: normal; cursor: pointer; }
+
 </style>
 </head>
 <body>
@@ -3476,7 +3493,7 @@ function xdoes(g, side, k) { const ev = XEV.find(e => e.k === k), h = cloneG(g),
 function xready(g, side, k) { if (g && side && g.me && g.op && XCHK.has(k) && !xdoes(g, side, k)) return false; const P = g && side && g[side], F = g && side && g[side === 'me' ? 'op' : 'me']
   if (P && F) { if (k === 'freeag' || k === 'pick1') return !!(P.deck.length && P.hand.length < XHMAX); if (k === 'deep') return !!(P.deck.length && XP5.some(p => !P.five[p])); if (k === 'callup') return !!(P.used.length && XP5.some(p => !P.five[p])); if (k === 'second') return !!(P.used.length && P.hand.length < XHMAX); if (k === 'draftn') return !!F.deck.length; if (k === 'cherry') return !!F.hand.length; if (k === 'sign') return !!(F.hand.length && P.hand.length); if (k === 'clonehand') return !!(F.hand.length && P.hand.length < XHMAX); if (k === 'freeagent') return !!(F.used.length && P.hand.length < XHMAX); if (k === 'redraft') return !!(P.deck.length && XP5.some(p => P.five[p])); if (k === 'replay') return !!F.lastEvK; if (k === 'lottery' || k === 'legendspin') return P.hand.length < XHMAX && !!leaguePool(g, side, k === 'legendspin').length; if (k === 'superspin') return XEV.some(e => e.tier === 'L' && !XMETA.has(e.k) && !P.seen.has(e.k)); if (k === 'playbook' || k === 'choose3' || k === 'blind3') return true }
   if (k === 'replay') return !!(F && F.lastEvK); if (k === 'review') return !!(F && F.lastPos && F.five[F.lastPos]); if (k === 'merge') return !!(P && XP5.filter(p => P.five[p]).length >= 2); if (k === 'switcheroo') return !!(P && P.hand.length && XP5.some(p => P.five[p])); if (k === 'recycle') return !!(P && P.used.length); if (k === 'freeagent') return !!(F && F.used.length && P.hand.length < XHMAX); if (k === 'clonehand') return !!(F && F.hand.length && P.hand.length < XHMAX); if (k === 'hotpotato' || k === 'fastbreak') return !!(P && P.hand.length && (k === 'hotpotato' || XP5.some(p => !P.five[p]))); if (k === 'icedeck') return !!(F && F.deck.length); if (k === 'redraft') return !!(P && P.deck.length && XP5.some(p => P.five[p]))
-  if (k === 'callup') return !!(g && side && g[side].used.length && XP5.some(p => !g[side].five[p])); if (k === 'trash') return !!(g && side && g[side === 'me' ? 'op' : 'me'].hand.length); if (k === 'homect') return !!(g && side && g.home && g.home !== side); if (k === 'sudden') return !!(g && !g.lastFor); if (k === 'switch') return !!(g && side && teamFP(g, side) < teamFP(g, side === 'me' ? 'op' : 'me')); if (g && side && g.me && g.op) { const P2 = g[side], F2 = g[side === 'me' ? 'op' : 'me'], n2 = XP5.filter(p => P2.five[p]).length, o2 = XP5.filter(p => F2.five[p] && !F2.five[p].lock)
+  if (k === 'callup') return !!(g && side && g[side].used.length && XP5.some(p => !g[side].five[p])); if (k === 'trash') return !!(g && side && g[side === 'me' ? 'op' : 'me'].hand.length); if (k === 'homect') return !!(g && side && g.home && g.home !== side); if (k === 'sudden' && g && g.lastFor) return false;   /* was `return !g.lastFor` — it answered before the 4-cards-and-ahead rule below ever ran, so SUDDEN could land on turn 1 */ if (k === 'switch') return !!(g && side && teamFP(g, side) < teamFP(g, side === 'me' ? 'op' : 'me')); if (g && side && g.me && g.op) { const P2 = g[side], F2 = g[side === 'me' ? 'op' : 'me'], n2 = XP5.filter(p => P2.five[p]).length, o2 = XP5.filter(p => F2.five[p] && !F2.five[p].lock)
     if (k === 'sudden' && !(n2 >= 4 && teamFP(g, side) > teamFP(g, side === 'me' ? 'op' : 'me'))) return false   /* Or: "מה קורה אם הוא שם לי על התור הראשון, שהתור הבא שלי הוא התור האחרון?" — the game ended on 1-2 cards */
     if (k === 'jumpball') return !!(o2.length && XP5.some(p => P2.five[p] && !P2.five[p].lock)); if (k === 'nolook') return !!(P2.hand.length && F2.hand.length); if (k === 'rookies' || k === 'hofclass') return P2.hand.length < XHMAX && !!leaguePool(g, side, k === 'hofclass').filter(id => k === 'hofclass' || CARDS[id].e === '2020s').length; if (k === 'goat') return !!leaguePool(g, side, true).length
     if (k === 'poster2') { const mb = XP5.filter(p => P2.five[p]).map(p => ovrOf(P2.five[p].s)), tb = o2.map(p => ovrOf(F2.five[p].s)); return !!(mb.length && tb.length && Math.max(...tb) > Math.max(...mb)) } if (k === 'melee') return XP5.some(p => P2.five[p] || F2.five[p]) } if (k === 'posswap') return !!(g && side && XP5.some(p => g[side].five[p] && g[side === 'me' ? 'op' : 'me'].five[p] && !g[side === 'me' ? 'op' : 'me'].five[p].lock)); if (k === 'second2') return !!(g && side && XP5.filter(p => g[side].five[p]).length >= 2); if (k === 'skyhook') return !!(g && side && g[side].five.C); if (k === 'cherry' || k === 'techall') return !!(g && side && g[side === 'me' ? 'op' : 'me'].hand.length); const n = XNEED[k]; if (!n || !g || !side) return true; const has = sd => XP5.some(p => g[sd].five[p]), f = side === 'me' ? 'op' : 'me'
@@ -3524,6 +3541,7 @@ SCREENS.chaos = (s, a = {}) => {
   g.dkN = el(s, 'div', 'dkl', 'left:54px;top:794px')
   g.pass = TAG(s, 'Dark', 'KEEP MY FIVE ›', 150, 800, 104, 1, { btn: true, on: () => g.onPass && g.onPass() }); g.pass.classList.add('xpass')
   TAG(s, 'Dark', '?  RULES', 300, 800, 72, 1, { btn: true, on: () => { SND('y_select'); howTo() } })
+  if (a.mp) mpChat(s, { x: 64, y: 70, side: 'l' }, { x: 64, y: 70, side: 'r' }, { x: 258, y: 798 })
   paintAll(g)
   later(a.fromMM ? 800 : 350, () => xrun(g))
 }
@@ -4184,6 +4202,7 @@ function mpResult(s, a, win) { const f = MPG.friend; NET.flush(['again', 'start'
   const sc = el(hg, 'div', 'xh2h'), bw = el(sc, 'b', '', '', String(a.rec0[0])); el(sc, 'i', '', '', '–'); const bl = el(sc, 'b', '', '', String(a.rec0[1]))
   later(1300, () => { const t = win ? bw : bl; t.textContent = String(win ? a.rec[0] : a.rec[1]); t.classList.add(win ? 'up' : 'dn'); t.animate([{ transform: 'scale(1.9)', filter: 'brightness(2.2)' }, { transform: 'scale(1)', filter: 'none' }], { duration: 420, easing: 'cubic-bezier(.2,1.4,.4,1)' }); kick(win ? 2 : 1); SND(win ? 'y_coin' : 'tok', { gain: .8 }) })
   const st = A(lab(s, '', 0, 724, 390, 12, C.CR, 'c'), 'a-fade', 1200)
+  mpChat(s, { x: 24, y: 620, side: 'l' }, { x: 24, y: 620, side: 'r' }, { x: 175, y: 672 })
   const fr = NET.recv('again'); let mine = false
   fr.then(() => { if (!mine && curKey === 'result') { st.textContent = f.name + ' WANTS A REMATCH'; SND('y_tip', { gain: .8 }) } })
   PAIR(s, 764, ['A', 150, 56, 'REMATCH', { cta: true, on: async () => { if (mine) return; if (!MPG || MPG.gone) { toast(f.name + ' left'); return } mine = true; NET.send('again', 1); st.textContent = 'WAITING FOR ' + f.name + '…'
@@ -4258,53 +4277,60 @@ function howTo() { ov((o) => { o.querySelector('.dim').onclick = () => closeOv()
   Object.entries(XGRP).forEach(([grp, ks]) => { el(h, 'div', 'xgl', '', grp); ks.forEach(k => { const e = XEV.find(x => x.k === k); if (!e) return; const r = el(h, 'div', 'hr xgr t' + e.tier); el(r, 'img').src = IMG[e.ic]; const t = el(r, 'div'); el(t, 'b', '', `color:rgb(${XTONE[e.tone]})`, e.h); el(t, 'p', '', '', e.d) }) })
   h.animate([{ opacity: 0, transform: 'translateY(30px)' }, { opacity: 1, transform: 'none' }], { duration: 300, easing: 'cubic-bezier(.2,.9,.3,1)' }) }) }
 
-/* ════ PLAY A FRIEND — phone against phone with a room code, no server of our own.
-   A direct WebRTC link (PeerJS, its free public broker only introduces the two phones). Both phones run the SAME game: one seed for the dice
+/* ════ PLAY A FRIEND — phone against phone with a room code.
+   v20–v22: a direct WebRTC link (PeerJS + its free public broker). v23: our own room server on Cloudflare (a WebSocket relay). Both phones run the SAME game: one seed for the dice
    (GRNG), the host's side order for every roll (SIDES), and only the TAPS cross the wire — spin, pick, target, the card and its spot. Same seed +
    same taps = the same game on both screens. The CPU's decisions become the friend's.
    why: Or "אם אני רוצה מולטיפלייר" — option 2, the room code ════ */
 let MPG = null
-const MP_VER = '22'   /* two phones on different versions would roll different games — the room refuses that up front */
-const NET = (() => { let peer = null, conn = null, q = {}, w = {}, onClose = null
-  const deliver = m => { if (!m || !m.k) return; if (w[m.k] && w[m.k].length) w[m.k].shift()(m.v); else (q[m.k] = q[m.k] || []).push(m.v) }
-  /* one link only: the first connection that opens wins, a late twin is closed (a retry can leave one behind) */
-  const NETERR = new Set(['network', 'server-error', 'socket-error', 'socket-closed', 'disconnected'])
-  const later2 = f => setTimeout(f, 1500)
-  const keep = (p, isDone, onState, onDead) => { let tries = 0, tm = null
-    p.on('open', () => { if (tries) onState && onState('live'); tries = 0 })
-    p.on('disconnected', () => { if (isDone() || p.destroyed) return; if (++tries > 8) return onDead && onDead({ type: 'network' }); onState && onState('reconnecting'); clearTimeout(tm)
-      tm = setTimeout(() => { try { if (!p.destroyed && p.disconnected && !isDone()) p.reconnect() } catch (e) {} }, Math.min(5000, 700 * tries)) }) }
-  const take = (c, onOpen) => { conn = c; c.on('data', deliver); c.on('close', () => conn === c && onClose && onClose()); c.on('error', () => conn === c && onClose && onClose()); onOpen && onOpen() }
+const MP_VER = '23'   /* two phones on different versions would roll different games — the room refuses that up front */
+/* the phones meet in OUR room server (build/server/worker.js on Cloudflare): a plain WebSocket, so it gets through any network (office Wi-Fi
+   included — Bella could not get a direct WebRTC link through hers). Every tap carries a sequence number; after any drop the phone reconnects to
+   the same room and both sides ask each other for what they missed (ack → resend), so a lost tap can never freeze the lockstep.
+   why: Or "אני רוצה שזה יעבוד לתמיד בלי חפירות" */
+const NET = (() => { const URL0 = 'wss://draftchaos.orsplayvault.workers.dev/room/'
+  let ws = null, role = null, code = null, sid = null, closed = true, q = {}, w = {}, lis = {}, onClose = null, onSt = null, out = [], seq = 0, got = 0, peerOn = false, peerSeen = false, cb = {}, ready = false, retry = 0, tmPing = null, tmRe = null
+  const deliver = (k, v) => { if (lis[k]) { try { lis[k](v) } catch (e) {} return } if (w[k] && w[k].length) w[k].shift()(v); else (q[k] = q[k] || []).push(v) }   /* lis: side channels (chat) that never touch the lockstep queues */
+  const raw = o => { try { if (ws && ws.readyState === 1) ws.send(typeof o === 'string' ? o : JSON.stringify(o)) } catch (e) {} }
+  const ack = () => raw({ t: 'ack', got })
+  /* a friend who drops (a locked screen, a jump to WhatsApp) is WAITED for, never thrown out: the match ends only on an explicit leave ('bye').
+     v23 first had "25 s away = left" — under drops it ended live matches */
+  const setPeer = on => { if (on) { peerOn = true; if (!peerSeen) { peerSeen = true; cb.open && cb.open() } onSt && onSt('peer', true) }
+    else if (peerOn) { peerOn = false; onSt && onSt('peer', false) } }
+  const on = m => {
+    if (m.t === 'err') { closed = true; try { ws.close() } catch (e) {} return cb.err && cb.err({ type: m.e === 'taken' ? 'unavailable-id' : m.e === 'no-room' ? 'peer-unavailable' : m.e }) }
+    if (m.t === 'hi') { retry = 0; onSt && onSt('me', true); if (!ready) { ready = true; cb.ready && cb.ready() } else cb.state && cb.state('live'); setPeer(m.peer); if (m.peer) ack(); return }
+    if (m.t === 'peer') { setPeer(m.on); if (m.on) ack(); return }
+    if (m.t === 'bye') { peerOn = false; if (onClose) onClose(); return }
+    if (m.t === 'ack') { out = out.filter(x => x.s > m.got); out.forEach(raw); return }
+    if (m.t === 'm') { if (m.s === got + 1) { got++; deliver(m.k, m.v) } else if (m.s > got + 1) ack() } }
+  /* a socket can die without a close event (a phone switching networks): no pong for 45 s = dead → reconnect now */
+  const lost = s => { if (s !== ws) return; clearInterval(tmPing); ws = null; try { s.close() } catch (e) {} if (closed) return; cb.state && cb.state('reconnecting'); onSt && onSt('me', false)
+    if (++retry > 15 && !peerSeen) { closed = true; return cb.err && cb.err({ type: 'network' }) }   /* in a match it never gives up — the phone may just be locked */
+    tmRe = setTimeout(connect, Math.min(4000, 400 * Math.min(retry, 10))) }
+  const connect = () => { clearTimeout(tmRe); if (closed) return; const s = ws = new WebSocket(URL0 + code + '?role=' + role + '&sid=' + sid); s.pong = Date.now()
+    s.onopen = () => { s.pong = Date.now(); clearInterval(tmPing); tmPing = setInterval(() => { if (Date.now() - s.pong > 45000) return lost(s); raw('ping') }, 15000) }
+    s.onmessage = e => { if (s !== ws) return; s.pong = Date.now(); if (e.data === 'pong') return; let m; try { m = JSON.parse(e.data) } catch (x) { return } if (m && m.t) on(m) }
+    s.onclose = () => lost(s); s.onerror = () => {} }
+  /* back from the background / the network came back: don't wait for the backoff */
+  addEventListener('online', () => { if (!closed && (!ws || ws.readyState > 1)) { retry = 0; clearTimeout(tmRe); connect() } })
+  document.addEventListener('visibilitychange', () => { if (!document.hidden && !closed && (!ws || ws.readyState > 1)) { retry = 0; clearTimeout(tmRe); connect() } })
+  const start = (r, c, o) => { NETreset(); role = r; code = c; sid = Array.from({ length: 12 }, () => 'abcdefghijkmnpqrstuvwxyz23456789'[Math.random() * 32 | 0]).join(''); cb = o; closed = false; connect() }
+  const NETreset = () => { closed = true; clearInterval(tmPing); clearTimeout(tmRe); try { ws && ws.close() } catch (e) {} ws = null; q = {}; w = {}; out = []; seq = 0; got = 0; peerOn = false; peerSeen = false; ready = false; retry = 0 }
   return {
-    _peer: () => peer,
-    async load() { if (window.Peer) return true; return new Promise(res => { const s = document.createElement('script'); s.src = 'https://cdnjs.cloudflare.com/ajax/libs/peerjs/1.5.4/peerjs.min.js'; s.onload = () => res(true); s.onerror = () => res(false); document.head.appendChild(s) }) },
-    /* the code is shown only once the broker has the room (onReady) — a friend typing fast can't hit a room that isn't there yet.
-       The broker link can drop on a phone (Or on 4G: "COULD NOT OPEN A ROOM (network)" with the code already up): the room keeps its code and
-       reconnects by itself (onState 'reconnecting' / 'live'); only ~30 s of failures is an error. Once the friend is in, the broker is let go —
-       the link between the two phones is direct */
-    host(code, onOpen, onErr, onReady, onState) { let done = false, ready = false; const p = peer = new Peer('dchaos82-' + code)
-      p.on('open', () => { if (!ready) { ready = true; onReady && onReady() } })
-      keep(p, () => done, st => ready && onState && onState(st), e => !done && onErr && onErr(e))
-      p.on('connection', c => c.on('open', () => { if (done) { try { c.close() } catch (e) {} return } done = true; take(c, onOpen); later2(() => { try { p.disconnect() } catch (e) {} }) }))
-      p.on('error', e => { if (done) return; const t = e && e.type; if (NETERR.has(t) || (t === 'unavailable-id' && ready)) return; onErr && onErr(e) }) },
-    /* a connect that hangs (no open, no error — seen 2 in 4 on the QA pair) is dropped and tried again; a room not there yet gets two more tries;
-       a broker drop reconnects; no id from the broker at all = a fresh peer */
-    join(code, onOpen, onErr, onState) { let done = false, tries = 0, miss = 0, made = 0, mine = null   /* mine: this join's own peer — a retry's leftovers never touch the next one */
-      const go = () => { if (done || !mine || mine !== peer || mine.disconnected) return; if (++tries > 6) { done = true; return onErr && onErr({ type: 'timeout' }) } const c = mine.connect('dchaos82-' + code, { reliable: true })
-        c.on('open', () => { if (done) { try { c.close() } catch (e) {} return } if (mine !== peer) { try { c.close() } catch (e) {} return } done = true; const p = mine; take(c, onOpen); later2(() => { try { p.disconnect() } catch (e) {} }) }); setTimeout(() => { if (!done && mine === peer) { try { c.close() } catch (e) {} go() } }, 6000) }
-      const mk = () => { if (done) return; if (++made > 4) { done = true; return onErr && onErr({ type: 'network' }) } const p = mine = peer = new Peer()
-        p.on('open', () => { onState && onState('live'); go() }); keep(p, () => done, onState, e => { if (!done) { done = true; onErr && onErr(e) } })
-        p.on('error', e => { if (done) return; const t = e && e.type
-          if (t === 'peer-unavailable') { if (++miss < 3) { tries--; setTimeout(go, 1500) } else { done = true; onErr && onErr(e) } return }
-          if (p.destroyed) { if (p !== peer) return; onState && onState('reconnecting'); setTimeout(mk, 1200); return }
-          if (NETERR.has(t)) return; done = true; onErr && onErr(e) }) }
-      mk() },
-    send(k, v) { try { if (conn && conn.open) conn.send({ k, v }) } catch (e) {} },
+    _ws: () => ws,
+    async load() { return typeof WebSocket !== 'undefined' },
+    /* the code is shown once the room exists on the server (onReady); onOpen = the friend is in */
+    host(c, onOpen, onErr, onReady, onState) { start('host', c, { open: onOpen, err: onErr, ready: onReady, state: onState }) },
+    join(c, onOpen, onErr, onState) { start('guest', c, { open: onOpen, err: onErr, ready: () => onState && onState('live'), state: onState }) },
+    send(k, v) { const f = { t: 'm', s: ++seq, k, v }; out.push(f); raw(f) },
     recv(k) { if (q[k] && q[k].length) return Promise.resolve(q[k].shift()); return new Promise(r => (w[k] = w[k] || []).push(r)) },
     onClose(f) { onClose = f },
+    status(f) { onSt = f },
+    listen(k, f) { lis[k] = f },
     /* between two matches: anything still queued or awaited belongs to the game that just ended — a stale waiter would eat the rematch's first tap */
     flush(keep = []) { for (const k of Object.keys(q)) if (!keep.includes(k)) delete q[k]; for (const k of Object.keys(w)) if (!keep.includes(k)) delete w[k] },
-    reset() { try { conn && conn.close() } catch (e) {} try { peer && peer.destroy() } catch (e) {} peer = null; conn = null; q = {}; w = {} } } })()
+    reset() { if (!closed) raw({ t: 'bye' }); NETreset() } } })()
 /* who you are, and how you stand against each friend — kept on the phone under keys no new version touches; the same link keeps them
    why: Or "זה עושה לי כמה המאץ' היסטורי שלי נגד רון… אני 5 הוא 0 · אם אני אעדכן את המשחק… עדיין הכל יישמר · גם עם מישהו אחר" */
 const MPK_ME = 'p820_dchaos_me', MPK_H2H = 'p820_dchaos_h2h'
@@ -4316,8 +4342,19 @@ function mpMe() { let m = mpLoad(MPK_ME); if (!m || !m.id) { m = { id: Array.fro
 const mpH2H = () => mpLoad(MPK_H2H) || {}
 const mpRecord = fid => { const r = mpH2H()[fid]; return r ? [r.w | 0, r.l | 0] : [0, 0] }
 function mpTally(fid, name, win) { const all = mpH2H(), r = all[fid] || { w: 0, l: 0 }; r.name = name; r[win ? 'w' : 'l'] = (r[win ? 'w' : 'l'] | 0) + 1; r.t = Date.now(); all[fid] = r; mpSave(MPK_H2H, all); return [r.w | 0, r.l | 0] }
-function mpLeave() { NET.reset(); MPG = null }
+function mpLeave() { NET.reset(); MPG = null; mpAway.me = mpAway.peer = false; mpAwaySince = 0; clearTimeout(mpAwayT); if (mpPill) { mpPill.remove(); mpPill = null } }
+/* WAITING FOR RON… — a pill over the screen while either phone is away (after 2.5 s, so a blip shows nothing); LEAVE appears after 45 s */
+const mpAway = { me: false, peer: false }; let mpPill = null, mpAwayT = null, mpAwaySince = 0
+function mpStatus(who, up) { mpAway[who] = !up; clearTimeout(mpAwayT)
+  if (!mpAway.me && !mpAway.peer) { mpAwaySince = 0; if (mpPill) { mpPill.remove(); mpPill = null } return }
+  if (!mpAwaySince) mpAwaySince = Date.now(); mpAwayT = setTimeout(mpPaintPill, mpPill ? 0 : 2500) }
+function mpPaintPill() { if (!MPG || (!mpAway.me && !mpAway.peer)) return; const scr = document.querySelector('#scrs section.scr:last-child'); if (!scr) return
+  if (!mpPill || !mpPill.isConnected) { mpPill = el(scr, 'div', 'xaway'); mpPill.animate([{ opacity: 0, transform: 'translate(-50%,-8px)' }, { opacity: 1, transform: 'translate(-50%,0)' }], { duration: 220 }) }
+  mpPill.innerHTML = ''; el(mpPill, 'i'); const t = el(mpPill, 'span'); t.textContent = mpAway.me ? 'RECONNECTING…' : 'WAITING FOR ' + MPG.friend.name + '…'
+  if (Date.now() - mpAwaySince > 45000) { const lv = el(mpPill, 'b', '', '', 'LEAVE'); lv.onclick = () => { mpLeave(); mpStatus('me', true); mpStatus('peer', true); go('hub') } }
+  clearTimeout(mpAwayT); mpAwayT = setTimeout(mpPaintPill, 5000) }
 function mpBegin(seed) { GRNG = mulberry32(seed); const f = MPG.friend
+  NET.status(mpStatus)
   NET.onClose(() => { if (!MPG) return; MPG.gone = true; toast(f.name + ' left'); if (curKey === 'chaos') { if (G) G.over = true; later(900, () => { mpLeave(); go('hub') }) } })
   closeOv(); navLock = 0; go('chaos', { mp: { guest: MPG.guest, deck: MPG.fdeck, name: f.name } }) }
 const MP_CODE = () => Array.from({ length: 4 }, () => 'ABCDEFGHJKMNPQRSTUVWXYZ23456789'[Math.random() * 31 | 0]).join('')
@@ -4363,10 +4400,30 @@ function mpLobby(pre) { SND('y_select'); ov(o => { const h = el(o, 'div', 'howto
   bOpen.onclick = () => { SND('y_select'); row.style.display = 'none'; who.style.display = 'none'; recs.style.display = 'none'; openRoom() }
   bJoin.onclick = () => { SND('y_select'); row.style.display = 'none'; who.style.display = 'none'; recs.style.display = 'none'; inp.style.display = ''; go2.style.display = ''; msg.textContent = 'TYPE YOUR FRIEND’S CODE'; inp.focus() }
   go2.onclick = async () => { const code = inp.value.trim().toUpperCase(); if (code.length !== 4) return fail('THE CODE IS 4 LETTERS'); SND('y_select'); msg.classList.remove('err'); msg.textContent = 'CONNECTING…'; NET.reset(); if (!await NET.load()) return fail('NO CONNECTION — TRY AGAIN ONLINE')
-    NET.join(code, async () => { msg.textContent = 'IN THE ROOM — DEALING…'; hello(); const hi = await NET.recv('hello'); if (!sameVer(hi)) return; joined(friendOf(hi)); const st = await NET.recv('start'); start(true, hi, st.seed) }, e => fail(e && e.type === 'peer-unavailable' ? 'NO ROOM WITH THAT CODE' : 'NO CONNECTION RIGHT NOW — TAP JOIN ROOM AGAIN'),
+    NET.join(code, async () => { msg.textContent = 'IN THE ROOM — DEALING…'; hello(); const hi = await NET.recv('hello'); if (!sameVer(hi)) return; joined(friendOf(hi)); const st = await NET.recv('start'); start(true, hi, st.seed) }, e => fail(e && e.type === 'peer-unavailable' ? 'NO ROOM WITH THAT CODE' : e && e.type === 'full' ? 'THAT ROOM ALREADY HAS TWO PLAYERS' : 'NO CONNECTION RIGHT NOW — TAP JOIN ROOM AGAIN'),
       st => { msg.classList.remove('err'); msg.textContent = st === 'reconnecting' ? 'RECONNECTING…' : 'CONNECTING…' }) }
   if (me.name) preJoin()
   h.animate([{ opacity: 0, transform: 'scale(.9)' }, { opacity: 1, transform: 'none' }], { duration: 220 }) }) }
+
+/* QUICK CHAT — a bubble pops by the sender's avatar on both phones: ready lines in English and in Hebrew + emoji, or type your own (either
+   language, right-to-left handled). It rides the same reliable channel as the taps but on its own key, so it can never disturb the lockstep.
+   why: Or "בא לי שיהיה צ׳אט במשחק · גם בעברית וגם באנגלית · שתגובה תקפוץ" */
+const CHAT_LINES = ['GG', 'NICE!', 'NO WAY!', 'LUCKY…', 'WELL PLAYED', 'OOPS', 'יאללה!', 'וואו', 'מזל!', 'אין מצב', 'גדול!', 'באסה', '🔥', '😂', '😡', '😱', '👏', '🙏']
+const chatClean = t => String(t == null ? '' : t).replace(/[\u0000-\u001f\u007f​-‏‪-‮⁦-⁩]/g, '').replace(/\s+/g, ' ').trim().slice(0, 60)
+function mpChat(s, me, them, at) { let last = 0; const cur = {}
+  const pop = (who, text) => { const t = chatClean(text); if (!t) return; const a = who === 'me' ? me : them; if (cur[who]) cur[who].remove()
+    const b = el(s, 'div', 'xbub ' + who, (a.side === 'l' ? `left:${a.x}px;` : `right:${a.x}px;`) + `top:${a.y}px`); b.textContent = t; cur[who] = b
+    b.animate([{ transform: 'scale(.3)', opacity: 0 }, { transform: 'scale(1.12)', opacity: 1, offset: .6 }, { transform: 'scale(1)', opacity: 1 }], { duration: 320, easing: 'cubic-bezier(.2,1.3,.4,1)' })
+    if (who !== 'me') SND('y_tip', { gain: .8 })
+    setTimeout(() => { if (!b.isConnected) return; b.animate([{ opacity: 1 }, { opacity: 0, transform: 'translateY(-8px)' }], { duration: 300, fill: 'forwards' }).onfinish = () => b.remove() }, 3600) }
+  NET.listen('chat', v => pop('them', v))
+  const btn = el(s, 'div', 'xchatb', `left:${at.x}px;top:${at.y}px`, '💬'), pan = el(s, 'div', 'xchatp'), grid = el(pan, 'div', 'xchatg'), row = el(pan, 'div', 'xchatr')
+  const inp = el(row, 'input'); inp.maxLength = 60; inp.placeholder = 'כתוב משהו · TYPE…'; inp.dir = 'auto'; inp.enterKeyHint = 'send'; const go = el(row, 'i', '', '', 'SEND')
+  const send = t => { const c = chatClean(t); if (!c) return; const now = Date.now(); if (now - last < 1200) return; last = now; NET.send('chat', c); pop('me', c); pan.classList.remove('on'); inp.value = ''; inp.blur() }
+  CHAT_LINES.forEach(t => { const b = el(grid, 'b'); b.textContent = t; b.onclick = e => { e.stopPropagation(); SND('y_select', { gain: .6 }); send(t) } })
+  go.onclick = e => { e.stopPropagation(); send(inp.value) }; inp.onkeydown = e => { if (e.key === 'Enter') send(inp.value) }
+  pan.onclick = e => e.stopPropagation(); btn.onclick = e => { e.stopPropagation(); SND('y_select', { gain: .6 }); pan.classList.toggle('on'); if (pan.classList.contains('on')) pan.animate([{ transform: 'translateY(30px)', opacity: 0 }, { transform: 'none', opacity: 1 }], { duration: 200, easing: 'ease-out' }) }
+  s.addEventListener('pointerdown', e => { if (pan.classList.contains('on') && !pan.contains(e.target) && e.target !== btn) pan.classList.remove('on') }) }
 
 /* ════════════════ PACK — the CARDS (2026-10-12) opening, ported 1:1: land · swipe the seam · tear to the side · the stack slides out · hangs · fans to the
    triangle (the best card on top, two below) · tap: the rarity pulse (a legendary holds, shakes, pulls the light in) · flip ════════════════ */
@@ -4460,7 +4517,7 @@ SCREENS.pack = (s, a = {}) => {
 
 /* ════════════════ DEV (side panel on desktop · ☰ on the phone) ════════════════ */
 function openDevSheet() { ov((o) => { o.querySelector('.dim').onclick = () => closeOv(); const sh = el(o, 'div', 'sheet'); el(sh, 'div', 'dev'); renderDev() }) }
-function devHTML() { return `<h3>DRAFT CHAOS · POC v22</h3>
+function devHTML() { return `<h3>DRAFT CHAOS · POC v23</h3>
 <p>Screens</p><div class="seg"><button data-dev="go:hub">HUB</button><button data-dev="go:mm">MATCHMAKING</button><button data-dev="go:chaos">MATCH</button><button data-dev="go:deck">MY DECK</button><button data-dev="go:cards">MY CARDS</button><button data-dev="go:store">PACKS</button></div>
 <p>Your next spin lands on</p><div class="seg">${XEV.map(e => `<button data-dev="ev:${e.k}">${e.lab}</button>`).join('')}</div>
 <p>Their next spin lands on</p><div class="seg">${XEV.map(e => `<button data-dev="eo:${e.k}">${e.lab}</button>`).join('')}</div>
