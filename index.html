@@ -1523,6 +1523,10 @@ img { display: block; -webkit-user-drag: none; user-select: none; }
 .xcoin.xtoss { left: 155px; top: 360px; width: 80px; height: 80px; z-index: 45; }
 .rstamp.xtossst b.pnb, .rstamp.xtossst b.pnr { -webkit-text-fill-color: currentColor; }
 .rstamp.xtossst span b { display: inline !important; font: inherit !important; letter-spacing: inherit !important; }
+/* v41 a stolen event re-reads: the old names are struck, the thief's names pop in */
+.xstrike { text-decoration: line-through; text-decoration-thickness: 3px; text-decoration-color: #fff; opacity: .55; }
+.xswapin { display: inline-block; animation: xswapin .45s cubic-bezier(.2,1.6,.4,1) both; }
+@keyframes xswapin { 0% { transform: scale(2.2); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
 
 </style>
 </head>
@@ -4250,7 +4254,13 @@ const JTAG = { fusion: 'FUSED', bigthree: 'FUSED', takeover: 'SWALLOWED', cannib
 /* the moment a waiting rule fires: BLOCKED shatters the event on the drum, STOLEN carries it across to the thief, FROZEN ices the drum */
 function jBlocked(g) { runLog(g, 'X', 'BLOCKED'); const x = 195, y = DRY + 47; jStamp(g, x, y, 'BLOCKED', 'blk'); FX.flashAt(x, y, 200, '255,70,90', 1); FX.sparksAt(x, y, 160, 60, 34, '255,90,100'); FXU.shock(x, y, 220, '255,80,90', 600); kick(3)
   const an = g.evb.animate([{ transform: 'none', opacity: 1, filter: 'none' }, { transform: 'translateX(-8px) rotate(-2deg)', offset: .15 }, { transform: 'translateX(8px) rotate(2deg)', offset: .3 }, { transform: 'scale(.6) rotate(6deg)', opacity: 0, filter: 'grayscale(1)' }], { duration: 700, fill: 'forwards' }); an.onfinish = () => an.cancel() }
-function jStolen(g, thief) { runLog(g, 'X', 'STOLEN BY', thief === 'me' ? 'YOU' : g.opp.name); const a = { x: 195, y: DRY + 47 }, b = ctr(thief === 'me' ? g.avMe : g.avOp); jBeam(g, a, b, '185,130,255', 'STOLEN'); FX.flashAt(a.x, a.y, 160, '185,130,255', .9); kick(2) }
+/* STOLEN rewrites the line in front of you (Or v40: "היה כתוב עדיין יובל מקבל חצי · בא לי שיהיה כתוב יובל ואז זה ימחק וישתנה לאור · אני נדפקתי
+   כי הוא גנב לי"): the names on the event line get struck through, then the line re-reads from the thief's side and the new names pop in */
+async function relineSteal(g, thief) { const ev = g.lastEv; if (!ev || !g.evD) return; const now = evLineHtml(g, ev, thief); if (g.evD.innerHTML === now) return
+  g.evD.querySelectorAll('.pnb, .pnr').forEach(b => b.classList.add('xstrike')); SND('kn_s', { gain: .5 })
+  await xnap(700); if (!xalive(g) || g.lastEv !== ev) return
+  g.evD.innerHTML = now; g.evD.querySelectorAll('.pnb, .pnr').forEach(b => b.classList.add('xswapin')); SND('y_select', { gain: .6 }) }
+function jStolen(g, thief) { runLog(g, 'X', 'STOLEN BY', thief === 'me' ? 'YOU' : g.opp.name); relineSteal(g, thief); const a = { x: 195, y: DRY + 47 }, b = ctr(thief === 'me' ? g.avMe : g.avOp); jBeam(g, a, b, '185,130,255', 'STOLEN'); FX.flashAt(a.x, a.y, 160, '185,130,255', .9); kick(2) }
 function jFrozen(g, side) { runLog(g, 'X', (side === 'me' ? 'YOU' : g.opp.name) + ' FROZEN · NO SPIN'); const x = 195, y = DRY + 47; jStamp(g, x, y, '❄ FROZEN', 'ice'); FX.sparksAt(x, y, 150, 60, 30, '170,225,255'); FXU.room('120,190,255', .2, 600); FX.flashAt(x, y, 180, '170,225,255', .9) }
 function jNoCard(g, side) { runLog(g, 'X', (side === 'me' ? 'YOU' : g.opp.name) + ' · DELAY OF GAME · NO CARD'); const c = side === 'me' ? { x: 195, y: 700 } : { x: 195, y: 166 }; jStamp(g, c.x, c.y, 'NO CARD', 'dn'); FX.flashAt(c.x, c.y, 120, '255,80,100', .7); kick(1) }
 /* ════ PRESTIGE — the finish on every motion: afterimages behind a flying card, a foil sweep and a white flash frame when it lands, gold lightning
@@ -4615,14 +4625,20 @@ async function xrun(g) {
      לא? ככה אני מדמיין את זה" — completing first is a weapon, and BENCH / INJURY (they empty a spot) are how you slow the other side down */
   const full = sd => XP5.every(p => g[sd].five[p])
   /* one turn: the turn itself, the two-phone check, and every TIME OUT it earns stacked on it */
+  let lastSd = null
+  /* an earned turn is ALWAYS played — also one won on the OTHER side's turn (COIN FOR A TURN → NO hands the rival a turn) when the game would
+     otherwise end first (Or v40: "יצא again יצא לי no וזה עבר לאופוננט · אבל הוא הגיע ל5 · לא עשה לו עוד תור · לדעתי זה אמור") */
+  const extras = async sd => {
+    while (g[sd].extra && xalive(g)) {   /* earned turns STACK, full five or not (a full five still spins, it just places nothing) — Or: "זה אמור לעשות סטאק, סטאק, סטאק… זה המשחק" */ g[sd].extra = false; const b = el(g.s, 'div', 'rstamp m', `top:${STY}px`); b.innerHTML = `<b>TIME OUT</b><span>${sd === 'me' ? 'YOU GO' : g.opp.name + ' GOES'} AGAIN</span>`; A(b, 'a-stamp', 0); SND('m_whistle', { gain: .45 }); SND('m_level', { gain: .5, at: 120 }); await xnap(1000); b.remove(); await (sd === 'me' ? myTurn(g, true) : opTurn(g, true)); await xnap(300) }
+  }
+  const settle = async () => { while (xalive(g) && (g.me.extra || g.op.extra)) { const s = lastSd && g[foe(lastSd)].extra ? foe(lastSd) : g.me.extra ? 'me' : 'op'; await extras(s); g[s].extra = false; lastSd = s } }
   const turn = async sd => {
     await (sd === 'me' ? myTurn(g) : opTurn(g)); await xnap(300)
     if (g.mp && xalive(g)) { const mine = mpHash(g); NET.send('hash', mine); const theirs = await NET.recv('hash'); if (theirs !== mine) { console.error('DESYNC', mine, theirs); toast('Out of sync with your friend') } }
     /* TIME OUT is honoured on the LAST turn too (Or: "אם יוצא לי extra turn, אני אמור לקבל את ה-extra turn" — it used to end the game on the spot) */
-    while (g[sd].extra && xalive(g)) {   /* earned turns STACK, full five or not (a full five still spins, it just places nothing) — Or: "זה אמור לעשות סטאק, סטאק, סטאק… זה המשחק" */ g[sd].extra = false; const b = el(g.s, 'div', 'rstamp m', `top:${STY}px`); b.innerHTML = `<b>TIME OUT</b><span>${sd === 'me' ? 'YOU GO' : g.opp.name + ' GOES'} AGAIN</span>`; A(b, 'a-stamp', 0); SND('m_whistle', { gain: .45 }); SND('m_level', { gain: .5, at: 120 }); await xnap(1000); b.remove(); await (sd === 'me' ? myTurn(g, true) : opTurn(g, true)); await xnap(300) }
+    await extras(sd)
     g[sd].extra = false
   }
-  let lastSd = null
   let t = 0
   race: while (xalive(g) && t < 12) { t++
     for (const sd of order) { if (!xalive(g)) return
@@ -4631,6 +4647,7 @@ async function xrun(g) {
       await turn(sd); lastSd = sd
       if (last) break race
       if (!g.lastFor && full(sd)) { g.lastFor = foe(sd); paintGame(g); const b = el(g.s, 'div', 'rstamp m', `top:${STY}px`); b.innerHTML = `<b>${sd === 'me' ? 'YOUR FIVE IS SET!' : g.opp.name + '’S FIVE IS SET'}</b><span>${sd === 'me' ? g.opp.name + ' GETS ONE LAST TURN' : 'YOU GET ONE LAST TURN'}</span>`; A(b, 'a-bigslam', 0); kick(3); SND('g_set', { gain: .7 }); if (sd === 'me') SND('m_cheer', { gain: .45, at: 150 }); await xnap(1600); b.remove() } } }
+  await settle(); if (!xalive(g)) return
   /*@spec OVERTIME = every OT spun adds one full round AFTER the last turn, and they STACK (an OT spun in overtime adds another round); the side that
      did not take the last turn goes first | why: Or "היה אמור להיות לו עוד תור אחי · דיברנו על זה · כל פעם שיש עוד טור זה אמור להיות בסטאק" — g.ot was
      counted from v11 on and never played, so OVERTIME did nothing */
@@ -4638,7 +4655,8 @@ async function xrun(g) {
     const nx = lastSd ? foe(lastSd) : order[0], b = el(g.s, 'div', 'rstamp m', `top:${STY}px`)
     b.innerHTML = `<b>OVERTIME!</b><span>+1 ROUND${g.ot ? ` · ${g.ot} MORE` : ''}</span>`; A(b, 'a-bigslam', 0); kick(3); SND('m_buzzer', { gain: .45 }); SND('m_chant', { gain: .55, at: 200 }); await xnap(1600); b.remove()
     runLog(g, 'S', 'OVERTIME', 'ROUND ' + g.otRound)
-    for (const sd of [nx, foe(nx)]) { if (!xalive(g)) return; await turn(sd); lastSd = sd } }
+    for (const sd of [nx, foe(nx)]) { if (!xalive(g)) return; await turn(sd); lastSd = sd }
+    await settle() }
   if (xalive(g)) xfinish(g) }
 const escH = t => String(t).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c])
 async function xfinish(g) { g.turn = null; g.evb.classList.remove('on'); SND('m_buzzer', { gain: .55 }); kick(2); await xnap(900); if (!xalive(g)) return; SND('g_calc', { gain: .8 }); info(g, '<b class="h">FINAL</b><span>THE STRONGER FIVE TAKES THE PILE</span>', 'gold'); await xnap(700); if (!xalive(g)) return; const m = scoreOf(g, 'me'), o = scoreOf(g, 'op'), win = m > o || (m === o && (g.mp ? (GRNG() < .5) !== !!MPG.guest : GRNG() < .5))
@@ -4784,7 +4802,7 @@ function howTo() { ov((o) => { o.querySelector('.dim').onclick = () => closeOv()
    same taps = the same game on both screens. The CPU's decisions become the friend's.
    why: Or "אם אני רוצה מולטיפלייר" — option 2, the room code ════ */
 let MPG = null
-const MP_VER = '38'   /* the GAME protocol, not the build: two phones whose engine, dice or wire differ would roll different games, so the room refuses
+const MP_VER = '41'   /* the GAME protocol, not the build: two phones whose engine, dice or wire differ would roll different games, so the room refuses
    them — bump it only when one of those changes (v23 → '23'; v25 → '25': TIME OUT now plays on the last turn; v27 → '27': both play the opener's deck; v28 → '28': 29 new events). A UI-only update (v24: chat) keeps it, so nobody has to reopen together */
 /* the phones meet in OUR room server (build/server/worker.js on Cloudflare): a plain WebSocket, so it gets through any network (office Wi-Fi
    included — Bella could not get a direct WebRTC link through hers). Every tap carries a sequence number; after any drop the phone reconnects to
@@ -4957,7 +4975,7 @@ document.addEventListener('click', e => { let n = e.target; while (n && n !== do
 { const k0 = kick; kick = (n = 1) => { k0(n); if (SET.vib && n >= 2 && navigator.vibrate) try { navigator.vibrate(n >= 3 ? 28 : 14) } catch (e) {} } }
 
 /* ── the run log ── */
-function runNew(g, a) { const me = mpMe(); g.run = { id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6), v: '40', t: Date.now(), uid: me.id, name: me.name || '', mode: a.mp ? 'friend' : 'ai', opp: g.opp.name, oppId: (a.mp && typeof MPG !== 'undefined' && MPG && MPG.friend && MPG.friend.id) || '', L: [] } }
+function runNew(g, a) { const me = mpMe(); g.run = { id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6), v: '41', t: Date.now(), uid: me.id, name: me.name || '', mode: a.mp ? 'friend' : 'ai', opp: g.opp.name, oppId: (a.mp && typeof MPG !== 'undefined' && MPG && MPG.friend && MPG.friend.id) || '', L: [] } }
 function runLog(g, ...e) { if (g && g.run && !g.run.done && g.run.L.length < 1200) g.run.L.push([Math.round((Date.now() - g.run.t) / 100) / 10, ...e]) }
 const runFive = (g, sd) => XP5.map(p => { const o = g[sd].five[p]; return o ? `${p} ${CARDS[o.cid] ? CARDS[o.cid].n : o.cid} ${slotVal(g, sd, p).toFixed(1)}${o.out ? ' OUT' : ''}` : `${p} —` }).join(' · ')
 function runBoard(g) { if (!g || !g.run) return; runLog(g, 'B', 'me', runFive(g, 'me')); runLog(g, 'B', 'op', runFive(g, 'op')); runLog(g, '=', +scoreOf(g, 'me').toFixed(1), +scoreOf(g, 'op').toFixed(1)) }
@@ -5004,7 +5022,7 @@ function openSettings() { SND('z_menu_up', { gain: .7 }); ov(o => { o.querySelec
     all.forEach(r => { const d = el(list, 'div', 'xrun ' + (r.win ? 'w' : 'l')); el(d, 'em', '', '', r.win ? 'W' : 'L'); const t = el(d, 'span'); el(t, 'b', '', '', 'VS ' + escH(r.opp || '?')); el(t, 'small', '', '', `${r.rec || ''} · ${agoTxt(r.t)}${r.sent ? '' : ' · NOT SENT YET'}`); el(d, 'i', '', '', `${(+r.me || 0).toFixed(1)}–${(+r.op || 0).toFixed(1)}`); d.onclick = e => { e.stopPropagation(); runOpen(r) } }) }
   paint(histAdd(runsLocal()))
   try { fetch(RUNS_URL + me.id).then(x => x.ok ? x.json() : []).then(srv => { if (Array.isArray(srv) && srv.length && rl.isConnected) paint(histAdd(srv.map(x => ({ ...x, sent: true })))) }).catch(() => {}) } catch (e) {}
-  el(h, 'p', 'xsver', '', `DRAFT CHAOS v40`)
+  el(h, 'p', 'xsver', '', `DRAFT CHAOS v41`)
 }) }
 /* one run, move by move */
 function runView(r) { SND('z_menu_up', { gain: .6 }); ov(o => { o.querySelector('.dim').onclick = () => openSettings(); const h = el(o, 'div', 'howto xset xrv'); el(h, 'div', 'x', '', '‹').onclick = e => { e.stopPropagation(); openSettings() }
@@ -5158,7 +5176,7 @@ SCREENS.pack = (s, a = {}) => {
 
 /* ════════════════ DEV (side panel on desktop · ☰ on the phone) ════════════════ */
 function openDevSheet() { ov((o) => { o.querySelector('.dim').onclick = () => closeOv(); const sh = el(o, 'div', 'sheet'); el(sh, 'div', 'dev'); renderDev() }) }
-function devHTML() { return `<h3>DRAFT CHAOS · POC v40</h3>
+function devHTML() { return `<h3>DRAFT CHAOS · POC v41</h3>
 <p>Screens</p><div class="seg"><button data-dev="go:hub">HUB</button><button data-dev="go:mm">MATCHMAKING</button><button data-dev="go:chaos">MATCH</button><button data-dev="go:deck">MY DECK</button><button data-dev="go:cards">MY CARDS</button><button data-dev="go:store">PACKS</button></div>
 <p>Your next spin lands on</p><div class="seg">${XEV.map(e => `<button data-dev="ev:${e.k}">${e.lab}</button>`).join('')}</div>
 <p>Their next spin lands on</p><div class="seg">${XEV.map(e => `<button data-dev="eo:${e.k}">${e.lab}</button>`).join('')}</div>
