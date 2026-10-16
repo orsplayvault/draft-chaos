@@ -4264,21 +4264,41 @@ function howTo() { ov((o) => { o.querySelector('.dim').onclick = () => closeOv()
    same taps = the same game on both screens. The CPU's decisions become the friend's.
    why: Or "אם אני רוצה מולטיפלייר" — option 2, the room code ════ */
 let MPG = null
-const MP_VER = '21'   /* two phones on different versions would roll different games — the room refuses that up front */
+const MP_VER = '22'   /* two phones on different versions would roll different games — the room refuses that up front */
 const NET = (() => { let peer = null, conn = null, q = {}, w = {}, onClose = null
   const deliver = m => { if (!m || !m.k) return; if (w[m.k] && w[m.k].length) w[m.k].shift()(m.v); else (q[m.k] = q[m.k] || []).push(m.v) }
   /* one link only: the first connection that opens wins, a late twin is closed (a retry can leave one behind) */
+  const NETERR = new Set(['network', 'server-error', 'socket-error', 'socket-closed', 'disconnected'])
+  const later2 = f => setTimeout(f, 1500)
+  const keep = (p, isDone, onState, onDead) => { let tries = 0, tm = null
+    p.on('open', () => { if (tries) onState && onState('live'); tries = 0 })
+    p.on('disconnected', () => { if (isDone() || p.destroyed) return; if (++tries > 8) return onDead && onDead({ type: 'network' }); onState && onState('reconnecting'); clearTimeout(tm)
+      tm = setTimeout(() => { try { if (!p.destroyed && p.disconnected && !isDone()) p.reconnect() } catch (e) {} }, Math.min(5000, 700 * tries)) }) }
   const take = (c, onOpen) => { conn = c; c.on('data', deliver); c.on('close', () => conn === c && onClose && onClose()); c.on('error', () => conn === c && onClose && onClose()); onOpen && onOpen() }
   return {
+    _peer: () => peer,
     async load() { if (window.Peer) return true; return new Promise(res => { const s = document.createElement('script'); s.src = 'https://cdnjs.cloudflare.com/ajax/libs/peerjs/1.5.4/peerjs.min.js'; s.onload = () => res(true); s.onerror = () => res(false); document.head.appendChild(s) }) },
-    /* the code is shown only once the broker has the room (onReady) — a friend typing fast can't hit a room that isn't there yet */
-    host(code, onOpen, onErr, onReady) { let done = false; peer = new Peer('dchaos82-' + code); peer.on('open', () => onReady && onReady())
-      peer.on('connection', c => c.on('open', () => { if (done) { try { c.close() } catch (e) {} return } done = true; take(c, onOpen) })); peer.on('error', e => onErr && onErr(e)) },
-    /* a connect that hangs (no open, no error — seen 2 in 4 on the QA pair) is dropped and tried again; a room not there yet gets two more tries */
-    join(code, onOpen, onErr) { let done = false, tries = 0, miss = 0; peer = new Peer()
-      const go = () => { if (done || !peer) return; if (++tries > 4) return onErr && onErr({ type: 'timeout' }); const c = peer.connect('dchaos82-' + code, { reliable: true })
-        c.on('open', () => { if (done) { try { c.close() } catch (e) {} return } done = true; take(c, onOpen) }); setTimeout(() => { if (!done && peer) { try { c.close() } catch (e) {} go() } }, 6000) }
-      peer.on('open', go); peer.on('error', e => { if (done) return; if (e && e.type === 'peer-unavailable' && ++miss < 3) { tries--; return setTimeout(go, 1500) } done = true; onErr && onErr(e) }) },
+    /* the code is shown only once the broker has the room (onReady) — a friend typing fast can't hit a room that isn't there yet.
+       The broker link can drop on a phone (Or on 4G: "COULD NOT OPEN A ROOM (network)" with the code already up): the room keeps its code and
+       reconnects by itself (onState 'reconnecting' / 'live'); only ~30 s of failures is an error. Once the friend is in, the broker is let go —
+       the link between the two phones is direct */
+    host(code, onOpen, onErr, onReady, onState) { let done = false, ready = false; const p = peer = new Peer('dchaos82-' + code)
+      p.on('open', () => { if (!ready) { ready = true; onReady && onReady() } })
+      keep(p, () => done, st => ready && onState && onState(st), e => !done && onErr && onErr(e))
+      p.on('connection', c => c.on('open', () => { if (done) { try { c.close() } catch (e) {} return } done = true; take(c, onOpen); later2(() => { try { p.disconnect() } catch (e) {} }) }))
+      p.on('error', e => { if (done) return; const t = e && e.type; if (NETERR.has(t) || (t === 'unavailable-id' && ready)) return; onErr && onErr(e) }) },
+    /* a connect that hangs (no open, no error — seen 2 in 4 on the QA pair) is dropped and tried again; a room not there yet gets two more tries;
+       a broker drop reconnects; no id from the broker at all = a fresh peer */
+    join(code, onOpen, onErr, onState) { let done = false, tries = 0, miss = 0, made = 0, mine = null   /* mine: this join's own peer — a retry's leftovers never touch the next one */
+      const go = () => { if (done || !mine || mine !== peer || mine.disconnected) return; if (++tries > 6) { done = true; return onErr && onErr({ type: 'timeout' }) } const c = mine.connect('dchaos82-' + code, { reliable: true })
+        c.on('open', () => { if (done) { try { c.close() } catch (e) {} return } if (mine !== peer) { try { c.close() } catch (e) {} return } done = true; const p = mine; take(c, onOpen); later2(() => { try { p.disconnect() } catch (e) {} }) }); setTimeout(() => { if (!done && mine === peer) { try { c.close() } catch (e) {} go() } }, 6000) }
+      const mk = () => { if (done) return; if (++made > 4) { done = true; return onErr && onErr({ type: 'network' }) } const p = mine = peer = new Peer()
+        p.on('open', () => { onState && onState('live'); go() }); keep(p, () => done, onState, e => { if (!done) { done = true; onErr && onErr(e) } })
+        p.on('error', e => { if (done) return; const t = e && e.type
+          if (t === 'peer-unavailable') { if (++miss < 3) { tries--; setTimeout(go, 1500) } else { done = true; onErr && onErr(e) } return }
+          if (p.destroyed) { if (p !== peer) return; onState && onState('reconnecting'); setTimeout(mk, 1200); return }
+          if (NETERR.has(t)) return; done = true; onErr && onErr(e) }) }
+      mk() },
     send(k, v) { try { if (conn && conn.open) conn.send({ k, v }) } catch (e) {} },
     recv(k) { if (q[k] && q[k].length) return Promise.resolve(q[k].shift()); return new Promise(r => (w[k] = w[k] || []).push(r)) },
     onClose(f) { onClose = f },
@@ -4329,15 +4349,22 @@ function mpLobby(pre) { SND('y_select'); ov(o => { const h = el(o, 'div', 'howto
   who.onclick = () => { if (row.style.display !== 'none') nameStep() }
   h.insertBefore(who, row.nextSibling); h.appendChild(recs)
   if (me.name) paintMe(); else nameStep()
-  bOpen.onclick = async () => { SND('y_select'); row.style.display = 'none'; who.style.display = 'none'; recs.style.display = 'none'; msg.textContent = 'CONNECTING…'; if (!await NET.load()) return fail('NO CONNECTION — TRY AGAIN ONLINE'); const code = MP_CODE()
-    NET.host(code, async () => { msg.textContent = 'FRIEND JOINED — DEALING…'; hello(); const hi = await NET.recv('hello'); if (!sameVer(hi)) return; joined(friendOf(hi)); const seed = Math.random() * 2 ** 31 | 0; await xnap(900); NET.send('start', { seed }); start(false, hi, seed) }, e => fail('COULD NOT OPEN A ROOM (' + (e.type || 'error') + ')'), () => {
-    codeBox.textContent = code; codeBox.classList.add('on'); msg.textContent = 'SEND THIS CODE TO YOUR FRIEND · WAITING…'; shr.style.display = '' })
+  const retry = el(h, 'div', 'xmpb g', '', 'TRY AGAIN'); retry.style.display = 'none'
+  const openRoom = async (left = 3) => { msg.classList.remove('err'); msg.textContent = 'CONNECTING…'; retry.style.display = 'none'; codeBox.classList.remove('on'); shr.style.display = 'none'
+    NET.reset(); if (!await NET.load()) { retry.style.display = ''; return fail('NO CONNECTION — TRY AGAIN ONLINE') } const code = MP_CODE()
+    NET.host(code, async () => { msg.classList.remove('err'); msg.textContent = 'FRIEND JOINED — DEALING…'; hello(); const hi = await NET.recv('hello'); if (!sameVer(hi)) return; joined(friendOf(hi)); const seed = Math.random() * 2 ** 31 | 0; await xnap(900); NET.send('start', { seed }); start(false, hi, seed) },
+      e => { if (e && e.type === 'unavailable-id' && left > 0) return openRoom(left - 1); codeBox.classList.remove('on'); shr.style.display = 'none'; retry.style.display = ''; fail('NO CONNECTION RIGHT NOW — TRY AGAIN') },
+      () => { codeBox.textContent = code; codeBox.classList.add('on'); msg.textContent = 'SEND THIS CODE TO YOUR FRIEND · WAITING…'; shr.style.display = '' },
+      st => { msg.classList.remove('err'); msg.textContent = st === 'reconnecting' ? 'RECONNECTING… THE CODE STAYS THE SAME' : 'SEND THIS CODE TO YOUR FRIEND · WAITING…' })
     shr.onclick = async () => { SND('y_select'); const url = /^https?:/.test(location.protocol) ? location.origin + location.pathname + '?room=' + code : '', text = 'DRAFT CHAOS · join my room: ' + code + (url ? '\n' + url : '')
       try { if (navigator.share) { await navigator.share({ title: 'DRAFT CHAOS', text }); return } } catch (e) { if (e && e.name === 'AbortError') return }
       try { await navigator.clipboard.writeText(text); toast('Copied — paste it to your friend') } catch (e) { toast('Code: ' + code) } } }
+  retry.onclick = () => { SND('y_select'); openRoom() }
+  bOpen.onclick = () => { SND('y_select'); row.style.display = 'none'; who.style.display = 'none'; recs.style.display = 'none'; openRoom() }
   bJoin.onclick = () => { SND('y_select'); row.style.display = 'none'; who.style.display = 'none'; recs.style.display = 'none'; inp.style.display = ''; go2.style.display = ''; msg.textContent = 'TYPE YOUR FRIEND’S CODE'; inp.focus() }
-  go2.onclick = async () => { const code = inp.value.trim().toUpperCase(); if (code.length !== 4) return fail('THE CODE IS 4 LETTERS'); SND('y_select'); msg.classList.remove('err'); msg.textContent = 'CONNECTING…'; if (!await NET.load()) return fail('NO CONNECTION — TRY AGAIN ONLINE')
-    NET.join(code, async () => { msg.textContent = 'IN THE ROOM — DEALING…'; hello(); const hi = await NET.recv('hello'); if (!sameVer(hi)) return; joined(friendOf(hi)); const st = await NET.recv('start'); start(true, hi, st.seed) }, e => fail(e && e.type === 'peer-unavailable' ? 'NO ROOM WITH THAT CODE' : 'COULD NOT CONNECT (' + ((e && e.type) || 'error') + ')')) }
+  go2.onclick = async () => { const code = inp.value.trim().toUpperCase(); if (code.length !== 4) return fail('THE CODE IS 4 LETTERS'); SND('y_select'); msg.classList.remove('err'); msg.textContent = 'CONNECTING…'; NET.reset(); if (!await NET.load()) return fail('NO CONNECTION — TRY AGAIN ONLINE')
+    NET.join(code, async () => { msg.textContent = 'IN THE ROOM — DEALING…'; hello(); const hi = await NET.recv('hello'); if (!sameVer(hi)) return; joined(friendOf(hi)); const st = await NET.recv('start'); start(true, hi, st.seed) }, e => fail(e && e.type === 'peer-unavailable' ? 'NO ROOM WITH THAT CODE' : 'NO CONNECTION RIGHT NOW — TAP JOIN ROOM AGAIN'),
+      st => { msg.classList.remove('err'); msg.textContent = st === 'reconnecting' ? 'RECONNECTING…' : 'CONNECTING…' }) }
   if (me.name) preJoin()
   h.animate([{ opacity: 0, transform: 'scale(.9)' }, { opacity: 1, transform: 'none' }], { duration: 220 }) }) }
 
@@ -4433,7 +4460,7 @@ SCREENS.pack = (s, a = {}) => {
 
 /* ════════════════ DEV (side panel on desktop · ☰ on the phone) ════════════════ */
 function openDevSheet() { ov((o) => { o.querySelector('.dim').onclick = () => closeOv(); const sh = el(o, 'div', 'sheet'); el(sh, 'div', 'dev'); renderDev() }) }
-function devHTML() { return `<h3>DRAFT CHAOS · POC v21</h3>
+function devHTML() { return `<h3>DRAFT CHAOS · POC v22</h3>
 <p>Screens</p><div class="seg"><button data-dev="go:hub">HUB</button><button data-dev="go:mm">MATCHMAKING</button><button data-dev="go:chaos">MATCH</button><button data-dev="go:deck">MY DECK</button><button data-dev="go:cards">MY CARDS</button><button data-dev="go:store">PACKS</button></div>
 <p>Your next spin lands on</p><div class="seg">${XEV.map(e => `<button data-dev="ev:${e.k}">${e.lab}</button>`).join('')}</div>
 <p>Their next spin lands on</p><div class="seg">${XEV.map(e => `<button data-dev="eo:${e.k}">${e.lab}</button>`).join('')}</div>
