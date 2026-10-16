@@ -4283,7 +4283,8 @@ function howTo() { ov((o) => { o.querySelector('.dim').onclick = () => closeOv()
    same taps = the same game on both screens. The CPU's decisions become the friend's.
    why: Or "אם אני רוצה מולטיפלייר" — option 2, the room code ════ */
 let MPG = null
-const MP_VER = '23'   /* two phones on different versions would roll different games — the room refuses that up front */
+const MP_VER = '23'   /* the GAME protocol, not the build: two phones whose engine, dice or wire differ would roll different games, so the room refuses
+   them — bump it only when one of those changes (v23 = p23). A UI-only update (v24: chat) keeps it, so nobody has to reopen together */
 /* the phones meet in OUR room server (build/server/worker.js on Cloudflare): a plain WebSocket, so it gets through any network (office Wi-Fi
    included — Bella could not get a direct WebRTC link through hers). Every tap carries a sequence number; after any drop the phone reconnects to
    the same room and both sides ask each other for what they missed (ack → resend), so a lost tap can never freeze the lockstep.
@@ -4409,6 +4410,7 @@ function mpLobby(pre) { SND('y_select'); ov(o => { const h = el(o, 'div', 'howto
    language, right-to-left handled). It rides the same reliable channel as the taps but on its own key, so it can never disturb the lockstep.
    why: Or "בא לי שיהיה צ׳אט במשחק · גם בעברית וגם באנגלית · שתגובה תקפוץ" */
 const CHAT_LINES = ['GG', 'NICE!', 'NO WAY!', 'LUCKY…', 'WELL PLAYED', 'OOPS', 'יאללה!', 'וואו', 'מזל!', 'אין מצב', 'גדול!', 'באסה', '🔥', '😂', '😡', '😱', '👏', '🙏']
+const mpChatWait = []
 const chatClean = t => String(t == null ? '' : t).replace(/[\u0000-\u001f\u007f​-‏‪-‮⁦-⁩]/g, '').replace(/\s+/g, ' ').trim().slice(0, 60)
 function mpChat(s, me, them, at) { let last = 0; const cur = {}
   const pop = (who, text) => { const t = chatClean(text); if (!t) return; const a = who === 'me' ? me : them; if (cur[who]) cur[who].remove()
@@ -4416,7 +4418,8 @@ function mpChat(s, me, them, at) { let last = 0; const cur = {}
     b.animate([{ transform: 'scale(.3)', opacity: 0 }, { transform: 'scale(1.12)', opacity: 1, offset: .6 }, { transform: 'scale(1)', opacity: 1 }], { duration: 320, easing: 'cubic-bezier(.2,1.3,.4,1)' })
     if (who !== 'me') SND('y_tip', { gain: .8 })
     setTimeout(() => { if (!b.isConnected) return; b.animate([{ opacity: 1 }, { opacity: 0, transform: 'translateY(-8px)' }], { duration: 300, fill: 'forwards' }).onfinish = () => b.remove() }, 3600) }
-  NET.listen('chat', v => pop('them', v))
+  /* a line that lands while the screen is changing (the match ends, a rematch starts) waits and pops on the next screen — v23 lost 1 in 149 that way */
+  NET.listen('chat', v => { if (!s.isConnected) { mpChatWait.push(v); return } pop('them', v) }); mpChatWait.splice(0).forEach(v => pop('them', v))
   const btn = el(s, 'div', 'xchatb', `left:${at.x}px;top:${at.y}px`, '💬'), pan = el(s, 'div', 'xchatp'), grid = el(pan, 'div', 'xchatg'), row = el(pan, 'div', 'xchatr')
   const inp = el(row, 'input'); inp.maxLength = 60; inp.placeholder = 'כתוב משהו · TYPE…'; inp.dir = 'auto'; inp.enterKeyHint = 'send'; const go = el(row, 'i', '', '', 'SEND')
   const send = t => { const c = chatClean(t); if (!c) return; const now = Date.now(); if (now - last < 1200) return; last = now; NET.send('chat', c); pop('me', c); pan.classList.remove('on'); inp.value = ''; inp.blur() }
@@ -4517,7 +4520,7 @@ SCREENS.pack = (s, a = {}) => {
 
 /* ════════════════ DEV (side panel on desktop · ☰ on the phone) ════════════════ */
 function openDevSheet() { ov((o) => { o.querySelector('.dim').onclick = () => closeOv(); const sh = el(o, 'div', 'sheet'); el(sh, 'div', 'dev'); renderDev() }) }
-function devHTML() { return `<h3>DRAFT CHAOS · POC v23</h3>
+function devHTML() { return `<h3>DRAFT CHAOS · POC v24</h3>
 <p>Screens</p><div class="seg"><button data-dev="go:hub">HUB</button><button data-dev="go:mm">MATCHMAKING</button><button data-dev="go:chaos">MATCH</button><button data-dev="go:deck">MY DECK</button><button data-dev="go:cards">MY CARDS</button><button data-dev="go:store">PACKS</button></div>
 <p>Your next spin lands on</p><div class="seg">${XEV.map(e => `<button data-dev="ev:${e.k}">${e.lab}</button>`).join('')}</div>
 <p>Their next spin lands on</p><div class="seg">${XEV.map(e => `<button data-dev="eo:${e.k}">${e.lab}</button>`).join('')}</div>
