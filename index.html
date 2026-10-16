@@ -1446,6 +1446,13 @@ img { display: block; -webkit-user-drag: none; user-select: none; }
 .xsndck b { font: 700 30px/1 Teko; color: #ffe27a; letter-spacing: 1px; } .xsndck p { margin: 8px 0; } .xsndck p.bad { color: #ff6b81; } .xsndck p.ok { color: #7dffa6; }
 .xsndck button { margin: 4px; padding: 9px 12px; border-radius: 10px; border: 0; background: #1b2a4d; color: #fff; font: 800 12px "Fira Sans"; }
 .xsndck button.bad { background: #5a1624; } .xsndck button[data-r]::after { content: ' ' attr(data-r); color: #ffe27a; }
+/* the loader the phone paints before the game is ready (replaced by the title the moment it is) */
+.start .dcload { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; background: radial-gradient(60% 45% at 50% 46%, #1a1430 0, #03050c 75%); }
+.dcload b { font: 700 58px/1 Teko; letter-spacing: 2px; color: #ffe27a; text-shadow: 0 0 26px rgba(255,160,40,.65), 0 3px 0 #8a4a00; padding-top: 8px; }
+.dcload i { position: relative; width: 150px; height: 4px; border-radius: 2px; overflow: hidden; background: rgba(255,255,255,.12); }
+.dcload i::after { content: ''; position: absolute; top: 0; bottom: 0; left: 0; width: 40%; border-radius: 2px; background: linear-gradient(90deg, #ffb21f, #ffe27a); animation: dcLoad 1s ease-in-out infinite; }
+@keyframes dcLoad { from { transform: translateX(-100%); } to { transform: translateX(260%); } }
+.dcload span { font: italic 900 11px "Fira Sans"; letter-spacing: 3px; color: #8f9cbd; }
 
 
 </style>
@@ -1461,7 +1468,7 @@ img { display: block; -webkit-user-drag: none; user-select: none; }
   <canvas class="fx" id="fx" width="780" height="1688"></canvas>
   <div class="push" id="push"></div>
   <div class="toast" id="toast"></div>
-  <div class="start" id="start"><img class="lg" id="startLogo" alt="82-0"><div class="pt">DRAFT CHAOS · BUILD YOUR FIVE · SPIN AN EVENT EVERY TURN</div><div class="tt">TAP TO START</div><div class="sub">82-0 · DRAFT CHAOS — POC · sound on</div></div>
+  <div class="start" id="start"><div class="dcload"><b>DRAFT CHAOS</b><i></i><span>LOADING</span></div></div>
  </div>
 </main>
 <aside class="dev" id="devSide"></aside>
@@ -3216,7 +3223,7 @@ const XEV = [
   { k: 'lottery', lab: 'PICK 3',  ic: 'pack_s',      tone: 'gold',   h: 'PICK 3',        d: 'KEEP 1 OF 3 RANDOM PLAYERS' },
   { k: 'blind3',  lab: 'MYSTERY', ic: 'c_blind',     tone: 'purple', h: 'MYSTERY BOX',   d: 'PICK 1 OF 3 — BLIND' },
   { k: 'superspin',lab: 'SUPER SPIN',  ic: 'c_respin',    tone: 'gold',   h: 'SUPER SPIN',    d: 'A DRUM OF LEGENDARIES', w: .6 },
-  { k: 'legendspin',lab: 'LEGENDS',ic: 'c_legends',  tone: 'gold',   h: 'LEGEND SPIN',   d: 'A DRUM OF LEGENDS', w: .6 },
+  { k: 'legendspin',lab: 'LEGENDS',ic: 'c_legends',  tone: 'gold',   h: 'LEGEND SPIN',   d: 'A LEGEND LANDS ON YOUR COURT ×2', w: .6 },
   { k: 'replay',  lab: 'REPLAY',  ic: 'c_respin',    tone: 'purple', h: 'REPLAY',        d: 'COPY THEIR LAST EVENT' },
   { k: 'stealshow',lab: 'STEAL IT',ic: 'boost_stl',  tone: 'purple', h: 'STEAL THE SHOW', d: 'STEAL THEIR NEXT EVENT' },
   { k: 'blockparty',lab: 'BLOCKED',ic: 'boost_blk',  tone: 'red',    h: 'BLOCK PARTY',   d: 'BLOCK THEIR NEXT EVENT' },
@@ -3537,7 +3544,7 @@ function resolveEv(g, side, ev, tg) { const me = g[side], op = g[foe(side)], out
   if (ev.k === 'second2') { const f = bestOf(side); if (f.length < 2) out.fizz = true; else { const w = f[f.length - 1]; me.five[w].s = { ...me.five[f[0]].s }; out.secondUnit = { w, b: f[0] } } }
   if (ev.k === 'minimum' || ev.k === 'cap') { let n = 0; for (const sd of SIDES()) for (const p2 of filled(g, sd)) { const o = g[sd].five[p2]; if (o.lock && sd !== side) continue; const v = slotVal(g, sd, p2); if (ev.k === 'minimum' && v < 15 && effMul(g, sd, o, p2)) { o.flat = (o.flat || 0) + (15 - v); n++ } if (ev.k === 'cap' && v > 30) { o.flat = (o.flat || 0) - (v - 30); n++ } } out.capped = n }
   if (ev.k === 'pnr') { const ps = filled(g, side).map(p2 => me.five[p2]); let best = null, bv = -1; const perm = (k, used, cur) => { if (k === ps.length) { const v = ps.reduce((a2, o, i) => a2 + ovrOf(o.s) * effMul(g, side, o, cur[i]) + (o.flat || 0), 0); if (v > bv) { bv = v; best = cur.slice() } return } for (const pos of XP5) if (!used.has(pos)) { used.add(pos); cur.push(pos); perm(k + 1, used, cur); cur.pop(); used.delete(pos) } }
-    if (!ps.length) out.fizz = true; else { perm(0, new Set(), []); const nf = {}; XP5.forEach(p2 => nf[p2] = null); ps.forEach((o, i) => nf[best[i]] = o); me.five = nf; out.moved = 'pnr' } }
+    if (!ps.length) out.fizz = true; else { perm(0, new Set(), []); if (!best) out.fizz = true; else { const nf = {}; XP5.forEach(p2 => nf[p2] = null); ps.forEach((o, i) => nf[best[i]] = o); me.five = nf; out.moved = 'pnr' } } }   /* no arrangement scored (a NaN number) → fizzle, never a crash */
   if (ev.k === 'scramble') { if (!filled(g, foe(side)).length) out.fizz = true; else { permute(foe(side)); out.moved = 'scramble' } }
   if (ev.k === 'quake') { SIDES().forEach(permute); out.moved = 'quake' }
   if (ev.k === 'posswap') { const ps = XP5.filter(p2 => me.five[p2] && op.five[p2] && !op.five[p2].lock); if (!ps.length) out.fizz = true; else { const gain = p2 => slotVal(g, foe(side), p2) - slotVal(g, side, p2), p2 = ps.sort((a, b) => gain(b) - gain(a))[0], A = me.five[p2]; me.five[p2] = op.five[p2]; op.five[p2] = A; out.posswap = p2 } }   /* the position that helps the spinner most (it was random — Or: "לא הבנתי מה קרה פה") */
@@ -3563,7 +3570,9 @@ function resolveEv(g, side, ev, tg) { const me = g[side], op = g[foe(side)], out
     if (ev.k === 'deep' || ev.k === 'callup') { takeFrom(ev.k === 'deep' ? me.deck : me.used, id); const pos = onCourt(g, side, id); if (pos) out.deep = { id, pos }; else { intoHand(me, id); out.drawn = [id] } }
     if (ev.k === 'redraft') { const f = filled(g, side).sort((x, y) => slotVal(g, side, x) - slotVal(g, side, y)), w = f[0]; takeFrom(me.deck, id); if (w) { const old = me.five[w]; me.deck.push(old.cid); me.deck = shuffle(me.deck); me.five[w] = mkSlot(id); out.redraft = { inn: id, out: old.cid, p: w } } else { intoHand(me, id); out.drawn = [id] } } }
   if (ev.k === 'twoway' && tg && tg.me && me.five[tg.me]) { const id = me.five[tg.me].cid; if (intoHand(me, id)) { out.drawn = [id]; out.twoway = id } else out.fizz = true }
-  if (ev.k === 'legendspin') { const id = (tg && tg.pick) || shuffle(leaguePool(g, side, true))[0]; if (!id) out.fizz = true; else { intoHand(me, id); out.drawn = [id]; out.legend = id } }
+  /* the legend lands STRAIGHT ON YOUR COURT as a DOUBLE (its own spot if open, else the first open one, else it replaces your weakest) — a 95 in hand was
+     worth ~+19, barely above a 93, so the biggest chain in the game (POCKET ACE → LEGEND SPIN) ended flat. Or v32: "לא מספיק מספק מה שיצא - יצא לו קלף של 19" */
+  if (ev.k === 'legendspin') { const id = (tg && tg.pick) || shuffle(leaguePool(g, side, true))[0]; if (!id) out.fizz = true; else { const pos = toCourt(g, side, id, { replace: true, dbl: true }); if (!pos) { intoHand(me, id); out.drawn = [id] } out.legend = id; out.legendPos = pos } }
   const desc = sd => (a, b) => slotVal(g, sd, b) - slotVal(g, sd, a)
   if (ev.k === 'melee') { const pool = []; for (const sd of SIDES()) { const P = g[sd]; for (const p2 of filled(g, sd)) { pool.push(P.five[p2].cid); P.five[p2] = null } pool.push(...P.hand); P.hand = [] }
     shuffle(pool); pool.forEach((id, t) => { const P = g[t % 2 ? foe(side) : side]; if (P.hand.length < XHMAX) P.hand.push(id); else P.used.push(id) }); g.lastFor = null; out.melee = pool.length }
@@ -3631,7 +3640,9 @@ function resolveEv(g, side, ev, tg) { const me = g[side], op = g[foe(side)], out
       /*@spec POCKET = PICKPOCKET always takes the half: with nobody on your court it waits in your POCKET and joins the next player you place (shown under your
          record, and in every drop target's number) | why: Or "עשיתי טייק F. נכון, אין לי שום דבר על המגרש, אבל לדעתי ה-F צריך לקרות עדיין, כי לקחתי את הנקודות" */
       if (recv) { const A = me.five[recv]; for (const s in half) A.s[s] += half[s]; out.recv = recv } else { me.pocket = me.pocket || { pts: 0, reb: 0, ast: 0, stl: 0, blk: 0 }; for (const s in half) me.pocket[s] += half[s]; out.pocket = ovrOf(half) } }
-    if (ev.k === 'swap') { const A = me.five[tg.me], B = op.five[tg.op], t = A.s; A.s = B.s; B.s = t }
+    /* MISMATCH swaps the NUMBER you see on the card — the stats AND every bonus on them (+20 · DOUBLE/TRIPLE · ×2 alley-oop · ×3 · ½ · PRIME); the
+       player and his position stay. Or v32: "במצב הזה זה אמור לקחת את הסטאטים עם הבונוסים · הוא בחר מישהו אחר כי זה לא היה ככה" (Malone +41.1 = 21.1 + 20) */
+    if (ev.k === 'swap') { const A = me.five[tg.me], B = op.five[tg.op]; for (const k2 of ['s', 'flat', 'mvp', 'hot', 'trip', 'half', 'prime']) { const t = A[k2]; A[k2] = B[k2]; B[k2] = t } }
     if (ev.k === 'trade') { const A = me.five[tg.me], B = op.five[tg.op]; me.five[tg.me] = B; op.five[tg.op] = A }
     if (ev.k === 'injury') { const B = op.five[tg.op]; op.used.push(B.cid); op.five[tg.op] = null; out.injured = B.cid }
     if (ev.k === 'mvp') dbl(me.five[tg.me])
@@ -3662,14 +3673,22 @@ const XCHK = new Set(['dteam', 'defense', 'teammates', 'franchise', 'showtime', 
 const xsig = g => JSON.stringify(SIDES().map(sd => [g[sd].hand.slice().sort(), g[sd].used.slice().sort(), XP5.map(p => g[sd].five[p] ? [g[sd].five[p].cid, ovrOf(g[sd].five[p].s).toFixed(2), g[sd].five[p].mvp | 0, !!g[sd].five[p].hot, !!g[sd].five[p].half, !!g[sd].five[p].trip, !!g[sd].five[p].lock] : 0)]))
 function xdoes(g, side, k) { const ev = XEV.find(e => e.k === k), h = cloneG(g), tg = ev.tgt ? aiTarget(h, side, k) : null; if (ev.tgt && !tg) return false; const b = xsig(h), out = resolveEv(h, side, ev, tg); return !out.fizz && xsig(h) !== b }
 function xready(g, side, k) { if (g && side && g.me && g.op && XCHK.has(k) && !xdoes(g, side, k)) return false; if ((XDISC[k] || XPACK[k]) && g && side && g.me && g.op) return !!(XDISC[k] ? XDISC[k].ok(g, side) : XPACK[k](g, side)); const P = g && side && g[side], F = g && side && g[side === 'me' ? 'op' : 'me']
-  if (P && F) { if (k === 'freeag' || k === 'pick1') return !!(P.deck.length && P.hand.length < XHMAX); if (k === 'deep') return !!(P.deck.length && XP5.some(p => !P.five[p])); if (k === 'callup') return !!(P.used.length && XP5.some(p => !P.five[p])); if (k === 'second') return !!(P.used.length && P.hand.length < XHMAX); if (k === 'draftn') return !!F.deck.length; if (k === 'cherry') return !!F.hand.length; if (k === 'sign') return !!(F.hand.length && P.hand.length); if (k === 'clonehand') return !!(F.hand.length && P.hand.length < XHMAX); if (k === 'freeagent') return !!(F.used.length && P.hand.length < XHMAX); if (k === 'redraft') return !!(P.deck.length && XP5.some(p => P.five[p])); if (k === 'replay') return !!F.lastEvK; if (k === 'lottery' || k === 'legendspin') return P.hand.length < XHMAX && !!leaguePool(g, side, k === 'legendspin').length; if (k === 'superspin') return XEV.some(e => e.tier === 'L' && !XMETA.has(e.k) && !P.seen.has(e.k)); if (k === 'playbook' || k === 'choose3' || k === 'blind3') return true }
+  if (P && F) { if (k === 'freeag' || k === 'pick1') return !!(P.deck.length && P.hand.length < XHMAX); if (k === 'deep') return !!(P.deck.length && XP5.some(p => !P.five[p])); if (k === 'callup') return !!(P.used.length && XP5.some(p => !P.five[p])); if (k === 'second') return !!(P.used.length && P.hand.length < XHMAX); if (k === 'draftn') return !!F.deck.length; if (k === 'cherry') return !!F.hand.length; if (k === 'sign') return !!(F.hand.length && P.hand.length); if (k === 'clonehand') return !!(F.hand.length && P.hand.length < XHMAX); if (k === 'freeagent') return !!(F.used.length && P.hand.length < XHMAX); if (k === 'redraft') return !!(P.deck.length && XP5.some(p => P.five[p])); if (k === 'replay') return !!F.lastEvK; if (k === 'lottery') return P.hand.length < XHMAX && !!leaguePool(g, side).length; if (k === 'legendspin') return !!leaguePool(g, side, true).length && (anyEmpty(g, side) || !!weakestOf(g, side, true) || P.hand.length < XHMAX); if (k === 'superspin') return XEV.some(e => e.tier === 'L' && !XMETA.has(e.k) && !P.seen.has(e.k)); if (k === 'playbook' || k === 'choose3' || k === 'blind3') return true }
   if (k === 'replay') return !!(F && F.lastEvK); if (k === 'review') return !!(F && F.lastPos && F.five[F.lastPos]); if (k === 'merge') return !!(P && XP5.filter(p => P.five[p]).length >= 2); if (k === 'switcheroo') return !!(P && P.hand.length && XP5.some(p => P.five[p])); if (k === 'recycle') return !!(P && P.used.length); if (k === 'freeagent') return !!(F && F.used.length && P.hand.length < XHMAX); if (k === 'clonehand') return !!(F && F.hand.length && P.hand.length < XHMAX); if (k === 'hotpotato' || k === 'fastbreak') return !!(P && P.hand.length && (k === 'hotpotato' || XP5.some(p => !P.five[p]))); if (k === 'icedeck') return !!(F && F.deck.length); if (k === 'redraft') return !!(P && P.deck.length && XP5.some(p => P.five[p]))
   if (k === 'callup') return !!(g && side && g[side].used.length && XP5.some(p => !g[side].five[p])); if (k === 'trash') return !!(g && side && g[side === 'me' ? 'op' : 'me'].hand.length); if (k === 'homect') return !!(g && side && g.home && g.home !== side); if (k === 'sudden' && g && g.lastFor) return false;   /* was `return !g.lastFor` — it answered before the 4-cards-and-ahead rule below ever ran, so SUDDEN could land on turn 1 */ if (k === 'switch') return !!(g && side && teamFP(g, side) < teamFP(g, side === 'me' ? 'op' : 'me')); if (g && side && g.me && g.op) { const P2 = g[side], F2 = g[side === 'me' ? 'op' : 'me'], n2 = XP5.filter(p => P2.five[p]).length, o2 = XP5.filter(p => F2.five[p] && !F2.five[p].lock)
     if (k === 'sudden' && !(n2 >= 4 && teamFP(g, side) > teamFP(g, side === 'me' ? 'op' : 'me'))) return false   /* Or: "מה קורה אם הוא שם לי על התור הראשון, שהתור הבא שלי הוא התור האחרון?" — the game ended on 1-2 cards */
     if (k === 'jumpball') return !!(o2.length && XP5.some(p => P2.five[p] && !P2.five[p].lock)); if (k === 'nolook') return !!(P2.hand.length && F2.hand.length); if (k === 'rookies' || k === 'hofclass') return P2.hand.length < XHMAX && !!leaguePool(g, side, k === 'hofclass').filter(id => k === 'hofclass' || CARDS[id].e === '2020s').length; if (k === 'goat') return !!leaguePool(g, side, true).length
     if (k === 'poster2') { const mb = XP5.filter(p => P2.five[p]).map(p => ovrOf(P2.five[p].s)), tb = o2.map(p => ovrOf(F2.five[p].s)); return !!(mb.length && tb.length && Math.max(...tb) > Math.max(...mb)) } if (k === 'melee') return XP5.some(p => P2.five[p] || F2.five[p]) } if (k === 'posswap') return !!(g && side && XP5.some(p => g[side].five[p] && g[side === 'me' ? 'op' : 'me'].five[p] && !g[side === 'me' ? 'op' : 'me'].five[p].lock)); if (k === 'second2') return !!(g && side && XP5.filter(p => g[side].five[p]).length >= 2); if (k === 'skyhook') return !!(g && side && g[side].five.C); if (k === 'cherry' || k === 'techall') return !!(g && side && g[side === 'me' ? 'op' : 'me'].hand.length); const n = XNEED[k]; if (!n || !g || !side) return true; const has = sd => XP5.some(p => g[sd].five[p]), f = side === 'me' ? 'op' : 'me'
   return n === 'op' ? has(f) : n === 'me' ? has(side) : n === 'both' ? has(side) && has(f) : has(side) || has(f) }
-function xspinIdx(g, side) { const seen = g && side && g[side] && g[side].seen; const ok = XEV.map((e, i) => [e, i]).filter(([e]) => !(e.once && g && g.usedOnce && g.usedOnce.has(e.k)) && !(seen && seen.has(e.k)) && xready(g, side, e.k)); let x = GRNG() * ok.reduce((a, [e]) => a + (e.w || 1), 0); for (const [e, i] of ok) { if ((x -= (e.w || 1)) < 0) return i } return ok[0][1] }
+/*@spec SPIN_ODDS = 82-0 (the UNICORN tier) is its own roll first: 1 % of spins while it is still in play; every other spin splits COMMON 65 % · EPIC 25 % ·
+   LEGENDARY 10 % over the events that are ready right now (a tier with nothing ready hands its share to the others), then by weight inside the tier
+   | why: Or v32 "בוא נעשה 65 25 10 · ומה עם 82-0 אמרנו שהוא טיר משל עצמו" — it was 76.7 / 18.1 / 5.2 (82-0 ~0.1 %) over 7,400 real spins (build/sim/rarity.mjs) */
+const XODDS = { C: .65, E: .25, L: .10 }, XODDS_U = .01, xtierOf = k => XTIER.U.includes(k) ? 'U' : XTIER.L.includes(k) ? 'L' : XTIER.E.includes(k) ? 'E' : 'C'
+function xspinIdx(g, side) { const seen = g && side && g[side] && g[side].seen; const ok = XEV.map((e, i) => [e, i]).filter(([e]) => !(e.once && g && g.usedOnce && g.usedOnce.has(e.k)) && !(seen && seen.has(e.k)) && xready(g, side, e.k))
+  const by = { C: [], E: [], L: [], U: [] }; ok.forEach(x => by[xtierOf(x[0].k)].push(x)); if (by.U.length && GRNG() < XODDS_U) return by.U[GRNG() * by.U.length | 0][1]
+  const tiers = ['C', 'E', 'L'].filter(t => by[t].length); if (!tiers.length) return ok[0][1]
+  let r = GRNG() * tiers.reduce((a, t) => a + XODDS[t], 0), T = tiers[tiers.length - 1]; for (const t of tiers) { if ((r -= XODDS[t]) < 0) { T = t; break } }
+  const L = by[T]; let x = GRNG() * L.reduce((a, [e]) => a + (e.w || 1), 0); for (const [e, i] of L) { if ((x -= (e.w || 1)) < 0) return i } return L[0][1] }
 /* ── /ENGINE ── */
 
 /* ════════════════ 06 · THE SERIES ════════════════ */
@@ -4182,6 +4201,11 @@ function paintPiles(g, force) { if (g.pileHold && !force) return; if (!g.pl) { g
     if (!arr.length) { el(box, 'div', 'xpe'); } else if (z === 'deck') { for (let i = 0; i < Math.min(3, arr.length); i++) BACK(box, 'L', i * 1.5, -i * 1.5, r.w) } else { for (let i = Math.min(2, arr.length - 1); i >= 1; i--) BACK(box, 'R', i * 1.5, -i * 1.5, r.w).classList.add('xpdim'); const c = CARD(box, arr[arr.length - 1], 0, 0, r.w); c.classList.add('xpused') }
     el(box, 'b', 'xpn', '', arr.length) } }
 
+/* the legend's landing: a slam on its spot — flash, confetti, LEGEND ×2 stamped on the card, the number counting up big */
+async function legendLand(g, side, pos) { const f = g.fEls[side][pos]; if (!f || !f.c) return; const c = ctr(f.c)
+  f.c.animate([{ transform: 'scale(1)', filter: 'none' }, { transform: 'scale(1.35)', filter: 'brightness(1.9) drop-shadow(0 0 22px rgba(255,210,90,1))', offset: .3 }, { transform: 'scale(1)', filter: 'none' }], { duration: 700, easing: 'cubic-bezier(.2,1.3,.4,1)' })
+  FX.flashAt(c.x, c.y, 200, '255,220,120', 1); FXU.ring(c.x, c.y, 120, '255,210,90', 560); CONF.burst(c.x, c.y, 50); kick(4); SND('z_trophy_hit', { gain: .9 })
+  jStamp(g, c.x, c.y - 6, 'LEGEND ×2', 'pot').style.zIndex = 40; if (f.v) jCount(f.v, slotVal(g, side, pos) / 2, slotVal(g, side, pos), 700); await xnap(1000) }
 /* what the event did, played out on the board */
 async function playOut(g, side, ev, out, S0) { const who = side === 'me' ? 'YOU' : g.opp.name, mine = side === 'me', N2 = id => CARDS[id] ? CARDS[id].n : ''
   if (out.fizz) { info(g, `<img src="${IMG[ev.ic]}"><b class="h">${ev.h}</b><span>NOTHING TO HIT</span>`, ev.tone); await xnap(700); return }
@@ -4296,7 +4320,7 @@ async function playOut(g, side, ev, out, S0) { const who = side === 'me' ? 'YOU'
   if (out.allstar) { SND('y_trophy'); kick(3); info(g, `<b class="h">ALL-STAR VOTE</b><span>${N2(out.allstar.cid)} ${out.allstar.stay ? 'IS ALREADY ' + (out.allstar.to === 'me' ? 'YOURS' : 'THEIRS') + ' — HE DOUBLES' : 'JOINS ' + (out.allstar.to === 'me' ? 'YOU' : g.opp.name)}</span>`, 'gold') }
   if (out.buyout) info(g, `<b class="h">BUYOUT</b><span>${N2(out.buyout)} — TO THE BOTTOM OF ${mine ? 'THEIR' : 'YOUR'} DECK</span>`, 'red')
   if (out.expansion) info(g, `<b class="h">EXPANSION DRAFT</b><span>${N2(out.expansion)} — INTO ${mine ? 'YOUR' : 'THEIR'} HAND</span>`, 'purple')
-  if (out.legend) { SND('y_trophy'); kick(3); info(g, `<b class="h">LEGEND SPIN</b><span>${N2(out.legend)} — INTO ${mine ? 'YOUR' : 'THEIR'} HAND</span>`, 'gold') }
+  if (out.legend) { SND('y_trophy'); kick(3); info(g, `<b class="h">LEGEND SPIN</b><span>${N2(out.legend)} ${out.legendPos ? '×2 — STRAIGHT ONTO ' + (mine ? 'YOUR' : 'THEIR') + ' COURT' : '— INTO ' + (mine ? 'YOUR' : 'THEIR') + ' HAND'}</span>`, 'gold') }
   if (out.mayhem) info(g, `<b class="h">MASCOT MAYHEM</b><span>TWO MORE EVENTS FOR ${mine ? 'YOU' : g.opp.name}!</span>`, 'red')
   if (ev.k === 'stealshow') info(g, `<b class="h">STEAL THE SHOW</b><span>${mine ? 'THEIR' : 'YOUR'} NEXT EVENT GOES TO ${mine ? 'YOU' : g.opp.name}</span>`, 'purple')
   if (ev.k === 'blockparty') info(g, `<b class="h">BLOCK PARTY</b><span>${mine ? 'THEIR' : 'YOUR'} NEXT EVENT IS CANCELLED</span>`, 'red')
@@ -4322,7 +4346,7 @@ async function playOut(g, side, ev, out, S0) { const who = side === 'me' ? 'YOU'
   if (out.goat) { SND('z_trophy_hit', { gain: .9 }); kick(3); info(g, `<b class="h">THE GOAT</b><span>${N2(out.goat.id)} ${out.goat.pos ? 'STRAIGHT ONTO THE COURT AT ' + out.goat.pos : 'INTO ' + (mine ? 'YOUR' : 'THEIR') + ' HAND'}</span>`, 'gold') }
   if (ev.k === 'ring') later(520, () => jStamp(g, 195, 96, '×3', 'up'))
   if (ev.k === 'timeout') info(g, `<b class="h">TIME OUT</b><span>${mine ? 'YOU GET' : g.opp.name + ' GETS'} ANOTHER TURN</span>`, 'blue')
-  if (S0) { await jPlay(g, side, ev, out, S0); paintGame(g); await xnap(500); return }
+  if (S0) { await jPlay(g, side, ev, out, S0); if (out.legendPos && xalive(g)) await legendLand(g, side, out.legendPos); paintGame(g); await xnap(500); return }
   paintFive(g, 'me'); paintFive(g, 'op'); paintHand(g); paintOpHand(g); paintScore(g, true); paintGame(g); await xnap(650) }
 /*@spec PLACE = tap a card in your hand: every spot in your five shows what it would do to your number (+42 green · −8 red · OOP orange); tap a spot to
    play it there (over a player = he goes to your discard). With five full you may keep your five instead | why: the decision is WHERE, and the board
@@ -4513,7 +4537,7 @@ function howTo() { ov((o) => { o.querySelector('.dim').onclick = () => closeOv()
    same taps = the same game on both screens. The CPU's decisions become the friend's.
    why: Or "אם אני רוצה מולטיפלייר" — option 2, the room code ════ */
 let MPG = null
-const MP_VER = '31'   /* the GAME protocol, not the build: two phones whose engine, dice or wire differ would roll different games, so the room refuses
+const MP_VER = '32'   /* the GAME protocol, not the build: two phones whose engine, dice or wire differ would roll different games, so the room refuses
    them — bump it only when one of those changes (v23 → '23'; v25 → '25': TIME OUT now plays on the last turn; v27 → '27': both play the opener's deck; v28 → '28': 29 new events). A UI-only update (v24: chat) keeps it, so nobody has to reopen together */
 /* the phones meet in OUR room server (build/server/worker.js on Cloudflare): a plain WebSocket, so it gets through any network (office Wi-Fi
    included — Bella could not get a direct WebRTC link through hers). Every tap carries a sequence number; after any drop the phone reconnects to
@@ -4798,7 +4822,7 @@ SCREENS.pack = (s, a = {}) => {
 
 /* ════════════════ DEV (side panel on desktop · ☰ on the phone) ════════════════ */
 function openDevSheet() { ov((o) => { o.querySelector('.dim').onclick = () => closeOv(); const sh = el(o, 'div', 'sheet'); el(sh, 'div', 'dev'); renderDev() }) }
-function devHTML() { return `<h3>DRAFT CHAOS · POC v31</h3>
+function devHTML() { return `<h3>DRAFT CHAOS · POC v32</h3>
 <p>Screens</p><div class="seg"><button data-dev="go:hub">HUB</button><button data-dev="go:mm">MATCHMAKING</button><button data-dev="go:chaos">MATCH</button><button data-dev="go:deck">MY DECK</button><button data-dev="go:cards">MY CARDS</button><button data-dev="go:store">PACKS</button></div>
 <p>Your next spin lands on</p><div class="seg">${XEV.map(e => `<button data-dev="ev:${e.k}">${e.lab}</button>`).join('')}</div>
 <p>Their next spin lands on</p><div class="seg">${XEV.map(e => `<button data-dev="eo:${e.k}">${e.lab}</button>`).join('')}</div>
@@ -4829,7 +4853,7 @@ const Q = new URLSearchParams(location.search), EMBED = window.parent !== window
 const FIRST = Q.get('s') || 'hub'
 function boot() { go(FIRST, {}); const rm = Q.get('room'); if (rm && typeof mpLobby === 'function') setTimeout(() => mpLobby(rm), 1700) }
 function start() { const st = $('#start'); if (!st || st.classList.contains('gone')) return; BANK.unlock(); st.classList.add('gone'); SND('y_tip', { gain: .6 }); boot() }
-$('#startLogo').src = IMG.logo82
+{ const sl = $('#startLogo'); if (sl) sl.src = IMG.logo82 }
 $('#start').onclick = start
 /* the sound engine wakes up on ANY tap: a phone can suspend it when another app takes the audio (a voice note, a call) and it then stayed silent
    until a reload (Or v31: "משהו קרה לכל הסאונדים · איפה כל הסאונדים של קלפים") */
