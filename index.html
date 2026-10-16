@@ -1405,7 +1405,8 @@ img { display: block; -webkit-user-drag: none; user-select: none; }
 
 /* PLAY A FRIEND — your name, your record, the head to head */
 .xmpw { font: italic 900 11px/1 "Fira Sans"; letter-spacing: .8px; color: #ffd36a; margin: 14px 0 0; cursor: pointer; }
-.xmpl { margin-top: 16px; text-align: left; } .xmpl:empty { display: none; }
+.xmpl { margin-top: 16px; text-align: left; max-height: 236px; overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; } .xmpl:empty { display: none; }
+.xrunl { max-height: 44vh; overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; }
 .xmpl b { display: block; font: italic 900 10px/1 "Fira Sans"; letter-spacing: 1px; color: #94a0b8; margin-bottom: 6px; text-align: center; }
 .xmpr2 { display: flex; justify-content: space-between; align-items: baseline; padding: 7px 12px 3px; border-radius: 9px; background: rgba(255,255,255,.05); margin-bottom: 5px; }
 .xmpr2 span { font: 700 22px/1 Teko; letter-spacing: .5px; color: #fff; } .xmpr2 i { font: 700 24px/1 Teko; font-style: normal; color: #c9d3ea; } .xmpr2 i.up { color: #3ddc84; } .xmpr2 i.dn { color: #ff8a9a; }
@@ -4837,8 +4838,9 @@ function mpLobby(pre) { SND('y_select'); ov(o => { const h = el(o, 'div', 'howto
   const sameVer = hi => { if (hi && hi.ver === MP_VER) return true; fail('YOU ARE ON DIFFERENT VERSIONS — BOTH CLOSE AND REOPEN THE GAME'); later(4000, () => mpLeave()); return false }
   /* your name first (once), then your record against every friend you have played */
   const who = el(h, 'p', 'xmpw'), recs = el(h, 'div', 'xmpl')
-  const paintMe = () => { who.textContent = 'PLAYING AS ' + me.name + '  ✎'; recs.innerHTML = ''; const all = Object.entries(mpH2H()).sort((x, y) => (y[1].t | 0) - (x[1].t | 0)).slice(0, 5)
-    if (all.length) { el(recs, 'b', '', '', 'YOUR RECORD'); all.forEach(([, r]) => { const d = el(recs, 'div', 'xmpr2'); el(d, 'span', '', '', mpName(r.name) || 'FRIEND'); el(d, 'i', (r.w | 0) > (r.l | 0) ? 'up' : (r.w | 0) < (r.l | 0) ? 'dn' : '', '', `${r.w | 0} – ${r.l | 0}`) }) } }
+  const paintMe = () => { who.textContent = 'PLAYING AS ' + me.name + '  ✎'; recs.innerHTML = ''; const all = Object.entries(mpH2H()).sort((x, y) => (y[1].t | 0) - (x[1].t | 0))
+    /* every friend, newest first — v36 showed only 5, so a 6th friend pushed the oldest out of sight (Or: "שיחקתי גם נגד טוכמן ונעלם מהרקורד") */
+    if (all.length) { el(recs, 'b', '', '', all.length > 1 ? `YOUR RECORD · ${all.length} FRIENDS` : 'YOUR RECORD'); all.forEach(([, r]) => { const d = el(recs, 'div', 'xmpr2'); el(d, 'span', '', '', mpName(r.name) || 'FRIEND'); el(d, 'i', (r.w | 0) > (r.l | 0) ? 'up' : (r.w | 0) < (r.l | 0) ? 'dn' : '', '', `${r.w | 0} – ${r.l | 0}`) }) } }
   const preJoin = () => { if (pre) { bJoin.onclick(); inp.value = String(pre).toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 4); pre = null } }
   const nameStep = () => { row.style.display = 'none'; who.style.display = 'none'; recs.style.display = 'none'; msg.classList.remove('err'); msg.textContent = 'YOUR NAME — YOUR FRIENDS SEE IT'
     const ni = el(h, 'input', 'xmpi xmpn'); ni.maxLength = 10; ni.placeholder = 'NAME'; ni.value = me.name; ni.autocapitalize = 'characters'; const ok = el(h, 'div', 'xmpb g', '', 'OK')
@@ -4913,14 +4915,26 @@ document.addEventListener('click', e => { let n = e.target; while (n && n !== do
 { const k0 = kick; kick = (n = 1) => { k0(n); if (SET.vib && n >= 2 && navigator.vibrate) try { navigator.vibrate(n >= 3 ? 28 : 14) } catch (e) {} } }
 
 /* ── the run log ── */
-function runNew(g, a) { const me = mpMe(); g.run = { id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6), v: '36', t: Date.now(), uid: me.id, name: me.name || '', mode: a.mp ? 'friend' : 'ai', opp: g.opp.name, oppId: (a.mp && typeof MPG !== 'undefined' && MPG && MPG.friend && MPG.friend.id) || '', L: [] } }
+function runNew(g, a) { const me = mpMe(); g.run = { id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6), v: '37', t: Date.now(), uid: me.id, name: me.name || '', mode: a.mp ? 'friend' : 'ai', opp: g.opp.name, oppId: (a.mp && typeof MPG !== 'undefined' && MPG && MPG.friend && MPG.friend.id) || '', L: [] } }
 function runLog(g, ...e) { if (g && g.run && !g.run.done && g.run.L.length < 1200) g.run.L.push([Math.round((Date.now() - g.run.t) / 100) / 10, ...e]) }
 const runFive = (g, sd) => XP5.map(p => { const o = g[sd].five[p]; return o ? `${p} ${CARDS[o.cid] ? CARDS[o.cid].n : o.cid} ${slotVal(g, sd, p).toFixed(1)}${o.out ? ' OUT' : ''}` : `${p} —` }).join(' · ')
 function runBoard(g) { if (!g || !g.run) return; runLog(g, 'B', 'me', runFive(g, 'me')); runLog(g, 'B', 'op', runFive(g, 'op')); runLog(g, '=', +scoreOf(g, 'me').toFixed(1), +scoreOf(g, 'op').toFixed(1)) }
 function runEnd(g, win, m, o) { const r = g.run; if (!r || r.done) return; runBoard(g); runLog(g, 'F', win ? 'WIN' : 'LOSS', +m.toFixed(1), +o.toFixed(1), recordOf(m).join('-'), recordOf(o).join('-'))
   Object.assign(r, { done: true, win: !!win, me: +m.toFixed(1), op: +o.toFixed(1), rec: recordOf(m).join('-'), orec: recordOf(o).join('-'), dur: Math.round((Date.now() - r.t) / 1000) }); runKeep(r); runSend(r) }
 const runsLocal = () => { try { return JSON.parse(localStorage.getItem(RUNK)) || [] } catch (e) { return [] } }
-function runKeep(r) { const all = runsLocal().filter(x => x.id !== r.id); all.unshift(r); for (let n = 15; n > 0; n -= 5) { try { localStorage.setItem(RUNK, JSON.stringify(all.slice(0, n))); return } catch (e) {} } }
+function runKeep(r) { histAdd([r]); const all = runsLocal().filter(x => x.id !== r.id); all.unshift(r); for (let n = 15; n > 0; n -= 5) { try { localStorage.setItem(RUNK, JSON.stringify(all.slice(0, n))); return } catch (e) {} } }
+/* the full move-by-move log stays for the last 15 (it is big); a one-line summary of EVERY match stays forever in HISTK.
+   An older match opens from the server, which keeps the last 300 move by move */
+const HISTK = 'p820_dchaos_hist'
+const histLocal = () => { try { return JSON.parse(localStorage.getItem(HISTK)) || [] } catch (e) { return [] } }
+function histAdd(rs) { const all = histLocal(), at = new Map(all.map((x, i) => [x.id, i])); let ch = false
+  for (const r of rs || []) { if (!r || !r.id || r.win === undefined) continue
+    const s = { id: r.id, t: r.t, mode: r.mode, opp: r.opp, win: !!r.win, me: r.me, op: r.op, rec: r.rec, orec: r.orec, sent: !!r.sent }
+    if (at.has(r.id)) { const o = all[at.get(r.id)]; if (s.sent && !o.sent) { o.sent = true; ch = true } } else { at.set(r.id, all.length); all.push(s); ch = true } }
+  if (ch) { all.sort((a, b) => (b.t || 0) - (a.t || 0)); for (let n = 3000; n > 0; n -= 1000) { try { localStorage.setItem(HISTK, JSON.stringify(all.slice(0, n))); break } catch (e) {} } }
+  return all }
+function runOpen(r) { const full = runsLocal().find(x => x.id === r.id); if (full) return runView(full)
+  toast('Loading the match…'); fetch(`${RUNS_URL}${mpMe().id}/${r.id}`).then(x => x.ok ? x.json() : null).then(j => { if (j && j.L) runView(j); else toast('This match is not on the server') }).catch(() => toast('No connection — try again online')) }
 function runSend(r) { try { const b = JSON.stringify(r); fetch(RUNS_URL + r.uid, { method: 'POST', headers: { 'content-type': 'text/plain' }, body: b, keepalive: b.length < 60000 }).then(x => { if (x.ok) { r.sent = true; runKeep(r) } }).catch(() => {}) } catch (e) {} }
 /* a run that never reached the server (no signal at the buzzer) goes up the next time the game opens */
 later(4000, () => runsLocal().filter(r => r.done && !r.sent).slice(0, 5).forEach(runSend))
@@ -4941,10 +4955,14 @@ function openSettings() { SND('z_menu_up', { gain: .7 }); ov(o => { o.querySelec
     const done = () => { const n = mpName(inp.value); if (n) { me.name = n; mpSave(MPK_ME, me); SND('g_vsign', { gain: .7 }) } v.textContent = me.name || 'TAP TO SET' }; inp.onblur = done; inp.onkeydown = k => { if (k.key === 'Enter') inp.blur() } })
   const tg = (lab, key, after) => row(lab, SET[key] ? 'ON' : 'OFF', v => { SET[key] = !SET[key]; setSave(); if (after) after(SET[key]); v.textContent = SET[key] ? 'ON' : 'OFF'; v.className = SET[key] ? 'on' : 'off'; if (SET[key] && key === 'snd') SND('g_vsign', { gain: .8 }); if (SET[key] && key === 'vib' && navigator.vibrate) navigator.vibrate(30) })
   ;[tg('SOUND', 'snd', on => { SOUND = on }), tg('VIBRATION', 'vib')].forEach((v, i) => v.className = SET[['snd', 'vib'][i]] ? 'on' : 'off')
-  const rl = el(h, 'div', 'xruns'); el(rl, 'b', '', '', 'MY RUNS')
-  const runs = runsLocal(); if (!runs.length) el(rl, 'p', 'none', '', 'NO MATCHES YET — PLAY ONE AND IT SHOWS UP HERE')
-  runs.forEach(r => { const d = el(rl, 'div', 'xrun ' + (r.win ? 'w' : 'l')); el(d, 'em', '', '', r.win ? 'W' : 'L'); const t = el(d, 'span'); el(t, 'b', '', '', (r.mode === 'friend' ? 'VS ' : 'VS ') + escH(r.opp || '?')); el(t, 'small', '', '', `${r.rec || ''} · ${agoTxt(r.t)}${r.sent ? '' : ' · NOT SENT YET'}`); el(d, 'i', '', '', `${(r.me || 0).toFixed(1)}–${(r.op || 0).toFixed(1)}`); d.onclick = e => { e.stopPropagation(); runView(r) } })
-  el(h, 'p', 'xsver', '', `DRAFT CHAOS v36`)
+  /* EVERY match, not the last 15 (Or v36: "מבאס אותי שלא כל המאטצ היסטורי נשמר"): the phone's own history plus the server's list */
+  const rl = el(h, 'div', 'xruns'), rh = el(rl, 'b', '', '', 'MY RUNS'), list = el(rl, 'div', 'xrunl')
+  const paint = all => { list.innerHTML = ''; rh.textContent = all.length ? `MY RUNS · ${all.length} ${all.length === 1 ? 'MATCH' : 'MATCHES'}` : 'MY RUNS'
+    if (!all.length) el(list, 'p', 'none', '', 'NO MATCHES YET — PLAY ONE AND IT SHOWS UP HERE')
+    all.forEach(r => { const d = el(list, 'div', 'xrun ' + (r.win ? 'w' : 'l')); el(d, 'em', '', '', r.win ? 'W' : 'L'); const t = el(d, 'span'); el(t, 'b', '', '', 'VS ' + escH(r.opp || '?')); el(t, 'small', '', '', `${r.rec || ''} · ${agoTxt(r.t)}${r.sent ? '' : ' · NOT SENT YET'}`); el(d, 'i', '', '', `${(+r.me || 0).toFixed(1)}–${(+r.op || 0).toFixed(1)}`); d.onclick = e => { e.stopPropagation(); runOpen(r) } }) }
+  paint(histAdd(runsLocal()))
+  try { fetch(RUNS_URL + me.id).then(x => x.ok ? x.json() : []).then(srv => { if (Array.isArray(srv) && srv.length && rl.isConnected) paint(histAdd(srv.map(x => ({ ...x, sent: true })))) }).catch(() => {}) } catch (e) {}
+  el(h, 'p', 'xsver', '', `DRAFT CHAOS v37`)
 }) }
 /* one run, move by move */
 function runView(r) { SND('z_menu_up', { gain: .6 }); ov(o => { o.querySelector('.dim').onclick = () => openSettings(); const h = el(o, 'div', 'howto xset xrv'); el(h, 'div', 'x', '', '‹').onclick = e => { e.stopPropagation(); openSettings() }
@@ -5098,7 +5116,7 @@ SCREENS.pack = (s, a = {}) => {
 
 /* ════════════════ DEV (side panel on desktop · ☰ on the phone) ════════════════ */
 function openDevSheet() { ov((o) => { o.querySelector('.dim').onclick = () => closeOv(); const sh = el(o, 'div', 'sheet'); el(sh, 'div', 'dev'); renderDev() }) }
-function devHTML() { return `<h3>DRAFT CHAOS · POC v36</h3>
+function devHTML() { return `<h3>DRAFT CHAOS · POC v37</h3>
 <p>Screens</p><div class="seg"><button data-dev="go:hub">HUB</button><button data-dev="go:mm">MATCHMAKING</button><button data-dev="go:chaos">MATCH</button><button data-dev="go:deck">MY DECK</button><button data-dev="go:cards">MY CARDS</button><button data-dev="go:store">PACKS</button></div>
 <p>Your next spin lands on</p><div class="seg">${XEV.map(e => `<button data-dev="ev:${e.k}">${e.lab}</button>`).join('')}</div>
 <p>Their next spin lands on</p><div class="seg">${XEV.map(e => `<button data-dev="eo:${e.k}">${e.lab}</button>`).join('')}</div>
