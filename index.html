@@ -1453,7 +1453,32 @@ img { display: block; -webkit-user-drag: none; user-select: none; }
 .dcload i::after { content: ''; position: absolute; top: 0; bottom: 0; left: 0; width: 40%; border-radius: 2px; background: linear-gradient(90deg, #ffb21f, #ffe27a); animation: dcLoad 1s ease-in-out infinite; }
 @keyframes dcLoad { from { transform: translateX(-100%); } to { transform: translateX(260%); } }
 .dcload span { font: italic 900 11px "Fira Sans"; letter-spacing: 3px; color: #8f9cbd; }
-
+.xcoin.xcoins { z-index: 40; }   /* COIN STORM: a coin over each card */
+/* the final card (between the last turn and RESULT) */
+.xfin { position: absolute; left: 12px; right: 12px; z-index: 38; pointer-events: none; text-align: center; padding: 16px 10px 14px; border-radius: 22px; background: radial-gradient(80% 90% at 50% 40%, rgba(14,20,44,.97), rgba(3,6,16,.96)); box-shadow: 0 0 0 2px rgba(255,210,90,.55), 0 0 40px rgba(255,170,40,.35), 0 18px 40px rgba(0,0,0,.6); }
+.xfin.lost { box-shadow: 0 0 0 2px rgba(190,120,255,.55), 0 0 40px rgba(150,80,255,.35), 0 18px 40px rgba(0,0,0,.6); }
+.xfin b { display: block; font: 700 58px/1 Teko; letter-spacing: 1.5px; padding-top: 6px; color: #ffe27a; text-shadow: 0 0 26px rgba(255,180,40,.85), 0 3px 0 #8a4a00; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.xfin.lost b { color: #e6d2ff; text-shadow: 0 0 26px rgba(160,90,255,.85), 0 3px 0 #3b1a6b; }
+.xfr { display: flex; align-items: center; justify-content: center; gap: 12px; margin-top: 8px; }
+.xfr p { margin: 0; min-width: 120px; font: 700 40px/1 Teko; color: #fff; }
+.xfr p.me { color: #ffb15c; } .xfr p.op { color: #c9a6ff; }
+.xfr p i { display: block; font: italic 900 10px/1 "Fira Sans"; letter-spacing: 1.6px; color: #8f9cbd; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 140px; margin-inline: auto; }
+.xfr p em { display: block; font: italic 900 11px/1 "Fira Sans"; letter-spacing: 1px; color: #c9d3ea; font-style: normal; margin-top: 2px; }
+.xfr u { text-decoration: none; font: 700 22px/1 Teko; color: #8f9cbd; }
+.xfin span { display: block; margin-top: 10px; font: italic 900 11px/1 "Fira Sans"; letter-spacing: 1.6px; color: #ffcf8a; }
+/* 82-0: the rainbow edge that rides the whole chaos */
+.x82edge { position: absolute; inset: 0; z-index: 34; pointer-events: none; opacity: 0; box-shadow: inset 0 0 0 4px rgba(255,90,90,.95), inset 0 0 46px rgba(255,90,90,.7); animation: x82hue 1.1s linear infinite; }
+@keyframes x82hue { from { filter: hue-rotate(0deg); } to { filter: hue-rotate(360deg); } }
+/* a boosted card in hand: green number, a green pill, a green glow (red when it's cut) */
+.xhv.up { color: #7dffa6; text-shadow: 0 0 10px rgba(80,255,140,.85), 0 1px 2px rgba(0,0,0,.9); }
+.xhv.dn { color: #ff7d8e; text-shadow: 0 0 10px rgba(255,70,90,.7), 0 1px 2px rgba(0,0,0,.9); }
+.xhb { position: absolute; z-index: 3; display: flex; justify-content: center; pointer-events: none; }
+.xhb span { padding: 3px 6px 2px; border-radius: 6px; font: italic 900 8.5px/1 "Fira Sans"; letter-spacing: .5px; white-space: nowrap; color: #03240f; background: linear-gradient(#a6ffc4, #3fe07a); box-shadow: 0 0 10px rgba(80,255,140,.8), 0 2px 3px rgba(0,0,0,.6); }
+.xhb.dn span { color: #2a0309; background: linear-gradient(#ffb3bd, #ff5a70); box-shadow: 0 0 10px rgba(255,70,90,.7), 0 2px 3px rgba(0,0,0,.6); }
+.cc.xbst.up:not(.sel) { filter: drop-shadow(0 0 7px rgba(80,255,140,.9)); }
+.cc.xbst.dn:not(.sel) { filter: drop-shadow(0 0 7px rgba(255,70,90,.8)) saturate(.8); }
+.xhb.nt span { color: #2a1600; background: linear-gradient(#fff2a8, #ffc23a); box-shadow: 0 0 10px rgba(255,200,60,.7), 0 2px 3px rgba(0,0,0,.6); }
+.xgame em.xot { font-style: normal; color: #7dffa6; text-shadow: 0 0 10px rgba(80,255,140,.7); }   /* +1 OT banked */
 
 </style>
 </head>
@@ -3257,7 +3282,7 @@ const XEV = [
   { k: 'mayhem',  lab: 'MAYHEM',  ic: 'c_hot',       tone: 'red',    h: 'MASCOT MAYHEM', d: '2 MORE EVENTS', w: .3, gc: true },
   { k: 'allstar', lab: 'ALL-STAR',ic: 'c_legends',   tone: 'gold',   h: 'ALL-STAR VOTE', d: 'THE BEST PLAYER ON THE BOARD → YOU', w: .3, gc: true },
   { k: 'ddouble', lab: 'DBL-DBL', ic: 'c_legends',   tone: 'gold',   h: 'DOUBLE-DOUBLE', d: 'YOUR 2 BEST ×2', w: .3, gc: true },
-  { k: 'ot',      lab: 'OT',      ic: 'hex_time',    tone: 'gold',   h: 'OVERTIME',      d: 'ONE EXTRA ROUND', w: .3, gc: true },
+  { k: 'ot',      lab: 'OVERTIME', ic: 'hex_time',   tone: 'gold',   h: 'OVERTIME',      d: 'AN EXTRA ROUND AFTER THE LAST TURN', w: .3, gc: true },   /* Or v33: "וואן אקסטרה ראונד זה אוברטיים · קצת לא ברור, חשבתי יהיה לי עוד תור" */
   { k: 'sudden',  lab: 'SUDDEN',  ic: 'hex_time',    tone: 'red',    h: 'SUDDEN DEATH',  d: 'THEIR NEXT TURN IS THE LAST', w: .3, gc: true },
   { k: 'clear',   lab: 'CLEAR',   ic: 'c_bench',     tone: 'red',    h: 'BENCH CLEARED', d: 'EVERYONE BACK TO HAND', w: .25, gc: true },
   { k: 'timemac', lab: 'THROWBK',    ic: 'hex_time',    tone: 'gold',   h: 'THROWBACK NIGHT',  d: 'EVERYONE → BEST SEASON', w: .3, gc: true },
@@ -3322,14 +3347,28 @@ const XEV = [
 /*@spec RARITY = 70 COMMON · 20 EPIC (purple) · 10 LEGENDARY (gold). A spin lands EPIC ~13% of the time and LEGENDARY ~3.5%; each has its own reveal
    (flash → 70 ms freeze → camera kick → burst) and its labels glow as they fly past on the drum, so a near miss is felt. SUPER SPIN rolls LEGENDARY only,
    PLAYBOOK offers EPIC/LEGENDARY | why: Or "נגיד יש 150 בוסטרים… אני רוצה שיהיה איזה 20 שהם ממש ממש מגניבים, 10 נדירים רצח" · "דברים ג'וסים" */
+/* v33 — MORE COIN FLIPS (Or: "חייב להגיד שה-flip coins מאוד כיף · יותר פליפ קוינס") and FOUR MORE UNICORNS on the level of 82-0 (Or: "עוד 4 מטורפיייםםםם ברמה של 82-0") */
+XEV.push(
+  { k: 'dornot',    lab: 'FLIP ×2', ic: 'coin1',  tone: 'purple', h: 'DOUBLE OR NOTHING', d: 'FLIP FOR ONE OF YOURS — ×2 OR ½', tgt: 'me' },
+  { k: 'ft',        lab: 'FT LINE', ic: 'coin1',     tone: 'gold',   h: 'FREE THROWS',       d: '2 FLIPS — EACH ONE IN = +8' },
+  { k: 'triflip',   lab: '3 FLIPS', ic: 'hex_5050', tone: 'purple', h: 'TRIPLE THREAT',    d: '3 FLIPS — HEADS +10 YOURS · TAILS +10 THEIRS' },
+  { k: 'cturn',     lab: 'AGAIN?', ic: 'hex_time',    tone: 'purple', h: 'COIN FOR A TURN',   d: 'FLIP — YOU GO AGAIN OR THEY DO' },
+  { k: 'allin',     lab: 'ALL IN',    ic: 'hex_5050',    tone: 'red',    h: 'ALL IN',            d: 'ONE FLIP — YOUR WHOLE FIVE ×2 OR ½' },
+  { k: 'cstorm',    lab: 'STORM',     ic: 'coin1',       tone: 'gold',   h: 'COIN STORM',        d: 'A COIN ON EVERY CARD — YOURS ×2 · THEIRS ½', big: 'COIN STORM' },
+  { k: 'lottery82', lab: 'LOTTERY',   ic: 'hex_swap',    tone: 'gold',   h: 'DRAFT LOTTERY',     d: 'EVERY CARD FLIES — LANDS ANYWHERE', big: 'LOTTERY' },
+  { k: 'dyn82',     lab: 'SUPER 5', ic: 'trophy',      tone: 'gold',   h: 'SUPERTEAM',         d: 'YOUR WHOLE FIVE BECOMES YOUR BEST PLAYER', big: 'SUPERTEAM' },
+  { k: 'blindtr',   lab: 'BLIND',     ic: 'c_reshuffle', tone: 'purple', h: 'BLIND TRADE',       d: 'ONE OF YOURS ↔ A RANDOM CARD FROM THEIR HAND', tgt: 'me' },
+  { k: 'signtr',    lab: 'SIGN',      ic: 'mm_vs',       tone: 'purple', h: 'SIGN & TRADE',      d: 'ONE OF THEIRS JOINS YOU — A RANDOM CARD OF YOURS GOES TO THEM', tgt: 'op' },
+  { k: 'deadline',  lab: 'DEADLINE',  ic: 'hex_5050',    tone: 'purple', h: 'TRADE DEADLINE',    d: 'FLIP — YOUR WORST FOR THEIR BEST · OR YOUR BEST FOR THEIR WORST' },
+  { k: 'allstarwk', lab: 'ALL-STAR',  ic: 'c_legends',   tone: 'gold',   h: 'ALL-STAR WEEKEND',  d: '3 LEGENDARY EVENTS IN A ROW — ALL YOURS', big: 'ALL-STAR' })
 const XTIER = { L: ['timemac', 'star', 'switch', 'deckswap', 'mirror5', 'clear', 'allstar', 'ko', 'purse', 'legendspin', 'ring', 'showtime', 'defense', 'goat'], E: ['melee', 'jumpball', 'dteam', 'hofclass', 'franchise', 'streak', 'poster2', 'playbook', 'pick1', 'ddouble', 'ot', 'sudden', 'mayhem', 'reset', 'superspin', 'sswap', 'triple', 'pile2', 'pick3', 'stealshow', 'defector', 'don', 'rivalry', 'quake', 'tornado', 'hands', 'blind3',
   'dynasty', 'golden', 'blockbuster', 'primepick', 'pickpass', 'cursed', 'secret', 'hofvote', 'fortress', 'alleypass', 'fusion', 'cannibal', 'split', 'vampire'] }
 XTIER.L.push('goatdebate', 'wish', 'pocketace', 'bigthree', 'takeover')
-XTIER.U = ['e82']   /* UNICORN — one of a kind (Or: "בוסטר 1 יחיד אחרון, שהוא כמו Unicorn · כמו yogg saron בהארטסטון · מספר אפקטים רנדומלי בין 2 ל 8 · הטארגטים רנדומליים · הכל רנדומלי") */
+XTIER.E.push('dornot', 'cturn', 'allin', 'deadline'); XTIER.U = ['e82', 'cstorm', 'lottery82', 'dyn82', 'allstarwk']   /* UNICORN — one of a kind (Or: "בוסטר 1 יחיד אחרון, שהוא כמו Unicorn · כמו yogg saron בהארטסטון · מספר אפקטים רנדומלי בין 2 ל 8 · הטארגטים רנדומליים · הכל רנדומלי") */
 XEV.forEach(e => { e.tier = XTIER.U.includes(e.k) ? 'U' : XTIER.L.includes(e.k) ? 'L' : XTIER.E.includes(e.k) ? 'E' : 'C'; e.gc = e.tier !== 'C'; if (e.tier === 'U') e.w = .1; else if (e.tier === 'L') e.w = .28; else if (e.tier === 'E') e.w = .5 })
 const XLABT = Object.fromEntries(XEV.map(e => [e.lab, e.tier]))
 const tintStrip = r => r._strip.querySelectorAll('.it').forEach(n => { const t = XLABT[n.textContent]; if (t === 'E' || t === 'L' || t === 'U') n.classList.add('t' + t) })
-const XGRP = { 'UNICORN — ONE OF A KIND': ['e82'], 'LEGENDARY — VERY RARE': XTIER.L, 'EPIC — RARE': XTIER.E,
+const XGRP = { 'UNICORN — ONE OF A KIND': XTIER.U, 'COIN FLIPS — 50/50': ['coin', 'heave2', 'jumpball', 'ft', 'triflip', 'dornot', 'cturn', 'allin', 'deadline'], 'TRADES': ['trade', 'blockbuster', 'blindtr', 'signtr', 'deadline', 'hotpotato', 'defector'], 'LEGENDARY — VERY RARE': XTIER.L, 'EPIC — RARE': XTIER.E,
    'DISCOVER — PICK 1 OF 3': ['scout', 'erapick', 'hometown', 'scoutrep', 'gleague', 'coach', 'gameplan', 'nightcall'],
   'MERGE — ONE SWALLOWS ANOTHER': ['supplement', 'absorb'],
   'THE EVENTS THEMSELVES': ['choose3', 'replay', 'blockparty', 'again', 'timeout', 'freeze', 'dribble', 'delay'],
@@ -3348,7 +3387,16 @@ const draw = p => { if (!p.deck.length || p.hand.length >= XHMAX) return null; c
 const dbl = o => { o.mvp = (o.mvp | 0) + 1 }, dblTag = n => n <= 1 ? 'DOUBLE' : n === 2 ? 'TRIPLE' : '×' + (n + 1)
 const mkSlot = id => ({ cid: id, ps: XLINE[id].ps, s: { ...XLINE[id].s }, e: CARDS[id].e, mvp: false, out: false, lock: false })
 /* what a placement does to your number: every card × every spot, the best one */
-function placeDelta(g, side, id, pos) { const cur = g[side].five[pos], o = mkSlot(id); if (g[side].alley) o.hot = true; if (g[side].airball || g[side].tired) o.half = true; if (g[side].heat) o.flat = 20; if (g[side].pocket) for (const k in g[side].pocket) o.s[k] += g[side].pocket[k]; if (g[side].anywhere) o.free = true; return ovrOf(o.s) * effMul(g, side, o, pos) - (cur ? ovrOf(cur.s) * effMul(g, side, cur, pos) : 0) }
+/* the card as it WILL land: every pending next-card modifier applied exactly as place() applies it — ×2 alley-oop · ½ airball/tired · +20 heat ·
+   +stats pocket · any spot · ×3 heave · DOUBLE streak. The spot previews, the hand numbers and the AI all read this one, so what you see is what lands
+   (it missed ×3 / DOUBLE / +20 — Or v33: "תמיד זה אמור להראות לי אם יש mod · שיראו גם כפול 3 · וגם הפוך אם יש דאונגריידס") */
+function pendSlot(g, side, id) { const P = g[side], o = mkSlot(id); if (P.alley) o.hot = true; if (P.airball || P.tired) o.half = true; if (P.heat) o.flat = (o.flat || 0) + 20
+  if (P.pocket) for (const k in P.pocket) o.s[k] = (o.s[k] || 0) + P.pocket[k]; if (P.anywhere) o.free = true; if (P.buzz3) o.trip = true; if (P.streak > 0) dbl(o); return o }
+const slotWorth = (g, side, o, pos) => { if (!o) return 0; const m = effMul(g, side, o, pos); return Math.max(0, ovrOf(o.s) * m + (m ? o.flat || 0 : 0)) }
+/* what is changing the card in hand right now, in words (for the pill on it) */
+function pendTags(g, side, id) { const P = g[side], t = [], nm = nightMul(g, { cid: id }); if (nm !== 1) t.push(nightTag(g)); if (P.buzz3) t.push('×3'); if (P.alley) t.push('×2'); if (P.streak > 0) t.push('DOUBLE'); if (P.heat) t.push('+20')
+  if (P.pocket) t.push('+STATS'); if (P.airball || P.tired) t.push('½'); if ((P.mul || 1) !== 1) t.push('TEAM ×' + +(P.mul).toFixed(2)); if (P.anywhere || P.posless) t.push('ANY SPOT'); return t }
+function placeDelta(g, side, id, pos) { const cur = g[side].five[pos]; return slotWorth(g, side, pendSlot(g, side, id), pos) - slotWorth(g, side, cur, pos) }
 /*@spec EMPTY_ONLY = a card goes into an EMPTY spot of your five — never over one of your players | why: Or "אני לא אוהב את זה שאתה יכול לשים קלף על קלף! זה לא טוב" */
 const worstCard = P => P.hand.slice().sort((x, y) => ovrOf(XLINE[x].s) - ovrOf(XLINE[y].s))[0]
 function bestPlace(g, side) { let best = null; for (const id of (g[side].forceWorst && g[side].hand.length ? [worstCard(g[side])] : g[side].hand)) for (const pos of XP5) { if (g[side].five[pos]) continue; const d = placeDelta(g, side, id, pos); if (!best || d > best.d) best = { id, pos, d } } return best }
@@ -3377,7 +3425,7 @@ function aiTarget(g, side, k) { const ev = XEV.find(e => e.k === k) || { k, tgt:
    FREE AGENT · NUMBER 1 PICK · RE-DRAFT · DEEP BENCH · CALL-UP · SECOND CHANCE · WAIVER CLAIM · SIGN & TRADE · CLONE A CARD (3 cards). The CPU takes the best |
    why: Or "לבחור מתוך 3 איוונטים זה מגניב · בכללי דברים של בחירה מתוך 3 זה כיף רצח · תעשה הרבה שיהיו בחירה בין 3" */
 const XCHOOSE = new Set(['lottery', 'rookies', 'hofclass', 'freeag', 'redraft', 'deep', 'pick1', 'cherry', 'sign', 'clonehand', 'freeagent', 'callup', 'second', 'draftn', 'scout', 'erapick', 'hometown', 'scoutrep', 'gleague', 'coach', 'gameplan', 'nightcall', 'supplement', 'dynasty', 'golden', 'blockbuster', 'primepick', 'pickpass', 'cursed', 'secret', 'hofvote', 'alleypass', 'fusion', 'cannibal', 'goatdebate', 'wish'])
-const XMETA = new Set(['choose3', 'playbook', 'replay', 'blind3', 'superspin', 'e82', 'pocketace'])
+const XMETA = new Set(['choose3', 'playbook', 'replay', 'blind3', 'superspin', 'e82', 'pocketace', 'allstarwk'])
 const mineAll = P => [...P.hand, ...P.deck, ...XP5.filter(p => P.five[p]).map(p => P.five[p].cid)]
 /* PICK 3 / LEGEND SPIN draw from the whole league (any team, any era) — never a player you already hold */
 const leaguePool = (g, side, legendsOnly) => { const own = new Set(mineAll(g[side])); return Object.keys(XLINE).filter(id => !own.has(id) && (!legendsOnly || (CARDS[id].o0 || CARDS[id].o) >= 95))   /* legends = the 95+ names on the card art: Jordan, Bird, Magic, Kobe… */ }
@@ -3589,6 +3637,28 @@ function resolveEv(g, side, ev, tg) { const me = g[side], op = g[foe(side)], out
   if (ev.k === 'ring') { g.pot *= 3; out.pile = true }
   if (ev.k === 'showtime') { const f = filled(g, side); if (!f.length) out.fizz = true; else { f.forEach(p2 => dbl(me.five[p2])); out.showtime = f.length } }
   if (ev.k === 'defense') { const f = open5(g, foe(side)).filter(p2 => !op.five[p2].half); if (!f.length) out.fizz = true; else { f.forEach(p2 => { op.five[p2].half = true }); out.defense = f.length } }
+  /* v33 COIN FLIPS — every coin is GRNG, so two phones flip the same coin */
+  if (ev.k === 'dornot') { const o = me.five[tg.me], hit = GRNG() < .5; if (hit) dbl(o); else o.half = true; out.flips = [hit]; out.dornot = { pos: tg.me, hit } }
+  if (ev.k === 'ft') { const p = weakestOf(g, side, true); if (!p) out.fizz = true; else { const f = [GRNG() < .5, GRNG() < .5], made = f.filter(Boolean).length; me.five[p].flat = (me.five[p].flat || 0) + 8 * made; out.flips = f; out.ft = { pos: p, made } } }
+  if (ev.k === 'triflip') { const f = [GRNG() < .5, GRNG() < .5, GRNG() < .5], got = [0, 0]; f.forEach(h => { const sd = h ? side : foe(side), p = weakestOf(g, sd, true); if (p) { g[sd].five[p].flat = (g[sd].five[p].flat || 0) + 10; got[h ? 0 : 1]++ } }); out.flips = f; out.triflip = got }
+  if (ev.k === 'cturn') { const hit = GRNG() < .5; g[hit ? side : foe(side)].extra = true; out.flips = [hit]; out.cturn = hit }
+  if (ev.k === 'allin') { const hit = GRNG() < .5, ps = open5(g, side); ps.forEach(p => { if (hit) dbl(me.five[p]); else me.five[p].half = true }); out.flips = [hit]; out.allin = { hit, n: ps.length } }
+  /* v33 TRADES (Or: "כל מיני טריידים זה דווקא כיף - להחליף שחקן שלי עם שחקן שלו - להחליף שחקן מהבורד שלי עם ראנדום מהיד שלו") */
+  if (ev.k === 'blindtr') { const i = GRNG() * op.hand.length | 0, id = op.hand.splice(i, 1)[0], o = me.five[tg.me]; op.hand.push(o.cid); me.five[tg.me] = mkSlot(id); out.blind = { got: id, gave: o.cid, pos: tg.me } }
+  if (ev.k === 'signtr') { const B = op.five[tg.op], emp = XP5.filter(p => !me.five[p]), pos = B.ps.find(p => emp.includes(p)) || emp[0], i = GRNG() * me.hand.length | 0, id = me.hand.splice(i, 1)[0]
+    op.five[tg.op] = mkSlot(id); me.five[pos] = B; out.sign = { got: B.cid, gave: id, pos } }
+  if (ev.k === 'deadline') { const hit = GRNG() < .5, a = hit ? weakestOf(g, side, true) : bestOfS(g, side, true), b = hit ? bestOfS(g, foe(side), true) : weakestOf(g, foe(side), true), A = me.five[a], B = op.five[b]
+    me.five[a] = B; op.five[b] = A; out.flips = [hit]; out.deadline = { hit, a, b, got: B.cid, gave: A.cid }; out.moves = [{ id: A.cid, from: { sd: side, p: a }, to: { sd: foe(side), p: b } }, { id: B.cid, from: { sd: foe(side), p: b }, to: { sd: side, p: a } }]; out.movesStamp = 'TRADED!' }
+  /* v33 UNICORNS */
+  if (ev.k === 'cstorm') { const L = []; for (const sd of SIDES()) for (const p of XP5) { const o = g[sd].five[p]; if (!o || o.lock) continue; const yes = GRNG() < .5; if (yes) { if (sd === side) dbl(o); else o.half = true } L.push({ sd, p, yes }) } out.storm = L }
+  if (ev.k === 'lottery82') { const cards = [], spots = []; for (const sd of SIDES()) for (const p of XP5) { const o = g[sd].five[p]; if (o && o.lock) continue; spots.push({ sd, p }); if (o) { cards.push({ o, from: { sd, p } }); g[sd].five[p] = null } }
+    shuffle(spots); out.lot = cards.map((c, i) => { const to = spots[i]; g[to.sd].five[to.p] = c.o; return { id: c.o.cid, from: c.from, to } }) }
+  if (ev.k === 'dyn82') { const b = bestOfS(g, side, true), B = me.five[b], to = []; for (const p of open5(g, side)) { if (p === b) continue; const o = me.five[p]
+      for (const k2 of ['s', 'flat', 'mvp', 'hot', 'trip', 'half', 'prime']) o[k2] = k2 === 's' ? { ...B.s } : B[k2]; to.push(p) } out.dyn = { from: b, to } }
+  if (ev.k === 'allstarwk') { /* the headless path (the game plays it out in allStar()): three legendaries in a row, random targets */
+    const rt = e => { const pk = a => a.length ? a[GRNG() * a.length | 0] : null, t = {}; if (e.tgt === 'me' || e.tgt === 'both') { t.me = pk(filled(g, side).filter(p => !me.five[p].lock)); if (!t.me) return null } if (e.tgt === 'op' || e.tgt === 'both') { t.op = pk(open5(g, foe(side))); if (!t.op) return null } return t }
+    for (let i = 0; i < 3; i++) { const pool = XEV.filter(e => XTIER.L.includes(e.k) && !XMETA.has(e.k) && xready(g, side, e.k)); if (!pool.length) break; const e = pool[GRNG() * pool.length | 0], t = e.tgt ? rt(e) : {}; if (e.tgt && !t) continue
+      if (XCHOOSE.has(e.k)) { const o = choiceOpts(g, side, e.k); if (o.length) t.pick = o[GRNG() * o.length | 0] } resolveEv(g, side, e, t) } out.allstar3 = true }
   if (ev.k === 'heave2') { const hit = GRNG() < .5; if (hit) me.buzz3 = true; else me.airball = true; out.heave2 = hit }
   if (ev.k === 'tradeup') { const w = filled(g, side).sort((x, y) => slotVal(g, side, x) - slotVal(g, side, y))[0]; if (!w) out.fizz = true; else { const cur = me.five[w], base = ovrOf(XLINE[cur.cid].s), better = leaguePool(g, side).filter(id => ovrOf(XLINE[id].s) > base + 1), fit = better.filter(id => XLINE[id].ps.includes(w)), pool = fit.length ? fit : better
     if (!pool.length) out.fizz = true; else { const id = pool[GRNG() * pool.length | 0]; me.used.push(cur.cid); me.five[w] = mkSlot(id); out.tradeup = { out: cur.cid, inn: id, p: w } } } }
@@ -3672,7 +3742,16 @@ const XNEED = { twoway: 'me', defector: 'op', expansion: 'op', buyout: 'op', mer
 const XCHK = new Set(['dteam', 'defense', 'teammates', 'franchise', 'showtime', 'rest', 'tradeup', 'pnr', 'timemac', 'mirror5', 'clone', 'posswap', 'sswap', 'scramble', 'trade', 'sign', 'mirror', 'flip', 'swap', 'quake', 'rotate', 'shiftthem', 'tornado', 'reset', 'lights', 'second2', 'slayer', 'merge', 'switcheroo'])
 const xsig = g => JSON.stringify(SIDES().map(sd => [g[sd].hand.slice().sort(), g[sd].used.slice().sort(), XP5.map(p => g[sd].five[p] ? [g[sd].five[p].cid, ovrOf(g[sd].five[p].s).toFixed(2), g[sd].five[p].mvp | 0, !!g[sd].five[p].hot, !!g[sd].five[p].half, !!g[sd].five[p].trip, !!g[sd].five[p].lock] : 0)]))
 function xdoes(g, side, k) { const ev = XEV.find(e => e.k === k), h = cloneG(g), tg = ev.tgt ? aiTarget(h, side, k) : null; if (ev.tgt && !tg) return false; const b = xsig(h), out = resolveEv(h, side, ev, tg); return !out.fizz && xsig(h) !== b }
-function xready(g, side, k) { if (g && side && g.me && g.op && XCHK.has(k) && !xdoes(g, side, k)) return false; if ((XDISC[k] || XPACK[k]) && g && side && g.me && g.op) return !!(XDISC[k] ? XDISC[k].ok(g, side) : XPACK[k](g, side)); const P = g && side && g[side], F = g && side && g[side === 'me' ? 'op' : 'me']
+function xready(g, side, k) { if (g && side && g.me && g.op && XCHK.has(k) && !xdoes(g, side, k)) return false
+  if (g && side && g.me && g.op) { const mine = open5(g, side).length, all = filled(g, 'me').length + filled(g, 'op').length
+    if (k === 'dornot' || k === 'ft' || k === 'triflip' || k === 'allin') return mine > 0
+    if (k === 'cstorm') return open5(g, 'me').length + open5(g, 'op').length >= 2
+    if (k === 'lottery82') return all >= 3
+    if (k === 'dyn82') return mine >= 2
+    if (k === 'blindtr') return mine > 0 && g[foe(side)].hand.length > 0
+    if (k === 'signtr') return open5(g, foe(side)).length > 0 && g[side].hand.length > 0 && XP5.some(p => !g[side].five[p])
+    if (k === 'deadline') return mine > 0 && open5(g, foe(side)).length > 0
+    if (k === 'allstarwk') return XTIER.L.some(k2 => k2 !== 'pocketace' && xready(g, side, k2)) } if ((XDISC[k] || XPACK[k]) && g && side && g.me && g.op) return !!(XDISC[k] ? XDISC[k].ok(g, side) : XPACK[k](g, side)); const P = g && side && g[side], F = g && side && g[side === 'me' ? 'op' : 'me']
   if (P && F) { if (k === 'freeag' || k === 'pick1') return !!(P.deck.length && P.hand.length < XHMAX); if (k === 'deep') return !!(P.deck.length && XP5.some(p => !P.five[p])); if (k === 'callup') return !!(P.used.length && XP5.some(p => !P.five[p])); if (k === 'second') return !!(P.used.length && P.hand.length < XHMAX); if (k === 'draftn') return !!F.deck.length; if (k === 'cherry') return !!F.hand.length; if (k === 'sign') return !!(F.hand.length && P.hand.length); if (k === 'clonehand') return !!(F.hand.length && P.hand.length < XHMAX); if (k === 'freeagent') return !!(F.used.length && P.hand.length < XHMAX); if (k === 'redraft') return !!(P.deck.length && XP5.some(p => P.five[p])); if (k === 'replay') return !!F.lastEvK; if (k === 'lottery') return P.hand.length < XHMAX && !!leaguePool(g, side).length; if (k === 'legendspin') return !!leaguePool(g, side, true).length && (anyEmpty(g, side) || !!weakestOf(g, side, true) || P.hand.length < XHMAX); if (k === 'superspin') return XEV.some(e => e.tier === 'L' && !XMETA.has(e.k) && !P.seen.has(e.k)); if (k === 'playbook' || k === 'choose3' || k === 'blind3') return true }
   if (k === 'replay') return !!(F && F.lastEvK); if (k === 'review') return !!(F && F.lastPos && F.five[F.lastPos]); if (k === 'merge') return !!(P && XP5.filter(p => P.five[p]).length >= 2); if (k === 'switcheroo') return !!(P && P.hand.length && XP5.some(p => P.five[p])); if (k === 'recycle') return !!(P && P.used.length); if (k === 'freeagent') return !!(F && F.used.length && P.hand.length < XHMAX); if (k === 'clonehand') return !!(F && F.hand.length && P.hand.length < XHMAX); if (k === 'hotpotato' || k === 'fastbreak') return !!(P && P.hand.length && (k === 'hotpotato' || XP5.some(p => !P.five[p]))); if (k === 'icedeck') return !!(F && F.deck.length); if (k === 'redraft') return !!(P && P.deck.length && XP5.some(p => P.five[p]))
   if (k === 'callup') return !!(g && side && g[side].used.length && XP5.some(p => !g[side].five[p])); if (k === 'trash') return !!(g && side && g[side === 'me' ? 'op' : 'me'].hand.length); if (k === 'homect') return !!(g && side && g.home && g.home !== side); if (k === 'sudden' && g && g.lastFor) return false;   /* was `return !g.lastFor` — it answered before the 4-cards-and-ahead rule below ever ran, so SUDDEN could land on turn 1 */ if (k === 'switch') return !!(g && side && teamFP(g, side) < teamFP(g, side === 'me' ? 'op' : 'me')); if (g && side && g.me && g.op) { const P2 = g[side], F2 = g[side === 'me' ? 'op' : 'me'], n2 = XP5.filter(p => P2.five[p]).length, o2 = XP5.filter(p => F2.five[p] && !F2.five[p].lock)
@@ -3680,10 +3759,10 @@ function xready(g, side, k) { if (g && side && g.me && g.op && XCHK.has(k) && !x
     if (k === 'jumpball') return !!(o2.length && XP5.some(p => P2.five[p] && !P2.five[p].lock)); if (k === 'nolook') return !!(P2.hand.length && F2.hand.length); if (k === 'rookies' || k === 'hofclass') return P2.hand.length < XHMAX && !!leaguePool(g, side, k === 'hofclass').filter(id => k === 'hofclass' || CARDS[id].e === '2020s').length; if (k === 'goat') return !!leaguePool(g, side, true).length
     if (k === 'poster2') { const mb = XP5.filter(p => P2.five[p]).map(p => ovrOf(P2.five[p].s)), tb = o2.map(p => ovrOf(F2.five[p].s)); return !!(mb.length && tb.length && Math.max(...tb) > Math.max(...mb)) } if (k === 'melee') return XP5.some(p => P2.five[p] || F2.five[p]) } if (k === 'posswap') return !!(g && side && XP5.some(p => g[side].five[p] && g[side === 'me' ? 'op' : 'me'].five[p] && !g[side === 'me' ? 'op' : 'me'].five[p].lock)); if (k === 'second2') return !!(g && side && XP5.filter(p => g[side].five[p]).length >= 2); if (k === 'skyhook') return !!(g && side && g[side].five.C); if (k === 'cherry' || k === 'techall') return !!(g && side && g[side === 'me' ? 'op' : 'me'].hand.length); const n = XNEED[k]; if (!n || !g || !side) return true; const has = sd => XP5.some(p => g[sd].five[p]), f = side === 'me' ? 'op' : 'me'
   return n === 'op' ? has(f) : n === 'me' ? has(side) : n === 'both' ? has(side) && has(f) : has(side) || has(f) }
-/*@spec SPIN_ODDS = 82-0 (the UNICORN tier) is its own roll first: 1 % of spins while it is still in play; every other spin splits COMMON 65 % · EPIC 25 % ·
+/*@spec SPIN_ODDS = the UNICORN tier (82-0 + the four v33 ones) is its own roll first: 2 % of spins while one is still in play; every other spin splits COMMON 65 % · EPIC 25 % ·
    LEGENDARY 10 % over the events that are ready right now (a tier with nothing ready hands its share to the others), then by weight inside the tier
    | why: Or v32 "בוא נעשה 65 25 10 · ומה עם 82-0 אמרנו שהוא טיר משל עצמו" — it was 76.7 / 18.1 / 5.2 (82-0 ~0.1 %) over 7,400 real spins (build/sim/rarity.mjs) */
-const XODDS = { C: .65, E: .25, L: .10 }, XODDS_U = .01, xtierOf = k => XTIER.U.includes(k) ? 'U' : XTIER.L.includes(k) ? 'L' : XTIER.E.includes(k) ? 'E' : 'C'
+const XODDS = { C: .65, E: .25, L: .10 }, XODDS_U = .02, xtierOf = k => XTIER.U.includes(k) ? 'U' : XTIER.L.includes(k) ? 'L' : XTIER.E.includes(k) ? 'E' : 'C'
 function xspinIdx(g, side) { const seen = g && side && g[side] && g[side].seen; const ok = XEV.map((e, i) => [e, i]).filter(([e]) => !(e.once && g && g.usedOnce && g.usedOnce.has(e.k)) && !(seen && seen.has(e.k)) && xready(g, side, e.k))
   const by = { C: [], E: [], L: [], U: [] }; ok.forEach(x => by[xtierOf(x[0].k)].push(x)); if (by.U.length && GRNG() < XODDS_U) return by.U[GRNG() * by.U.length | 0][1]
   const tiers = ['C', 'E', 'L'].filter(t => by[t].length); if (!tiers.length) return ok[0][1]
@@ -3797,7 +3876,7 @@ const MPOUT = (k, v) => { if (MPON()) NET.send(k, v); return v }
 const MPIN = k => NET.recv(k)
 /* the board */
 function paintAll(g) { paintFive(g, 'op'); paintFive(g, 'me'); paintHand(g); paintOpHand(g); paintScore(g); paintGame(g) }
-function paintGame(g) { const t = Math.max(g.me.turns, g.op.turns), n = sd => XP5.filter(p => g[sd].five[p]).length; g.gm.innerHTML = `${g.otRound ? `<u>OVERTIME${g.otRound > 1 ? ' ' + g.otRound : ''}</u>` : g.lastFor ? '<u>LAST TURN</u>' : `TURN <b>${Math.max(1, t)}</b>`}${g.turn ? `<i>·</i>${g.turn === 'me' ? '<u>YOUR TURN</u>' : g.opp.name + '’S TURN'}` : ''}`
+function paintGame(g) { const t = Math.max(g.me.turns, g.op.turns), n = sd => XP5.filter(p => g[sd].five[p]).length; g.gm.innerHTML = `${g.otRound ? `<u>OVERTIME${g.otRound > 1 ? ' ' + g.otRound : ''}</u>` : g.lastFor ? '<u>LAST TURN</u>' : `TURN <b>${Math.max(1, t)}</b>`}${g.turn ? `<i>·</i>${g.turn === 'me' ? '<u>YOUR TURN</u>' : g.opp.name + '’S TURN'}` : ''}${g.ot > 0 ? `<i>·</i><em class="xot">+${g.ot} OT</em>` : ''}`
   g.dkN.innerHTML = `DECK<b>${g.me.deck.length}</b>`; paintPiles(g) }
 const scoreOf = (g, side) => teamFP(g, side) + (g.home === side ? XHOME : 0)
 function count1(e, from, to, D = 600) { e.dataset.v = to; const t0 = performance.now(); (function f() { const k = Math.min(1, (performance.now() - t0) / D), v = from + (to - from) * (1 - Math.pow(1 - k, 3)); e.textContent = v.toFixed(1); if (k < 1) requestAnimationFrame(f) })() }
@@ -3822,7 +3901,11 @@ function paintFive(g, side, hl) { const box = side === 'me' ? g.meB : g.opB, y =
     const v = el(box, 'div', 'xfp', `left:${x}px;top:${y + FH + 2}px;width:${FW}px`, o ? '+' + slotVal(g, side, p).toFixed(1) : '')
     g.fEls[side][p] = { sl, c, v, x, y } }) }
 function paintHand(g, fresh = []) { g.hB.innerHTML = ''; g.hEls = []; const h = g.me.hand, n = h.length, w = n >= 5 ? 70 : n === 4 ? 86 : 100, gap = n >= 5 ? 6 : 10, x0 = (390 - (n * w + (n - 1) * gap)) / 2   // max 5 in hand → the cards can be big (Or: "וככה הם יהיו יותר גדולים")
-  h.forEach((id, i) => { const x = x0 + i * (w + gap), y = 784 - w * CH, c = CARD(g.hB, id, x, y, w), chip = el(g.hB, 'div', 'xhv', `left:${x}px;top:${y - 22}px;width:${w}px`, '+' + cardFP(id).toFixed(1))
+  /* a card in hand that something is boosting right now (TONIGHT ×1.5, an alley-oop ×2, a ×3 heave, +20 heat, a DOUBLE streak — or ½ from an airball)
+     shows it: its number in green (red when cut) and a pill on the card. Or v33: "יש שנות ה-90 זוהרים · שיראו לי גם ביד שהם boosted · אינדיקציה בירוק" */
+  h.forEach((id, i) => { const x = x0 + i * (w + gap), y = 784 - w * CH, c = CARD(g.hB, id, x, y, w), base = cardFP(id), own = XLINE[id].ps[0], val = slotWorth(g, 'me', pendSlot(g, 'me', id), own), tags = pendTags(g, 'me', id), bst = val > base + .05 ? 'up' : val < base - .05 ? 'dn' : tags.length ? 'nt' : ''
+    const chip = el(g.hB, 'div', 'xhv' + (bst ? ' ' + bst : ''), `left:${x}px;top:${y - (bst ? 30 : 22)}px;width:${w}px`, '+' + val.toFixed(1))
+    if (bst) { el(el(g.hB, 'div', 'xhb ' + bst, `left:${x}px;top:${y - 9}px;width:${w}px`), 'span', '', '', tags.join(' · ')); c.classList.add('xbst', bst) }
     c.style.setProperty('--i', i); c.classList.toggle('sel', g.sel === id); c.onclick = () => g.onCard && g.onCard(id); { const lk = g.onCard && g.me.forceWorst ? worstCard(g.me) : null; if (lk && id !== lk) c.classList.add('xlocked'); if (lk && id === lk && g.sel !== id) c.classList.add('pickme') }
     const k = fresh.indexOf(id); if (k >= 0) c.animate([{ transform: `translate(${30 - x}px,${800 - y}px) scale(.3) rotate(-18deg)`, opacity: 0 }, { transform: 'none', opacity: 1 }], { duration: 420, delay: k * 110, easing: 'cubic-bezier(.2,.8,.3,1)', fill: 'backwards' })
     g.hEls.push({ id, c }) }) }
@@ -3910,7 +3993,7 @@ function pick3(g, ev, items, kind) { return new Promise(res => { const o = el(g.
       SND('commit'); later(1900, () => { o.remove(); res(i) }) } }) }) }
 /* PICK YOUR PLAY · PLAYBOOK · REPLAY: they turn into the real event */
 async function metaEvent(g, side, ev) { const P = g[side]
-  if (ev.k === 'e82') return ev
+  if (ev.k === 'e82' || ev.k === 'allstarwk') return ev
   if (ev.k === 'choose3' || ev.k === 'playbook' || ev.k === 'pocketace') { const pool = XEV.filter(e => !XMETA.has(e.k) && !P.seen.has(e.k) && xready(g, side, e.k) && (ev.k !== 'playbook' || e.gc) && (ev.k !== 'pocketace' || e.tier === 'L') && !(e.once && g.usedOnce && g.usedOnce.has(e.k)))
     const opts = shuffle(pool.slice()).slice(0, 3); if (!opts.length) { info(g, `<b class="h">${ev.h}</b><span>NOTHING LEFT TO CHOOSE</span>`, ev.tone); await xnap(800); return null }
     const pick = side === 'me' ? opts[MPOUT('pick', await pick3(g, ev, opts, 'ev'))] : MPON() ? opts[await MPIN('pick')] : opts.slice().sort((a, b) => (b.gc ? 1 : 0) - (a.gc ? 1 : 0))[GRNG() * opts.length | 0]
@@ -3926,27 +4009,64 @@ async function metaEvent(g, side, ev) { const P = g[side]
 /* 82-0 — the unicorn: 2 to 8 random events, each with random targets and random picks, one after another (Yogg-Saron) */
 function rndTarget(g, side, e) { const pick = a => a.length ? a[GRNG() * a.length | 0] : null, me = filled(g, side).filter(p => !g[side].five[p].lock), op = open5(g, foe(side)), tg = {}
   if (e.tgt === 'me') { tg.me = pick(me); if (!tg.me) return null } if (e.tgt === 'op') { tg.op = pick(op); if (!tg.op) return null } if (e.tgt === 'both') { tg.me = pick(me); tg.op = pick(op); if (!tg.me || !tg.op) return null } return tg }
-async function chaos82(g, side) { const n = 2 + (GRNG() * 7 | 0), P = g[side]
-  info(g, '<b class="h">82-0</b><span>HOW MANY EVENTS?</span>', 'gold'); const num = el(g.s, 'div', 'x82n', `top:${DRY - 10}px`); let d = 45, t0 = performance.now(), v = 2
-  while (performance.now() - t0 < 1700) { v = v >= 8 ? 2 : v + 1; num.textContent = '×' + v; SND('z_score_tik', { gain: .6 }); await xnap(d); d = Math.min(240, d * 1.13) }
-  num.textContent = '×' + n; num.animate([{ transform: 'translateX(-50%) scale(1.8)' }, { transform: 'translateX(-50%) scale(1)' }], { duration: 320, easing: 'cubic-bezier(.2,1.4,.4,1)' }); FX.flashAt(195, DRY + 30, 240, '255,255,255', 1); FXU.shock(195, DRY + 30, 220, '255,210,90', 600); kick(3); SND('z_impact17', { gain: .9 })
-  info(g, `<b class="h">82-0</b><span>${n} RANDOM EVENTS — RANDOM TARGETS</span>`, 'gold'); await xnap(900); num.animate([{ opacity: 1 }, { opacity: 0, transform: 'translateX(-50%) scale(.5)' }], { duration: 250, fill: 'forwards' }).onfinish = () => num.remove()
+async function chaos82(g, side) { const n = 2 + (GRNG() * 7 | 0), P = g[side], RB5 = ['255,90,90', '255,200,60', '90,255,140', '90,170,255', '200,110,255']
+  /* v33 JUICE (Or: "82-0 היה מה זה כיף · בא לי שהוא יהיה אפילו עוד יותר כיף מבחינת ג'וס ויזואלי וסאונדים"): a rainbow edge rides the whole chaos, the
+     counter climbs in pitch, every event lands harder than the last, and the finale freezes, rains coins and slams 82-0! letter by letter */
+  const edge = el(g.s, 'div', 'x82edge'); edge.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 300, fill: 'forwards' }); SND('swell', { gain: .7 })
+  info(g, '<b class="h">82-0</b><span>HOW MANY EVENTS?</span>', 'gold'); const num = el(g.s, 'div', 'x82n', `top:${DRY - 10}px`); let d = 45, t0 = performance.now(), v = 2, tk = 0
+  while (performance.now() - t0 < 1700) { v = v >= 8 ? 2 : v + 1; num.textContent = '×' + v; SND('z_score_tik', { gain: .6, rate: .85 + (v - 2) * .09 }); if (++tk % 3 === 0) FX.flashAt(195, DRY + 30, 90, RB5[tk % 5], .5); await xnap(d); d = Math.min(240, d * 1.13) }
+  num.textContent = '×' + n; num.animate([{ transform: 'translateX(-50%) scale(2.2)' }, { transform: 'translateX(-50%) scale(.92)', offset: .55 }, { transform: 'translateX(-50%) scale(1)' }], { duration: 380, easing: 'cubic-bezier(.2,1.4,.4,1)' })
+  FX.flashAt(195, DRY + 30, 300, '255,255,255', 1); RB5.forEach((c, k) => later(k * 70, () => FXU.shock(195, DRY + 30, 180 + k * 40, c, 620))); CONF.burst(195, DRY + 20, 16 + n * 10); kick(n >= 6 ? 5 : 3); SND('z_impact17', { gain: .9 }); SND('boom', { gain: .6 })
+  if (n >= 6) later(260, () => { jStamp(g, 195, DRY - 40, n === 8 ? 'INSANE!' : 'CRAZY!', 'pot').style.zIndex = 42; SND('y_trophy', { gain: .7 }) })
+  info(g, `<b class="h">82-0</b><span>${n} RANDOM EVENTS — RANDOM TARGETS</span>`, 'gold'); await xnap(1000); num.animate([{ opacity: 1 }, { opacity: 0, transform: 'translateX(-50%) scale(.5)' }], { duration: 250, fill: 'forwards' }).onfinish = () => num.remove()
   REEL_VALUES.stat = XEV.map(x => x.lab)
   for (let i = 0; i < n && xalive(g); i++) {
     const pool = XEV.filter(e => !XMETA.has(e.k) && e.k !== 'quicksubs' && !(e.once && g.usedOnce && g.usedOnce.has(e.k)) && xready(g, side, e.k)); let e = null, tg = null
     for (let t = 0; t < 12 && pool.length; t++) { const c = pool[GRNG() * pool.length | 0]; const tt = c.tgt ? rndTarget(g, side, c) : {}; if (c.tgt && !tt) continue; e = c; tg = tt; break } if (!e) break
     if (XCHOOSE.has(e.k)) { const o = choiceOpts(g, side, e.k); if (o.length) tg = { ...(tg || {}), pick: o[GRNG() * o.length | 0], opts: o } }
-    const tag = el(g.s, 'div', 'x82c', `top:${DRY + 22}px`, `${i + 1}<i>/${n}</i>`); tag.animate([{ opacity: 0, transform: 'scale(1.8)' }, { opacity: 1, transform: 'scale(1)' }], { duration: 240, easing: 'cubic-bezier(.2,1.4,.4,1)' })
-    g.drum.classList.remove('fired'); await rollDown(g.drum, e.lab, Math.max(520, 1000 - i * 90)); if (!xalive(g)) return
-    g.drum.classList.add('fired'); FX.flashAt(195, DRY + 47, 170, XTONE[e.tone] || '255,210,90', .95); FXU.ring(195, DRY + 47, 110, XTONE[e.tone] || '255,210,90', 420); kick(2); setBanner(g, e, side)
+    const heat = i / Math.max(1, n - 1), col = RB5[i % 5]
+    const tag = el(g.s, 'div', 'x82c', `top:${DRY + 22}px`, `${i + 1}<i>/${n}</i>`); tag.animate([{ opacity: 0, transform: 'scale(2.2) rotate(-8deg)' }, { opacity: 1, transform: 'scale(1)' }], { duration: 260, easing: 'cubic-bezier(.2,1.4,.4,1)' })
+    SND('z_whoosh_open', { gain: .6, rate: 1 + i * .06 }); g.drum.classList.remove('fired'); await rollDown(g.drum, e.lab, Math.max(520, 1000 - i * 90)); if (!xalive(g)) return
+    g.drum.classList.add('fired'); FX.flashAt(195, DRY + 47, 170 + heat * 90, XTONE[e.tone] || '255,210,90', .95); FXU.ring(195, DRY + 47, 110, XTONE[e.tone] || '255,210,90', 420); FXU.shock(195, DRY + 47, 150 + heat * 120, col, 520); kick(2 + Math.round(heat * 2)); SND('y_found', { gain: .7, rate: 1 + i * .07 }); if (heat > .6) SND('boom', { gain: .4 + heat * .3 })
+    edge.animate([{ filter: 'hue-rotate(0deg) brightness(1.8)' }, { filter: 'hue-rotate(90deg) brightness(1)' }], { duration: 420 }); setBanner(g, e, side)
     const A0 = jSnap(g), out = resolveEv(g, side, e, tg); await playOut(g, side, e, out, A0); P.again = false; tag.remove(); await xnap(200) }
-  /* the finale */
-  FX.flashAt(195, 400, 560, '255,255,255', 1); ['255,90,90', '255,200,60', '90,255,140', '90,170,255', '200,110,255'].forEach((c, k) => later(k * 90, () => FXU.shock(195, 400, 240 + k * 50, c, 700))); CONF.burst(195, 420, 140); kick(4); SND('z_trophy_hit', { gain: .9 }); SND('z_fireworks', { gain: .8 })
-  const fin = el(g.s, 'div', 'x82', `top:${STY - 40}px;font-size:74px`, '82-0!'); fin.animate([{ transform: 'scale(2.4)', opacity: 0 }, { transform: 'scale(1)', opacity: 1, offset: .25 }, { transform: 'scale(1)', opacity: 1, offset: .8 }, { transform: 'scale(1.15)', opacity: 0 }], { duration: 1400, fill: 'forwards' }).onfinish = () => fin.remove(); await xnap(1300)
+  /* the finale: a freeze, the rainbow, coins raining, three waves of confetti and 82-0! slammed in letter by letter */
+  const run = document.getAnimations(); run.forEach(a => { try { a.pause() } catch (e) {} }); FX.flashAt(195, 400, 600, '255,255,255', 1); SND('z_trophy_hit', { gain: 1 }); await xnap(110); run.forEach(a => { try { a.play() } catch (e) {} })
+  RB5.concat(RB5).forEach((c, k) => later(k * 70, () => { FXU.shock(195, 400, 200 + k * 40, c, 760); FXU.ring(195, 400, 120 + k * 26, c, 560) })); [0, 260, 520].forEach((t, w) => later(t, () => CONF.burst(195, 420 - w * 60, 90))); kick(5); SND('z_fireworks', { gain: .85 }); SND('boom', { gain: .7 })
+  for (let k = 0; k < 22; k++) { const c = el(stage, 'img', 'coinfly'); c.src = kitImg('coin'); c.style.zIndex = 42; const x0 = 20 + Math.random() * 350; c.animate([{ transform: `translate(${x0}px,-40px) rotate(0deg) scale(.9)`, opacity: 1 }, { transform: `translate(${x0 + (Math.random() - .5) * 80}px,${880}px) rotate(${(Math.random() - .5) * 900}deg) scale(1)`, opacity: 1 }], { duration: 1100 + Math.random() * 700, delay: k * 45, easing: 'cubic-bezier(.4,0,.9,.6)', fill: 'both' }).onfinish = () => c.remove(); if (k % 4 === 0) later(k * 45 + 500, () => SND('y_coin', { gain: .4 })) }
+  const fin = el(g.s, 'div', 'x82', `top:${STY - 40}px;font-size:96px`)
+  for (const [k, ch] of ['8', '2', '-', '0', '!'].entries()) { const sp = el(fin, 'span', '', '', ch); sp.animate([{ transform: 'scale(3.6) rotate(-14deg)', opacity: 0 }, { transform: 'scale(.88)', opacity: 1, offset: .6 }, { transform: 'scale(1)', opacity: 1 }], { duration: 240, easing: 'cubic-bezier(.2,1.4,.4,1)', fill: 'backwards' }); FX.flashAt(135 + k * 30, STY + 8, 130, RB5[k % 5], 1); kick(k === 4 ? 4 : 2); SND(k === 4 ? 'z_impact17' : 'z_score_tik', { gain: 1, rate: 1 + k * .12 }); await xnap(k === 4 ? 240 : 150) }
+  el(fin, 'em', '', '', (side === 'me' ? 'YOU' : g.opp.name) + ' · ' + n + ' EVENTS')
+  await xnap(900); fin.animate([{ opacity: 1, transform: 'scale(1)' }, { opacity: 0, transform: 'scale(1.18)' }], { duration: 320, fill: 'forwards' }).onfinish = () => fin.remove()
+  edge.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 400, fill: 'forwards' }).onfinish = () => edge.remove()
   paintAll(g) }
+/* ALL-STAR WEEKEND — three LEGENDARY events in a row for whoever spun it, random targets (a legendary always helps the spinner) */
+async function allStar(g, side) { const P = g[side]; REEL_VALUES.stat = XEV.map(x => x.lab)
+  for (let i = 0; i < 3 && xalive(g); i++) {
+    const pool = XEV.filter(e => XTIER.L.includes(e.k) && !XMETA.has(e.k) && xready(g, side, e.k)); let e = null, tg = null
+    for (let t = 0; t < 12 && pool.length; t++) { const c = pool[GRNG() * pool.length | 0]; const tt = c.tgt ? rndTarget(g, side, c) : {}; if (c.tgt && !tt) continue; e = c; tg = tt; break } if (!e) break
+    if (XCHOOSE.has(e.k)) { const o = choiceOpts(g, side, e.k); if (o.length) tg = { ...(tg || {}), pick: o[GRNG() * o.length | 0], opts: o } }
+    const tag = el(g.s, 'div', 'x82c', `top:${DRY + 22}px`, `${i + 1}<i>/3</i>`); tag.animate([{ opacity: 0, transform: 'scale(1.8)' }, { opacity: 1, transform: 'scale(1)' }], { duration: 240, easing: 'cubic-bezier(.2,1.4,.4,1)' })
+    g.drum.classList.remove('fired'); SND('z_whoosh_open', { gain: .7 }); await rollDown(g.drum, e.lab, 900); if (!xalive(g)) return
+    g.drum.classList.add('fired'); FX.flashAt(195, DRY + 47, 220, '255,215,90', 1); FXU.shock(195, DRY + 47, 200, '255,200,60', 560); kick(3); SND('z_trophy_hit', { gain: .8 }); setBanner(g, e, side)
+    const A0 = jSnap(g), out = resolveEv(g, side, e, tg); await playOut(g, side, e, out, A0); P.again = false; tag.remove(); await xnap(250) }
+  FX.flashAt(195, 400, 560, '255,240,190', 1); CONF.burst(195, 420, 120); kick(4); SND('z_fireworks', { gain: .8 })
+  const fin = el(g.s, 'div', 'x82', `top:${STY - 40}px;font-size:70px`, 'ALL-STAR!'); fin.animate([{ transform: 'scale(2.4)', opacity: 0 }, { transform: 'scale(1)', opacity: 1, offset: .25 }, { transform: 'scale(1)', opacity: 1, offset: .8 }, { transform: 'scale(1.15)', opacity: 0 }], { duration: 1400, fill: 'forwards' }).onfinish = () => fin.remove()
+  await xnap(1300); paintAll(g) }
+/* COIN STORM — a coin pops over every card, one after another: YES on yours ×2, YES on theirs ½ */
+async function stormPlay(g, side, L, A) { SND('swell', { gain: .6 })
+  for (const c of L) { if (!xalive(g)) return; const f = g.fEls[c.sd][c.p]; if (!f || !f.c) continue; const r = ctr(f.c), mine = c.sd === side
+    const co = el(g.s, 'div', 'xcoin xcoins', `left:${r.x - 20}px;top:${r.y - 24}px`); el(co, 'img').src = IMG.coin1; SND('z_team_btn', { gain: .55 })
+    await co.animate([{ transform: 'translateY(0) rotateY(0) scale(.6)' }, { transform: 'translateY(-46px) rotateY(900deg) scale(1)', offset: .5 }, { transform: 'translateY(0) rotateY(1800deg) scale(.9)' }], { duration: 430, easing: 'cubic-bezier(.3,.6,.4,1)' }).finished; co.remove()
+    if (c.yes) { const up = mine; jStamp(g, r.x, r.y, up ? '×2' : '½', up ? 'pot' : 'dn').style.zIndex = 40; FX.flashAt(r.x, r.y, 110, up ? '255,215,90' : '255,80,100', .95); FXU.ring(r.x, r.y, 60, up ? '255,215,90' : '255,80,100', 380); kick(up ? 2 : 1); SND(up ? 'z_scored' : 'y_down', { gain: .7 })
+      if (f.v) jCount(f.v, (A.sd[c.sd].five[c.p] || {}).v || 0, slotVal(g, c.sd, c.p), 380) }
+    else { const t = el(g.s, 'div', 'xmul', `left:${r.x}px;top:${r.y}px;font-size:30px;color:#8f9cbd`, 'NO'); t.animate([{ transform: 'translate(-50%,-50%) scale(1.6)', opacity: 0 }, { transform: 'translate(-50%,-50%) scale(1)', opacity: 1, offset: .3 }, { transform: 'translate(-50%,-70%)', opacity: 0 }], { duration: 650, fill: 'forwards' }).onfinish = () => t.remove(); SND('tok', { gain: .6 }) }
+    await xnap(170) }
+  FX.flashAt(195, 400, 400, '255,230,150', .8); kick(3); SND('z_impact17', { gain: .8 }) }
 /* one event, start to finish, for whoever it happens to: its target or its pick of three, then what it does */
 async function doEvent(g, side, ev) { let tg = null
   if (ev.k === 'e82') { await chaos82(g, side); return {} }
+  if (ev.k === 'allstarwk') { await allStar(g, side); return {} }
   if (ev.tgt) { tg = side === 'me' ? MPOUT('target', await chooseTarget(g, ev)) : MPON() ? await MPIN('target') : aiTarget(g, 'op', ev.k); if (!xalive(g)) return null
     if (!tg) { const P = g[side], d2 = draw(P); side === 'me' ? paintHand(g, d2 ? [d2] : []) : paintOpHand(g, d2 ? [d2] : []); info(g, `<b class="h">${ev.h}</b><span>NOTHING TO HIT — ${side === 'me' ? 'YOU DRAW' : g.opp.name + ' DRAWS'} 1</span>`, ev.tone); await xnap(800); return null }
     if (side === 'op') await markTargets(g, 'op', tg) }
@@ -3963,7 +4083,8 @@ async function quickSubs(g) { if (g.me.hand.length && XP5.some(p => !g.me.five[p
 async function showEvent(g, side, ev) { setBanner(g, ev, side); SND(ev.tone === 'red' ? 'kn_l' : 'y_sparkle', { gain: .7 })
   if (ev.tier === 'U') { g.evb.style.visibility = 'hidden'; const bk = el(g.s, 'div', 'xblack'); bk.animate([{ opacity: 0 }, { opacity: .9 }], { duration: 380, fill: 'forwards' }); SND('inhale', { gain: .9 }); SND('swell', { gain: .7 }); await xnap(650)
     const st = el(g.s, 'div', 'x82', `top:${STY - 40}px`), RB = ['255,107,107', '255,217,59', '107,255,154', '90,180,255']
-    for (const [k, ch] of ['8', '2', '-', '0'].entries()) { const sp = el(st, 'span', '', '', ch); sp.animate([{ transform: 'scale(3.4) rotate(-12deg)', opacity: 0 }, { transform: 'scale(.9)', opacity: 1, offset: .6 }, { transform: 'scale(1)', opacity: 1 }], { duration: 260, easing: 'cubic-bezier(.2,1.4,.4,1)', fill: 'backwards' }); FX.flashAt(150 + k * 30, STY + 10, 140, RB[k], 1); kick(k === 3 ? 4 : 2); SND(k === 3 ? 'z_impact17' : 'z_score_tik', { gain: 1 }); if (k === 3) SND('boom', { gain: .7 }); await xnap(k === 3 ? 260 : 190) }
+    const word = [...(ev.big || ev.lab)], nL = word.length; if (nL > 4) st.style.fontSize = Math.max(56, Math.min(110, Math.floor(370 / (nL * .5)))) + 'px'
+    for (const [k, ch] of word.entries()) { const sp = el(st, 'span', '', '', ch === ' ' ? '\u00a0' : ch), lastL = k === nL - 1; sp.animate([{ transform: 'scale(3.4) rotate(-12deg)', opacity: 0 }, { transform: 'scale(.9)', opacity: 1, offset: .6 }, { transform: 'scale(1)', opacity: 1 }], { duration: 260, easing: 'cubic-bezier(.2,1.4,.4,1)', fill: 'backwards' }); if (ch !== ' ') { FX.flashAt(195 + (k - (nL - 1) / 2) * Math.min(30, 300 / nL), STY + 10, 140, RB[k % 4], 1); kick(lastL ? 4 : 2); SND(lastL ? 'z_impact17' : 'z_score_tik', { gain: 1 }); if (lastL) SND('boom', { gain: .7 }) } await xnap(lastL ? 260 : nL > 6 ? 110 : 190) }
     FX.flashAt(195, 360, 620, '255,255,255', 1); SND('z_trophy_hit', { gain: 1 }); const run = document.getAnimations(); run.forEach(a => { try { a.pause() } catch (e) {} }); await xnap(120); run.forEach(a => { try { a.play() } catch (e) {} })
     bk.animate([{ opacity: .9 }, { opacity: .35 }], { duration: 500, fill: 'forwards' }); const rays = el(g.s, 'div', 'xrays xuni', `top:${STY - 160}px`); el(st, 'em', '', '', 'UNICORN · ' + (side === 'me' ? 'YOU' : g.opp.name))
     ;['255,90,90', '255,200,60', '90,255,140', '90,170,255', '200,110,255'].forEach((c, k) => later(k * 120, () => { FXU.shock(195, 360, 220 + k * 50, c, 760); FXU.ring(195, 360, 140 + k * 30, c, 600) }))
@@ -4109,6 +4230,7 @@ function jNum(g, n) { const f = g.fEls[n.sd] && g.fEls[n.sd][n.p]; if (!f || !f.
 function jBeams(g, side, ev, out, A) { const L = [], sOp = foe(side), at = (sd, p) => A.r[sd + '.five.' + p], val = (sd, p) => (A.sd[sd].five[p] || {}).v || 0, k = ev && ev.k
   if (!k || !out) return L
   if (k === 'swap' && out.tg) L.push([at(side, out.tg.me), at(sOp, out.tg.op), '185,130,255', jFmt(val(side, out.tg.me))], [at(sOp, out.tg.op), at(side, out.tg.me), '185,130,255', jFmt(val(sOp, out.tg.op))])
+  if (k === 'dyn82' && out.dyn) out.dyn.to.forEach(p => L.push([at(side, out.dyn.from), at(side, p), '255,210,90', 'SUPERTEAM']))
   if (k === 'mirror' && out.tg) L.push([at(sOp, out.tg.op), at(side, out.tg.me), '185,130,255', 'COPY'])
   if (k === 'heist' && out.tg) L.push([at(sOp, out.tg.op), out.recv ? at(side, out.recv) : ctr(side === 'me' ? g.hMe : g.hOp), '255,90,110', '½'])
   if (k === 'second2' && out.secondUnit) L.push([at(side, out.secondUnit.b), at(side, out.secondUnit.w), '120,200,255', 'COPY'])
@@ -4150,15 +4272,22 @@ async function potMoment(g, from, to, label, o = {}) { const cx = 195, cy = o.y 
    why: Or v31 "תעשה אנימציה נורמלית של הכל מתחלף, גם אם יש לנו אותו קלפים · משהו ג'וסי" — the diff layer matched identical cards to themselves, so a
    switch between two copies of the same five barely moved */
 async function jSwitch(g, A) { const fl = []
-  for (const sd of ['me', 'op']) XP5.forEach(p => { const s = A.sd[sd].five[p]; if (s) fl.push({ id: s.cid, v0: s.v || 0, F: { sd, z: 'five', i: p, key: `${sd}.five.${p}` }, T: { sd: foe(sd), z: 'five', i: p, key: `${foe(sd)}.five.${p}` }, a: A.r[`${sd}.five.${p}`] || jRect(g, sd, 'five', p) }) })
+  for (const sd of ['me', 'op']) XP5.forEach(p => { const s = A.sd[sd].five[p]; if (s) fl.push({ id: s.cid, v0: s.v || 0, F: { sd, z: 'five', i: p }, T: { sd: foe(sd), z: 'five', i: p }, bend: sd === 'me' ? 74 : -74 }) })
+  await jMoves(g, A, fl, 'SWITCH!') }
+/* DRAFT LOTTERY — every card on the court flies up and lands wherever the draw put it */
+async function jLottery(g, A, lot) { const fl = lot.map((m, i) => ({ id: m.id, v0: (A.sd[m.from.sd].five[m.from.p] || {}).v || 0, F: { sd: m.from.sd, z: 'five', i: m.from.p }, T: { sd: m.to.sd, z: 'five', i: m.to.p }, bend: i % 2 ? 66 : -66 }))
+  await jMoves(g, A, fl, 'LOTTERY!') }
+/* explicit flights between court spots: every moving card lifts off, they fly at once, a burst where the streams meet, and each slams down where it
+   belongs — the identity diff can't show a trade between identical cards (same deck), these always fly */
+async function jMoves(g, A, fl, stamp) { fl.forEach(m => { m.a = A.r[`${m.F.sd}.five.${m.F.i}`] || jRect(g, m.F.sd, 'five', m.F.i) })
   paintFive(g, 'me'); paintFive(g, 'op'); paintGame(g)
-  for (const sd of ['me', 'op']) XP5.forEach(p => { const f = g.fEls[sd][p] || {}; if (f.c) f.c.style.visibility = 'hidden'; if (f.v) f.v.style.visibility = 'hidden' })
+  for (const m of fl) { const f = g.fEls[m.T.sd][m.T.i] || {}; if (f.c) f.c.style.visibility = 'hidden'; if (f.v) f.v.style.visibility = 'hidden' }
   const HOLD = 300, D = 640, MY = (OPY + MEY + FH) / 2
   SND('swell', { gain: .6 }); kick(1)
   later(HOLD + D * .5, () => { FX.flashAt(195, MY, 240, '255,236,200', 1); FXU.ring(195, MY, 170, '255,214,120', 540); FXU.ring(195, MY, 110, '200,150,255', 420); kick(4); SND('boom', { gain: .7 })
-    const st = jStamp(g, 195, MY, 'SWITCH!', 'blk'); st.style.zIndex = 40 })
+    if (stamp) jStamp(g, 195, MY, stamp, 'blk').style.zIndex = 40 })
   await Promise.all(fl.map((m, i) => { const b = jRect(g, m.T.sd, 'five', m.T.i), mine = m.F.sd === 'me'
-    return jFly(g, m.id, m.a, b, m.F, m.T, { D, delay: (i % 5) * 36, hold: HOLD, trail: mine ? '255,150,50' : '175,115,255', bend: mine ? 74 : -74, lift: 8, rot: 10, echo: true }).then(() => {
+    return jFly(g, m.id, m.a, b, m.F, m.T, { D, delay: (i % 5) * 36, hold: HOLD, trail: mine ? '255,150,50' : '175,115,255', bend: m.bend || 0, lift: 8, rot: 10, echo: true }).then(() => {
       const f = g.fEls[m.T.sd][m.T.i] || {}; if (f.c) { f.c.style.visibility = ''; f.c.animate([{ transform: 'scale(1.3)', filter: 'brightness(1.8)' }, { transform: 'scale(.94)', offset: .5 }, { transform: 'scale(1)', filter: 'none' }], { duration: 300, easing: 'cubic-bezier(.2,1.4,.4,1)' }) }
       FXU.ring(b.x, b.y, 56, mine ? '255,150,50' : '175,115,255', 360); FX.sparksAt(b.x, b.y, b.w, b.h, 12, mine ? '255,170,80' : '190,140,255')
       if (f.v) { f.v.style.visibility = ''; jCount(f.v, m.v0, slotVal(g, m.T.sd, m.T.i), 520) } }) }))
@@ -4166,6 +4295,8 @@ async function jSwitch(g, A) { const fl = []
 /* THE PLAY-OUT: A = the photo before, the game state now = after */
 async function jPlay(g, side, ev, out, A, opt = {}) { const B = jState(g), dif = jDiff(A, B), mine = side === 'me'; g.pileHold = true
   if (out && out.switched && A.r) { await jSwitch(g, A); g.pileHold = false; paintScore(g, true); paintPiles(g, true); return { flew: XP5.length * 2, nums: 0 } }
+  if (out && out.moves && A.r) { await jMoves(g, A, out.moves.map((m, i) => ({ id: m.id, v0: (A.sd[m.from.sd].five[m.from.p] || {}).v || 0, F: { sd: m.from.sd, z: 'five', i: m.from.p }, T: { sd: m.to.sd, z: 'five', i: m.to.p }, bend: i % 2 ? 70 : -70 })), out.movesStamp); g.pileHold = false; paintScore(g, true); paintPiles(g, true); return { flew: out.moves.length, nums: 0 } }
+  if (out && out.lot && A.r) { await jLottery(g, A, out.lot); g.pileHold = false; paintScore(g, true); paintPiles(g, true); return { flew: out.lot.length, nums: 0 } }
   // too many cards between two piles (DECK SWAP, RECYCLE) — a few fly, the rest just arrive
   const grp = {}; let fl = [...dif.moves.map(m => ({ ...m, kind: 'move' })), ...dif.spawns.map(m => ({ ...m, kind: 'spawn' }))].filter(m => { const k = (m.from ? m.from.key : 'x') + '>' + m.to.key; grp[k] = (grp[k] || 0) + 1; return grp[k] <= ((m.from && m.from.z === 'deck') || m.to.z === 'deck' ? 3 : 6) })
   const src = m => m.from ? A.r[m.from.key + (m.from.z === 'hand' ? '.' + m.from.i : '')] || jRect(g, m.from.sd, m.from.z, m.from.i) : null
@@ -4188,7 +4319,7 @@ async function jPlay(g, side, ev, out, A, opt = {}) { const B = jState(g), dif =
     plan.forEach(p => { if (p.e) p.e.style.visibility = '' }) }
   // stats that crossed between players, then every number that moved
   const beams = jBeams(g, side, ev, out, A); beams.forEach((b, i) => jBeam(g, b[0], b[1], b[2], b[3], i * 140)); if (beams.length) await xnap(520 + beams.length * 140)
-  const nums = []; for (const sd of ['me', 'op']) XP5.forEach(p => { const a = A.sd[sd].five[p], b = B.sd[sd].five[p]; if (a && b && a.cid === b.cid && (Math.abs(b.v - a.v) > .05 || (!a.out && b.out) || (!a.lock && b.lock) || (!a.prime && b.prime))) nums.push({ sd, p, a, b }) })
+  const nums = []; if (!(out && out.storm)) for (const sd of ['me', 'op']) XP5.forEach(p => {   /* COIN STORM already counted every number up on the spot */ const a = A.sd[sd].five[p], b = B.sd[sd].five[p]; if (a && b && a.cid === b.cid && (Math.abs(b.v - a.v) > .05 || (!a.out && b.out) || (!a.lock && b.lock) || (!a.prime && b.prime))) nums.push({ sd, p, a, b }) })
   if (!beams.length && !plan.length && nums.length === 2 && nums[0].sd !== nums[1].sd && (nums[0].b.v - nums[0].a.v) * (nums[1].b.v - nums[1].a.v) < 0) { const [dn, up] = nums[0].b.v < nums[0].a.v ? nums : [nums[1], nums[0]]; jBeam(g, A.r[dn.sd + '.five.' + dn.p], A.r[up.sd + '.five.' + up.p], '255,200,90', ''); await xnap(520) }
   nums.forEach((n, i) => later(i * 120, () => jNum(g, n))); if (nums.length) await xnap(nums.length * 120 + 520)
   if (B.pot !== A.pot && !(out && out.pile)) await potMoment(g, A.pot, B.pot, potLab(A.pot, B.pot))
@@ -4218,6 +4349,18 @@ async function playOut(g, side, ev, out, S0) { const who = side === 'me' ? 'YOU'
     if (ev.k === 'injury') { SND('kn_l'); kick(2); info(g, `<b class="h">INJURY!</b><span>${CARDS[out.injured].n} IS OUT FOR GOOD — THE SPOT IS EMPTY</span>`, 'red') } if (ev.k === 'mvp') { SND('y_trophy', { gain: .7 }); const f = g.fEls[side][T.me]; if (f && f.c) { const c = ctr(f.c); CONF.burst(c.x, c.y, 30) } }
     if (ev.k === 'bench') info(g, `<b class="h">BENCHED</b><span>${N2(out.benched || S0 && (S0.sd[sOp].five[T.op] || {}).cid || '') || 'HE'} — BACK TO ${mine ? 'THEIR' : 'YOUR'} HAND</span>`, 'red') }
   if (out.night) { SND('swell', { gain: .5 }); FXU.room('185,130,255', .3, 600); info(g, `<b class="h">${out.night.slice(2, 4)}'s NIGHT</b><span>EVERY ${out.night.slice(2, 4)}'s PLAYER ×1.5 — UNTIL THE NEXT NIGHT</span>`, 'purple') }
+  if (out.flips) { for (const f2 of out.flips) { if (!xalive(g)) return; await pCoin(g, f2); await xnap(160) }
+    if (out.dornot) info(g, `<b class="h">DOUBLE OR NOTHING</b><span>${N2(g[side].five[out.dornot.pos].cid)} ${out.dornot.hit ? '×2!' : '½'}</span>`, out.dornot.hit ? 'gold' : 'red')
+    if (out.ft) info(g, `<b class="h">FREE THROWS · ${out.ft.made}/2</b><span>${out.ft.made ? '+' + 8 * out.ft.made + ' ON ' + N2(g[side].five[out.ft.pos].cid) : 'BOTH MISSED'}</span>`, out.ft.made ? 'gold' : 'red')
+    if (out.triflip) info(g, `<b class="h">TRIPLE THREAT</b><span>+10 ×${out.triflip[0]} ${mine ? 'YOURS' : 'THEIRS'} · +10 ×${out.triflip[1]} ${mine ? 'THEIRS' : 'YOURS'}</span>`, out.triflip[0] >= 2 ? 'gold' : 'purple')
+    if (out.cturn != null) info(g, `<b class="h">COIN FOR A TURN</b><span>${out.cturn ? who + (mine ? ' GO' : ' GOES') + ' AGAIN!' : (mine ? g.opp.name + ' GOES' : 'YOU GO') + ' TWICE NEXT'}</span>`, out.cturn ? 'gold' : 'red')
+    if (out.allin) info(g, `<b class="h">ALL IN</b><span>${mine ? 'YOUR' : 'THEIR'} WHOLE FIVE ${out.allin.hit ? '×2!' : '½'}</span>`, out.allin.hit ? 'gold' : 'red') }
+  if (out.deadline) info(g, `<b class="h">TRADE DEADLINE · ${out.deadline.hit ? 'YES!' : 'NO!'}</b><span>${N2(out.deadline.gave)} ↔ ${N2(out.deadline.got)}</span>`, out.deadline.hit ? 'gold' : 'red')
+  if (out.blind) info(g, `<b class="h">BLIND TRADE</b><span>${N2(out.blind.gave)} → ${mine ? 'THEIR' : 'YOUR'} HAND · ${N2(out.blind.got)} ONTO ${mine ? 'YOUR' : 'THEIR'} COURT</span>`, 'purple')
+  if (out.sign) info(g, `<b class="h">SIGN & TRADE</b><span>${N2(out.sign.got)} JOINS ${mine ? 'YOU' : 'THEM'} · ${N2(out.sign.gave)} GOES ${mine ? 'TO THEM' : 'TO YOU'}</span>`, 'purple')
+  if (out.storm && S0) { info(g, `<b class="h">COIN STORM</b><span>A COIN ON EVERY CARD</span>`, 'gold'); await stormPlay(g, side, out.storm, S0) }
+  if (out.lot) info(g, `<b class="h">DRAFT LOTTERY</b><span>${out.lot.length} CARDS IN THE AIR — THEY LAND ANYWHERE</span>`, 'gold')
+  if (out.dyn) info(g, `<b class="h">SUPERTEAM</b><span>${mine ? 'YOUR' : 'THEIR'} WHOLE FIVE IS NOW ${N2(g[side].five[out.dyn.from].cid)}</span>`, 'gold')
   if (out.coin) { const c = el(g.s, 'div', 'xcoin'); el(c, 'img').src = IMG.coin1; SND('tok'); c.animate([{ transform: 'translateY(0) rotateY(0)' }, { transform: 'translateY(-90px) rotateY(900deg)', offset: .5 }, { transform: 'translateY(0) rotateY(1800deg)' }], { duration: 1000, easing: 'cubic-bezier(.3,.6,.4,1)' })
     await xnap(1000); c.remove(); const mine2 = out.coin === 'me'; SND(mine2 ? 'y_trophy' : 'y_down', { gain: .7 }); kick(2); info(g, `<b class="h">COIN FLIP</b><span>+10 TO ${mine2 ? 'YOU' : g.opp.name}</span>`, 'gold') }
   if (out.crowd) { SND('y_found'); kick(1); info(g, `<b class="h">CROWD NOISE</b><span>${out.crowd === 'me' ? 'YOU’RE' : g.opp.name + ' IS'} BEHIND — +5</span>`, 'gold') }
@@ -4299,7 +4442,8 @@ async function playOut(g, side, ev, out, S0) { const who = side === 'me' ? 'YOU'
   if (out.home) { SND('y_found'); info(g, `<b class="h">HOME COURT</b><span>THE HOME +3 BELONGS TO ${mine ? 'YOU' : g.opp.name} NOW</span>`, 'gold') }
   if (ev.k === 'dribble') info(g, `<b class="h">DOUBLE DRIBBLE</b><span>${mine ? 'YOU SKIP YOUR' : g.opp.name + ' SKIPS THEIR'} NEXT SPIN</span>`, 'red')
   if (out.ddouble) { SND('y_trophy'); info(g, `<b class="h">DOUBLE-DOUBLE</b><span>${out.ddouble.map(p2 => N2(g[side].five[p2].cid)).join(' & ')} — BOTH DOUBLE</span>`, 'gold') }
-  if (out.ot) info(g, '<b class="h">OVERTIME</b><span>THE GAME GETS ONE EXTRA ROUND AT THE END</span>', 'gold')
+  /* OVERTIME banks a round for the END — say it big when it happens, and the header keeps "+1 OT" until it is played (Or v33: "לא עבד לי הוואן אקסטרה ראונד" — nothing on screen showed it was banked) */
+  if (out.ot) { info(g, '<b class="h">OVERTIME</b><span>THE GAME GETS ONE EXTRA ROUND AT THE END</span>', 'gold'); paintGame(g); const b = el(g.s, 'div', 'rstamp m', `top:${STY}px`); b.innerHTML = `<b>+1 ROUND</b><span>OVERTIME — PLAYED AFTER THE LAST TURN${g.ot > 1 ? ' · ' + g.ot + ' BANKED' : ''}</span>`; A(b, 'a-bigslam', 0); kick(3); SND('swell', { gain: .6 }); later(200, () => SND('y_trophy', { gain: .6 })); FX.flashAt(195, g.gm.getBoundingClientRect ? 70 : 70, 160, '120,255,170', .8); await xnap(1300); b.remove() }
   if (out.sudden) { SND('swell', { gain: .6 }); kick(2); info(g, `<b class="h">SUDDEN DEATH</b><span>${mine ? g.opp.name + '’S' : 'YOUR'} NEXT TURN IS THE LAST OF THE GAME</span>`, 'red') }
   if (ev.k === 'review' && out.benched) info(g, `<b class="h">REPLAY REVIEW</b><span>${N2(out.benched)} — BACK TO ${mine ? 'THEIR' : 'YOUR'} HAND</span>`, 'red')
   if (out.merge) info(g, `<b class="h">COMBO PLAYER</b><span>${N2(g[side].five[out.merge.into].cid)} + ${N2(out.merge.gone)} — ONE PLAYER NOW, A SPOT OPENS</span>`, 'blue')
@@ -4403,9 +4547,16 @@ async function xrun(g) {
     b.innerHTML = `<b>OVERTIME!</b><span>ONE EXTRA ROUND · ${nx === 'me' ? 'YOU GO' : g.opp.name + ' GOES'} FIRST${g.ot ? ` · ${g.ot} MORE AFTER THIS` : ''}</span>`; A(b, 'a-bigslam', 0); kick(3); SND('swell', { gain: .7 }); await xnap(1600); b.remove()
     for (const sd of [nx, foe(nx)]) { if (!xalive(g)) return; await turn(sd); lastSd = sd } }
   if (xalive(g)) xfinish(g) }
+const escH = t => String(t).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c])
 async function xfinish(g) { g.turn = null; info(g, '<b class="h">FINAL</b><span>THE STRONGER FIVE TAKES THE PILE</span>', 'gold'); const m = scoreOf(g, 'me'), o = scoreOf(g, 'op'), win = m > o || (m === o && (g.mp ? (GRNG() < .5) !== !!MPG.guest : GRNG() < .5))
-  const st = el(g.s, 'div', 'rstamp m', `top:${STY}px`); st.innerHTML = `<b>${recordOf(m).join('-')} · ${recordOf(o).join('-')}</b><span>${m.toFixed(1)} vs ${o.toFixed(1)} OVR${g.home ? ` · HOME +${XHOME} ${g.home === 'me' ? 'YOURS' : 'THEIRS'}` : ''} · ${win ? 'YOU TAKE THE PILE!' : g.opp.name + ' TAKES THE PILE'}</span>`; A(st, 'a-bigslam', 0); kick(3); SND(win ? 'z_win' : 'z_lost', { gain: .9 }); if (win) later(500, () => SND('z_fireworks', { gain: .7 }))
-  await xnap(1200); if (!xalive(g)) return
+  /* the final card: who won, both records side by side, the OVR line — every line fits the 390 stage (the one-line version ran off both edges), and it
+     clears away BEFORE the pile shows up (the pile used to land on top of it and the card hung on after). Or v33: "הפופ אפ שיש בין סוף המשחק לריזולט - קצת שבור" */
+  const st = el(g.s, 'div', 'xfin ' + (win ? 'won' : 'lost'), `top:${STY - 40}px`)
+  const ttl = win ? 'YOU WIN!' : g.opp.name + ' WINS'
+  st.innerHTML = `<b style="font-size:${ttl.length <= 10 ? 58 : Math.max(30, Math.floor(600 / ttl.length))}px">${escH(ttl)}</b><div class="xfr"><p class="me"><i>YOU</i>${recordOf(m).join('-')}<em>${m.toFixed(1)} OVR</em></p><u>VS</u><p class="op"><i>${escH(g.opp.name)}</i>${recordOf(o).join('-')}<em>${o.toFixed(1)} OVR</em></p></div>${g.home ? `<span>HOME +${XHOME} ${g.home === 'me' ? 'YOURS' : 'THEIRS'}</span>` : ''}`
+  A(st, 'a-bigslam', 0); kick(3); SND(win ? 'z_win' : 'z_lost', { gain: .9 }); if (win) { later(500, () => SND('z_fireworks', { gain: .7 })); later(300, () => CONF.burst(195, STY + 30, 70)) } FX.flashAt(195, STY + 30, 260, win ? '255,215,90' : '255,90,110', .8)
+  await xnap(1700); if (!xalive(g)) return
+  await st.animate([{ opacity: 1, transform: 'none' }, { opacity: 0, transform: 'translateY(-30px) scale(.92)' }], { duration: 260, easing: 'ease-in', fill: 'forwards' }).finished; st.remove()
   const av = ctr(win ? g.avMe : g.avOp), P = await potMoment(g, g.pot, g.pot, '', { keep: true, hold: 650 }); if (!xalive(g)) return
   const p = ctr(P.pl); for (const e of [P.amt, P.glow, P.dim]) e.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 260, fill: 'forwards' }); P.pl.style.visibility = 'hidden'; SND('y_whoosh', { gain: .7 })
   await flyTo(P.pl, p, { x: av.x, y: av.y, w: 64 }, 600, { lift: 30 }); P.box.remove(); FX.flashAt(av.x, av.y, 140, '255,210,110', .9); kick(3); SND('y_coin', { gain: .9 }); if (win) CONF.burst(av.x, av.y, 60)
@@ -4537,7 +4688,7 @@ function howTo() { ov((o) => { o.querySelector('.dim').onclick = () => closeOv()
    same taps = the same game on both screens. The CPU's decisions become the friend's.
    why: Or "אם אני רוצה מולטיפלייר" — option 2, the room code ════ */
 let MPG = null
-const MP_VER = '32'   /* the GAME protocol, not the build: two phones whose engine, dice or wire differ would roll different games, so the room refuses
+const MP_VER = '33'   /* the GAME protocol, not the build: two phones whose engine, dice or wire differ would roll different games, so the room refuses
    them — bump it only when one of those changes (v23 → '23'; v25 → '25': TIME OUT now plays on the last turn; v27 → '27': both play the opener's deck; v28 → '28': 29 new events). A UI-only update (v24: chat) keeps it, so nobody has to reopen together */
 /* the phones meet in OUR room server (build/server/worker.js on Cloudflare): a plain WebSocket, so it gets through any network (office Wi-Fi
    included — Bella could not get a direct WebRTC link through hers). Every tap carries a sequence number; after any drop the phone reconnects to
@@ -4822,7 +4973,7 @@ SCREENS.pack = (s, a = {}) => {
 
 /* ════════════════ DEV (side panel on desktop · ☰ on the phone) ════════════════ */
 function openDevSheet() { ov((o) => { o.querySelector('.dim').onclick = () => closeOv(); const sh = el(o, 'div', 'sheet'); el(sh, 'div', 'dev'); renderDev() }) }
-function devHTML() { return `<h3>DRAFT CHAOS · POC v32</h3>
+function devHTML() { return `<h3>DRAFT CHAOS · POC v33</h3>
 <p>Screens</p><div class="seg"><button data-dev="go:hub">HUB</button><button data-dev="go:mm">MATCHMAKING</button><button data-dev="go:chaos">MATCH</button><button data-dev="go:deck">MY DECK</button><button data-dev="go:cards">MY CARDS</button><button data-dev="go:store">PACKS</button></div>
 <p>Your next spin lands on</p><div class="seg">${XEV.map(e => `<button data-dev="ev:${e.k}">${e.lab}</button>`).join('')}</div>
 <p>Their next spin lands on</p><div class="seg">${XEV.map(e => `<button data-dev="eo:${e.k}">${e.lab}</button>`).join('')}</div>
