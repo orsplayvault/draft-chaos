@@ -1436,7 +1436,17 @@ img { display: block; -webkit-user-drag: none; user-select: none; }
 .xpotm .pile > img { filter: drop-shadow(0 10px 14px rgba(0,0,0,.65)) drop-shadow(0 0 26px rgba(255,190,60,.7)); }
 .xpotm-amt { position: absolute; left: 0; right: 0; display: flex; align-items: center; justify-content: center; gap: 8px; }
 .xpotm-amt img { width: 34px; height: 34px; filter: drop-shadow(0 2px 4px rgba(0,0,0,.7)); }
-.xpotm-amt span { font: 700 60px/1 Teko; padding-top: 6px; letter-spacing: 1px; color: #ffe862; -webkit-text-stroke: 1.5px #9a5a00; text-shadow: 0 0 18px rgba(255,200,60,.85), 0 3px 3px rgba(0,0,0,.8); }
+.xpotm-amt span { font: 700 64px/1 Teko; padding-top: 7px; letter-spacing: 1.5px; color: #ffe862; text-shadow: 0 2px 0 #b06a00, 0 4px 0 #6b3d00, 0 0 22px rgba(255,190,50,.85), 0 6px 10px rgba(0,0,0,.85); }
+/* Teko's contours overlap, so -webkit-text-stroke draws seams INSIDE the 9 / 5 / 0 (Or v31: "הפונט של הפייל של הכסף דפוק") — the pile's number and its
+   stamp carry no stroke; every other stamp paints its stroke under the fill so the seams are covered */
+.xmul.pot { color: #fff6c0; -webkit-text-stroke: 0; text-shadow: 0 2px 0 #b06a00, 0 0 16px rgba(255,200,60,1), 0 0 34px rgba(255,150,0,.9), 0 4px 6px rgba(0,0,0,.7); }
+.xmul { paint-order: stroke fill; }
+/* ?snd — the sound check sheet */
+.xsndck { position: fixed; inset: 0; z-index: 99999; overflow: auto; padding: 18px 14px 40px; background: rgba(4,8,18,.97); color: #e9eefb; font: 700 13px/1.4 "Fira Sans"; }
+.xsndck b { font: 700 30px/1 Teko; color: #ffe27a; letter-spacing: 1px; } .xsndck p { margin: 8px 0; } .xsndck p.bad { color: #ff6b81; } .xsndck p.ok { color: #7dffa6; }
+.xsndck button { margin: 4px; padding: 9px 12px; border-radius: 10px; border: 0; background: #1b2a4d; color: #fff; font: 800 12px "Fira Sans"; }
+.xsndck button.bad { background: #5a1624; } .xsndck button[data-r]::after { content: ' ' attr(data-r); color: #ffe27a; }
+
 
 </style>
 </head>
@@ -3768,7 +3778,7 @@ const MPOUT = (k, v) => { if (MPON()) NET.send(k, v); return v }
 const MPIN = k => NET.recv(k)
 /* the board */
 function paintAll(g) { paintFive(g, 'op'); paintFive(g, 'me'); paintHand(g); paintOpHand(g); paintScore(g); paintGame(g) }
-function paintGame(g) { const t = Math.max(g.me.turns, g.op.turns), n = sd => XP5.filter(p => g[sd].five[p]).length; g.gm.innerHTML = `${g.lastFor ? '<u>LAST TURN</u>' : `TURN <b>${Math.max(1, t)}</b>`}${g.turn ? `<i>·</i>${g.turn === 'me' ? '<u>YOUR TURN</u>' : g.opp.name + '’S TURN'}` : ''}`
+function paintGame(g) { const t = Math.max(g.me.turns, g.op.turns), n = sd => XP5.filter(p => g[sd].five[p]).length; g.gm.innerHTML = `${g.otRound ? `<u>OVERTIME${g.otRound > 1 ? ' ' + g.otRound : ''}</u>` : g.lastFor ? '<u>LAST TURN</u>' : `TURN <b>${Math.max(1, t)}</b>`}${g.turn ? `<i>·</i>${g.turn === 'me' ? '<u>YOUR TURN</u>' : g.opp.name + '’S TURN'}` : ''}`
   g.dkN.innerHTML = `DECK<b>${g.me.deck.length}</b>`; paintPiles(g) }
 const scoreOf = (g, side) => teamFP(g, side) + (g.home === side ? XHOME : 0)
 function count1(e, from, to, D = 600) { e.dataset.v = to; const t0 = performance.now(); (function f() { const k = Math.min(1, (performance.now() - t0) / D), v = from + (to - from) * (1 - Math.pow(1 - k, 3)); e.textContent = v.toFixed(1); if (k < 1) requestAnimationFrame(f) })() }
@@ -4108,7 +4118,7 @@ async function potMoment(g, from, to, label, o = {}) { const cx = 195, cy = o.y 
     if (to > from) for (let i = 0; i < 16; i++) { const c = el(stage, 'img', 'coinfly'); c.src = kitImg('coin'); c.style.zIndex = 40
       c.animate([{ transform: `translate(${cx + (Math.random() - .5) * 220 - 10}px,${cy - 300}px) scale(.95)`, opacity: 0 }, { opacity: 1, offset: .2 }, { transform: `translate(${cx + (Math.random() - .5) * 60 - 10}px,${cy - 18}px) scale(.6)`, opacity: 1 }], { duration: 440, delay: i * 38, easing: 'cubic-bezier(.5,0,.8,.6)', fill: 'both' })
         .onfinish = () => { c.remove(); if (i % 3 === 0) SND('y_coin', { gain: .45 }); if (i % 4 === 0) pl.animate([{ transform: `scale(${1 + (grow - 1) * i / 16})` }, { transform: `scale(${(1 + (grow - 1) * i / 16) * 1.06},${(1 + (grow - 1) * i / 16) * .95})` }, { transform: `scale(${1 + (grow - 1) * (i + 1) / 16})` }], { duration: 160, fill: 'forwards' }) } }
-    if (label) later(260, () => { jStamp(g, cx, cy - H / 2 - 34, label, to > from ? 'up' : 'dn').style.zIndex = 40 })
+    if (label) later(260, () => { jStamp(g, cx, cy - H / 2 - 34, label, to > from ? 'pot' : 'dn').style.zIndex = 40 })
     later(440, () => { countTo(num, to, 720); SND('y_num', { gain: .6 }) })
     later(1180, () => { pl.animate([{ transform: `scale(${grow})` }, { transform: `scale(${grow * 1.12})` }, { transform: `scale(${grow})` }], { duration: 260, fill: 'forwards' }); amt.animate([{ transform: 'scale(1)' }, { transform: 'scale(1.18)' }, { transform: 'scale(1)' }], { duration: 260 }); FX.flashAt(cx, cy, 150, '255,220,120', .8); kick(2) })
     await xnap(1500) } else await xnap(o.hold ?? 700)
@@ -4116,8 +4126,27 @@ async function potMoment(g, from, to, label, o = {}) { const cx = 195, cy = o.y 
   pl.animate([{ transform: `scale(${grow})`, opacity: 1 }, { transform: `scale(${grow * 1.2})`, opacity: 0 }], { duration: 300, easing: 'ease-in', fill: 'forwards' })
   for (const e of [amt, glow, dim]) e.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 300, fill: 'forwards' })
   await xnap(320); box.remove() }
+/* SWITCH SIDES, played for real: every card of both fives lifts off its spot, the two fives cross the court in two streams that pass each other
+   (a burst where they meet), and each card slams down on the other side — even when both fives hold the same players (same deck), you SEE the trade.
+   why: Or v31 "תעשה אנימציה נורמלית של הכל מתחלף, גם אם יש לנו אותו קלפים · משהו ג'וסי" — the diff layer matched identical cards to themselves, so a
+   switch between two copies of the same five barely moved */
+async function jSwitch(g, A) { const fl = []
+  for (const sd of ['me', 'op']) XP5.forEach(p => { const s = A.sd[sd].five[p]; if (s) fl.push({ id: s.cid, v0: s.v || 0, F: { sd, z: 'five', i: p, key: `${sd}.five.${p}` }, T: { sd: foe(sd), z: 'five', i: p, key: `${foe(sd)}.five.${p}` }, a: A.r[`${sd}.five.${p}`] || jRect(g, sd, 'five', p) }) })
+  paintFive(g, 'me'); paintFive(g, 'op'); paintGame(g)
+  for (const sd of ['me', 'op']) XP5.forEach(p => { const f = g.fEls[sd][p] || {}; if (f.c) f.c.style.visibility = 'hidden'; if (f.v) f.v.style.visibility = 'hidden' })
+  const HOLD = 300, D = 640, MY = (OPY + MEY + FH) / 2
+  SND('swell', { gain: .6 }); kick(1)
+  later(HOLD + D * .5, () => { FX.flashAt(195, MY, 240, '255,236,200', 1); FXU.ring(195, MY, 170, '255,214,120', 540); FXU.ring(195, MY, 110, '200,150,255', 420); kick(4); SND('boom', { gain: .7 })
+    const st = jStamp(g, 195, MY, 'SWITCH!', 'blk'); st.style.zIndex = 40 })
+  await Promise.all(fl.map((m, i) => { const b = jRect(g, m.T.sd, 'five', m.T.i), mine = m.F.sd === 'me'
+    return jFly(g, m.id, m.a, b, m.F, m.T, { D, delay: (i % 5) * 36, hold: HOLD, trail: mine ? '255,150,50' : '175,115,255', bend: mine ? 74 : -74, lift: 8, rot: 10, echo: true }).then(() => {
+      const f = g.fEls[m.T.sd][m.T.i] || {}; if (f.c) { f.c.style.visibility = ''; f.c.animate([{ transform: 'scale(1.3)', filter: 'brightness(1.8)' }, { transform: 'scale(.94)', offset: .5 }, { transform: 'scale(1)', filter: 'none' }], { duration: 300, easing: 'cubic-bezier(.2,1.4,.4,1)' }) }
+      FXU.ring(b.x, b.y, 56, mine ? '255,150,50' : '175,115,255', 360); FX.sparksAt(b.x, b.y, b.w, b.h, 12, mine ? '255,170,80' : '190,140,255')
+      if (f.v) { f.v.style.visibility = ''; jCount(f.v, m.v0, slotVal(g, m.T.sd, m.T.i), 520) } }) }))
+  kick(3); SND('cland', { gain: .8 }); for (const sd of ['me', 'op']) XP5.forEach(p => { const f = g.fEls[sd][p] || {}; if (f.c) f.c.style.visibility = ''; if (f.v) f.v.style.visibility = '' }) }
 /* THE PLAY-OUT: A = the photo before, the game state now = after */
 async function jPlay(g, side, ev, out, A, opt = {}) { const B = jState(g), dif = jDiff(A, B), mine = side === 'me'; g.pileHold = true
+  if (out && out.switched && A.r) { await jSwitch(g, A); g.pileHold = false; paintScore(g, true); paintPiles(g, true); return { flew: XP5.length * 2, nums: 0 } }
   // too many cards between two piles (DECK SWAP, RECYCLE) — a few fly, the rest just arrive
   const grp = {}; let fl = [...dif.moves.map(m => ({ ...m, kind: 'move' })), ...dif.spawns.map(m => ({ ...m, kind: 'spawn' }))].filter(m => { const k = (m.from ? m.from.key : 'x') + '>' + m.to.key; grp[k] = (grp[k] || 0) + 1; return grp[k] <= ((m.from && m.from.z === 'deck') || m.to.z === 'deck' ? 3 : 6) })
   const src = m => m.from ? A.r[m.from.key + (m.from.z === 'hand' ? '.' + m.from.i : '')] || jRect(g, m.from.sd, m.from.z, m.from.i) : null
@@ -4325,18 +4354,30 @@ async function xrun(g) {
      stronger five takes the pile (a safety stop at 12 turns each) | why: Or "אם מישהו מגיע לחמישייה ראשון - התור הבא של היריב הוא התור האחרון של המשחק
      לא? ככה אני מדמיין את זה" — completing first is a weapon, and BENCH / INJURY (they empty a spot) are how you slow the other side down */
   const full = sd => XP5.every(p => g[sd].five[p])
+  /* one turn: the turn itself, the two-phone check, and every TIME OUT it earns stacked on it */
+  const turn = async sd => {
+    await (sd === 'me' ? myTurn(g) : opTurn(g)); await xnap(300)
+    if (g.mp && xalive(g)) { const mine = mpHash(g); NET.send('hash', mine); const theirs = await NET.recv('hash'); if (theirs !== mine) { console.error('DESYNC', mine, theirs); toast('Out of sync with your friend') } }
+    /* TIME OUT is honoured on the LAST turn too (Or: "אם יוצא לי extra turn, אני אמור לקבל את ה-extra turn" — it used to end the game on the spot) */
+    while (g[sd].extra && xalive(g)) {   /* earned turns STACK, full five or not (a full five still spins, it just places nothing) — Or: "זה אמור לעשות סטאק, סטאק, סטאק… זה המשחק" */ g[sd].extra = false; const b = el(g.s, 'div', 'rstamp m', `top:${STY}px`); b.innerHTML = `<b>TIME OUT</b><span>${sd === 'me' ? 'YOU GO' : g.opp.name + ' GOES'} AGAIN</span>`; A(b, 'a-stamp', 0); SND('y_found'); await xnap(1000); b.remove(); await (sd === 'me' ? myTurn(g, true) : opTurn(g, true)); await xnap(300) }
+    g[sd].extra = false
+  }
+  let lastSd = null
   let t = 0
   race: while (xalive(g) && t < 12) { t++
     for (const sd of order) { if (!xalive(g)) return
       const last = g.lastFor === sd
       if (last) { const b = el(g.s, 'div', 'rstamp m', `top:${STY}px`); b.innerHTML = `<b>LAST TURN</b><span>${sd === 'me' ? 'YOUR LAST CHANCE' : g.opp.name + '’S LAST CHANCE'}</span>`; A(b, 'a-stamp', 0); SND('swell', { gain: .6 }); kick(2); await xnap(1200); b.remove(); if (!xalive(g)) return }
-      await (sd === 'me' ? myTurn(g) : opTurn(g)); await xnap(300)
-      if (g.mp && xalive(g)) { const mine = mpHash(g); NET.send('hash', mine); const theirs = await NET.recv('hash'); if (theirs !== mine) { console.error('DESYNC', mine, theirs); toast('Out of sync with your friend') } }
-      /* TIME OUT is honoured on the LAST turn too (Or: "אם יוצא לי extra turn, אני אמור לקבל את ה-extra turn" — it used to end the game on the spot) */
-      while (g[sd].extra && xalive(g)) {   /* earned turns STACK, full five or not (a full five still spins, it just places nothing) — Or: "זה אמור לעשות סטאק, סטאק, סטאק… זה המשחק" */ g[sd].extra = false; const b = el(g.s, 'div', 'rstamp m', `top:${STY}px`); b.innerHTML = `<b>TIME OUT</b><span>${sd === 'me' ? 'YOU GO' : g.opp.name + ' GOES'} AGAIN</span>`; A(b, 'a-stamp', 0); SND('y_found'); await xnap(1000); b.remove(); await (sd === 'me' ? myTurn(g, true) : opTurn(g, true)); await xnap(300) }
-      g[sd].extra = false
+      await turn(sd); lastSd = sd
       if (last) break race
       if (!g.lastFor && full(sd)) { g.lastFor = foe(sd); paintGame(g); const b = el(g.s, 'div', 'rstamp m', `top:${STY}px`); b.innerHTML = `<b>${sd === 'me' ? 'YOUR FIVE IS SET!' : g.opp.name + '’S FIVE IS SET'}</b><span>${sd === 'me' ? g.opp.name + ' GETS ONE LAST TURN' : 'YOU GET ONE LAST TURN'}</span>`; A(b, 'a-bigslam', 0); kick(3); SND('y_trophy', { gain: .7 }); await xnap(1600); b.remove() } } }
+  /*@spec OVERTIME = every OT spun adds one full round AFTER the last turn, and they STACK (an OT spun in overtime adds another round); the side that
+     did not take the last turn goes first | why: Or "היה אמור להיות לו עוד תור אחי · דיברנו על זה · כל פעם שיש עוד טור זה אמור להיות בסטאק" — g.ot was
+     counted from v11 on and never played, so OVERTIME did nothing */
+  while (xalive(g) && g.ot > 0) { g.ot--; g.otRound = (g.otRound || 0) + 1; paintGame(g)
+    const nx = lastSd ? foe(lastSd) : order[0], b = el(g.s, 'div', 'rstamp m', `top:${STY}px`)
+    b.innerHTML = `<b>OVERTIME!</b><span>ONE EXTRA ROUND · ${nx === 'me' ? 'YOU GO' : g.opp.name + ' GOES'} FIRST${g.ot ? ` · ${g.ot} MORE AFTER THIS` : ''}</span>`; A(b, 'a-bigslam', 0); kick(3); SND('swell', { gain: .7 }); await xnap(1600); b.remove()
+    for (const sd of [nx, foe(nx)]) { if (!xalive(g)) return; await turn(sd); lastSd = sd } }
   if (xalive(g)) xfinish(g) }
 async function xfinish(g) { g.turn = null; info(g, '<b class="h">FINAL</b><span>THE STRONGER FIVE TAKES THE PILE</span>', 'gold'); const m = scoreOf(g, 'me'), o = scoreOf(g, 'op'), win = m > o || (m === o && (g.mp ? (GRNG() < .5) !== !!MPG.guest : GRNG() < .5))
   const st = el(g.s, 'div', 'rstamp m', `top:${STY}px`); st.innerHTML = `<b>${recordOf(m).join('-')} · ${recordOf(o).join('-')}</b><span>${m.toFixed(1)} vs ${o.toFixed(1)} OVR${g.home ? ` · HOME +${XHOME} ${g.home === 'me' ? 'YOURS' : 'THEIRS'}` : ''} · ${win ? 'YOU TAKE THE PILE!' : g.opp.name + ' TAKES THE PILE'}</span>`; A(st, 'a-bigslam', 0); kick(3); SND(win ? 'z_win' : 'z_lost', { gain: .9 }); if (win) later(500, () => SND('z_fireworks', { gain: .7 }))
@@ -4472,7 +4513,7 @@ function howTo() { ov((o) => { o.querySelector('.dim').onclick = () => closeOv()
    same taps = the same game on both screens. The CPU's decisions become the friend's.
    why: Or "אם אני רוצה מולטיפלייר" — option 2, the room code ════ */
 let MPG = null
-const MP_VER = '28'   /* the GAME protocol, not the build: two phones whose engine, dice or wire differ would roll different games, so the room refuses
+const MP_VER = '31'   /* the GAME protocol, not the build: two phones whose engine, dice or wire differ would roll different games, so the room refuses
    them — bump it only when one of those changes (v23 → '23'; v25 → '25': TIME OUT now plays on the last turn; v27 → '27': both play the opener's deck; v28 → '28': 29 new events). A UI-only update (v24: chat) keeps it, so nobody has to reopen together */
 /* the phones meet in OUR room server (build/server/worker.js on Cloudflare): a plain WebSocket, so it gets through any network (office Wi-Fi
    included — Bella could not get a direct WebRTC link through hers). Every tap carries a sequence number; after any drop the phone reconnects to
@@ -4757,7 +4798,7 @@ SCREENS.pack = (s, a = {}) => {
 
 /* ════════════════ DEV (side panel on desktop · ☰ on the phone) ════════════════ */
 function openDevSheet() { ov((o) => { o.querySelector('.dim').onclick = () => closeOv(); const sh = el(o, 'div', 'sheet'); el(sh, 'div', 'dev'); renderDev() }) }
-function devHTML() { return `<h3>DRAFT CHAOS · POC v30</h3>
+function devHTML() { return `<h3>DRAFT CHAOS · POC v31</h3>
 <p>Screens</p><div class="seg"><button data-dev="go:hub">HUB</button><button data-dev="go:mm">MATCHMAKING</button><button data-dev="go:chaos">MATCH</button><button data-dev="go:deck">MY DECK</button><button data-dev="go:cards">MY CARDS</button><button data-dev="go:store">PACKS</button></div>
 <p>Your next spin lands on</p><div class="seg">${XEV.map(e => `<button data-dev="ev:${e.k}">${e.lab}</button>`).join('')}</div>
 <p>Their next spin lands on</p><div class="seg">${XEV.map(e => `<button data-dev="eo:${e.k}">${e.lab}</button>`).join('')}</div>
@@ -4790,6 +4831,15 @@ function boot() { go(FIRST, {}); const rm = Q.get('room'); if (rm && typeof mpLo
 function start() { const st = $('#start'); if (!st || st.classList.contains('gone')) return; BANK.unlock(); st.classList.add('gone'); SND('y_tip', { gain: .6 }); boot() }
 $('#startLogo').src = IMG.logo82
 $('#start').onclick = start
+/* the sound engine wakes up on ANY tap: a phone can suspend it when another app takes the audio (a voice note, a call) and it then stayed silent
+   until a reload (Or v31: "משהו קרה לכל הסאונדים · איפה כל הסאונדים של קלפים") */
+addEventListener('pointerdown', () => { if (BANK.state() !== 'running') BANK.unlock() }, true)
+document.addEventListener('visibilitychange', () => { if (!document.hidden && BANK.state() !== 'running') BANK.unlock() })
+/* SOUND CHECK — open the game with ?snd: what THIS phone's decoder made of every sound, and a button to hear each one */
+if (Q.has('snd')) BANK.ready.then(() => { const o = el(document.body, 'div', 'xsndck'), info = BANK.info(), names = Object.keys(SFX_BANK).filter(n => n[0] !== '_' && Array.isArray(SFX_BANK[n])), bad = names.filter(n => !(info[n] && info[n].length))
+  const sr = (Object.values(info).find(v => v && v[0]) || [{}])[0].sr
+  o.innerHTML = `<b>SOUND CHECK</b><p>engine ${BANK.state()} · ${sr || '?'} Hz · ${names.length - bad.length}/${names.length} sounds loaded</p><p class="${bad.length ? 'bad' : 'ok'}">${bad.length ? 'FAILED TO LOAD: ' + bad.join(' · ') : 'every sound loaded'}</p><p>tap a sound to hear it:</p>`
+  names.forEach(n => { const bt = el(o, 'button', bad.includes(n) ? 'bad' : '', '', n); bt.onclick = async e => { e.stopPropagation(); BANK.unlock(); for (let i = 0; i < 20 && BANK.state() !== 'running'; i++) await new Promise(r => setTimeout(r, 25)); const r = BANK.play(n, { jitter: false }); bt.dataset.r = r ? '✓' : '✗ ' + BANK.state() } }) })
 if (Q.has('nostart') || EMBED) { $('#start').remove(); addEventListener('pointerdown', () => BANK.unlock(), { once: true }); boot() }
 else introBrawl()   /* the Smash-style title (build/ch_intro.js) */
 renderDev()
