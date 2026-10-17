@@ -3434,46 +3434,48 @@ XTIER.E.push('dornot', 'cturn', 'allin', 'deadline'); XTIER.U = ['e82', 'cstorm'
 /*@spec V44_EVENTS = 38 new events — CRAZY and FUNNY — to reach 200 (Or v43: "אני רוצה שיהיו 200 סך הכל - אבל דברים מטורפים ומצחיקים"). All resolve on
    their own (no target to pick), every one re-checks that it changes something (xv44ok), LEGENDARY ones always help whoever spun, coin flips play the coin */
 XEV.push(
-  { k: 'gatorade', lab: 'GATORADE', ic: 'boost_pts',   tone: 'gold',   h: 'GATORADE BATH',       d: 'YOUR WHOLE FIVE +4' },
-  { k: 'sneaker',  lab: 'SNEAKERS', ic: 'boost_pts',   tone: 'gold',   h: 'SNEAKER DEAL',        d: 'YOUR BEST +12' },
-  { k: 'ankles',   lab: 'ANKLES',   ic: 'boost_stl',   tone: 'red',    h: 'ANKLE BREAKER',       d: 'THEIR BEST −10' },
-  { k: 'heckler',  lab: 'HECKLER',  ic: 'boost_blk',   tone: 'red',    h: 'COURTSIDE HECKLER',   d: 'THEIR 2 WORST −6 EACH' },
-  { k: 'dunkcon',  lab: 'DUNK CON', ic: 'c_hot',       tone: 'gold',   h: 'DUNK CONTEST',        d: 'YOUR 2 BEST +7 EACH' },
-  { k: 'hypeman',  lab: 'HYPE MAN', ic: 'boost_ast',   tone: 'gold',   h: 'HYPE MAN',            d: 'YOUR WORST +14' },
-  { k: 'birthday', lab: 'BIRTHDAY', ic: 'trophy',      tone: 'gold',   h: 'BIRTHDAY GAME',       d: 'A RANDOM PLAYER OF YOURS +16' },
-  { k: 'celeb',    lab: 'CELEB',    ic: 'mm_vs',       tone: 'red',    h: 'COURTSIDE CELEBRITY', d: 'THEIR BEST IS DISTRACTED: −12' },
   { k: 'tshirt',   lab: 'T-SHIRT',  ic: 'c_reshuffle', tone: 'blue',   h: 'T-SHIRT CANNON',      d: 'EVERYONE DRAWS A CARD' },
   { k: 'holdout',  lab: 'HOLDOUT',  ic: 'hex_lock',    tone: 'purple', h: 'CONTRACT HOLDOUT',    d: 'YOUR BEST PLAYS ½ · DRAW 2' },
-  { k: 'tank',     lab: 'TANK',     ic: 'c_under90',   tone: 'purple', h: 'TANK MODE',           d: 'YOUR WORST −10 · BEST +20' },
   { k: 'icebath',  lab: 'ICE BATH', ic: 'hex_time',    tone: 'blue',   h: 'ICE BATH',            d: 'EVERY ½ ON YOUR FIVE IS GONE', s: 'EVERY ½ OF YOURS — GONE' },
   { k: 'kisscam',  lab: 'KISS CAM', ic: 'c_double',    tone: 'purple', h: 'KISS CAM',            d: 'BOTH BEST PLAYERS ×2 — NOBODY KNOWS WHY' },
   { k: 'flopyear', lab: 'FLOP',     ic: 'hex_5050',    tone: 'purple', h: 'FLOP OF THE YEAR',    d: 'FLIP: THEIR BEST ½ OR YOUR BEST ½' },
-  { k: 'mascot',   lab: 'MASCOT',   ic: 'c_home',      tone: 'gold',   h: 'MASCOT ON THE COURT', d: 'YOUR TEAM +10' },
-  { k: 'bandwagon',lab: 'FANS',     ic: 'c_home',      tone: 'gold',   h: 'BANDWAGON FANS',      d: 'WHOEVER LEADS +8' },
-  { k: 'jinx',     lab: 'JINX',     ic: 'c_blind',     tone: 'red',    h: 'COMMENTATOR’S JINX',  d: 'WHOEVER LEADS −8' },
   { k: 'norefs',   lab: 'NO REFS',  ic: 'c_straight',  tone: 'blue',   h: 'THE REFS WENT HOME',  d: 'NO OUT-OF-POSITION PENALTY FOR ANYONE' },
-  { k: 'wrongjsy', lab: 'JERSEY',   ic: 'hex_swap',    tone: 'red',    h: 'WRONG JERSEY',        d: 'THEIR NEWEST −6' },
-  { k: 'nap',      lab: 'NAP',      ic: 'hex_time',    tone: 'purple', h: 'PRE-GAME NAP',        d: 'YOUR NEWEST +15 · NEXT SPIN SKIPPED' },
   { k: 'hotdog',   lab: 'HOT DOG',  ic: 'c_hot',       tone: 'red',    h: 'HOT DOG VENDOR',      d: 'THEIR WORST TRIPS ON A HOT DOG: ½' },
   { k: 'fanfight', lab: 'FIGHT!',   ic: 'mm_vs',       tone: 'red',    h: 'FANS ON THE COURT',   d: 'BOTH BEST PLAYERS ½' },
   { k: 'zone',     lab: 'ZONE',     ic: 'c_hot',       tone: 'gold',   h: 'IN THE ZONE',         d: 'YOUR NEXT 2 CARDS DOUBLE' },
   { k: 'blooper',  lab: 'BLOOPER',  ic: 'hex_5050',    tone: 'purple', h: 'BLOOPER REEL',        d: 'FLIP: YOUR WHOLE FIVE +8 OR −8' },
   { k: 'buzzflip', lab: 'BUZZER?',  ic: 'coin1',       tone: 'purple', h: 'BUZZER FLIP',         d: 'FLIP: +20 TO YOUR TEAM OR TO THEIRS', s: 'FLIP: +20 YOU OR +20 THEM' },
-  { k: 'cheer',    lab: 'CHEER',    ic: 'boost_ast',   tone: 'gold',   h: 'CHEER SQUAD',         d: 'YOUR WHOLE FIVE +6' },
-  { k: 'enforcer', lab: 'ENFORCER', ic: 'boost_blk',   tone: 'red',    h: 'THE ENFORCER',        d: 'THEIR 2 BEST −8 EACH' },
-  { k: 'rally',    lab: 'RALLY',    ic: 'c_respin',    tone: 'gold',   h: 'COMEBACK RALLY',      d: 'BEHIND? YOUR TEAM +25 · AHEAD? +8' },
-  { k: 'icecold',  lab: 'ICE COLD', ic: 'hex_lock',    tone: 'blue',   h: 'ICE COLD',            d: 'THEIR WHOLE FIVE −5' },
   { k: 'wipeout',  lab: 'WIPEOUT',  ic: 'mm_vs',       tone: 'red',    h: 'WIPEOUT',             d: 'EVERY CARD ON BOTH COURTS DIES — SHIELDS SURVIVE', s: 'EVERY CARD DIES · SHIELDS LIVE' },   /* Or: "נגיד קלף אחד שכל הקלפים מתים · במגרש · כולם לגרייב" */
   { k: 'ddare',    lab: 'DARE',     ic: 'hex_5050',    tone: 'purple', h: 'DOUBLE DARE',         d: 'FLIP: YOUR WORST ×2 OR THEIR WORST ×2', s: 'FLIP: A WORST ×2 — YOURS OR THEIRS' },
-  { k: 'supersub', lab: 'SUPERSUB', ic: 'c_bench',     tone: 'gold',   h: 'SUPER SUB',           d: 'DRAW 1 · YOUR NEXT CARD +20' },
   { k: 'flu',      lab: 'FLU GAME', ic: 'trophy',      tone: 'gold',   h: 'THE FLU GAME',        d: 'YOUR BEST PLAYS SICK — AND SCORES ×3', s: 'YOUR BEST PLAYS SICK: ×3' },
-  { k: 'supermax', lab: 'SUPERMAX', ic: 'trophy',      tone: 'gold',   h: 'SUPERMAX DEAL',       d: 'YOUR BEST +30' },
-  { k: 'ringnight',lab: 'RINGS',    ic: 'trophy',      tone: 'gold',   h: 'RING NIGHT',          d: 'YOUR WHOLE FIVE +10' },
-  { k: 'robbery',  lab: 'ROBBERY',  ic: 'boost_stl',   tone: 'red',    h: 'HIGHWAY ROBBERY',     d: 'THEIR 2 BEST −15 EACH' },
   { k: 'trainer',  lab: 'TRAINER',  ic: 'c_legends',   tone: 'blue',   h: 'MIRACLE TRAINER',     d: 'EVERY ½ ON YOUR FIVE GONE · ALL +6', s: 'YOUR ½ GONE · ALL +6' },
+  /* v49 — the flat ±N ones are gone (Or: "אלה לא אהבתי · אני פחות אוהב פלאט סטאטס · לא רק ברוקן קארד נרפס · דברים מטורפים, מגניבים רצח, רעיונות פסיכים").
+     Six hit the BROKEN cards (95+), sixteen turn the board upside down. Not one of them adds or takes a fixed number. */
+  { k: 'startax',  lab: 'STAR TAX', ic: 'c_under90',   tone: 'red',    h: 'STAR TAX',            d: 'EVERY 95+ PLAYER ON BOTH COURTS ½' },
+  { k: 'giantkill',lab: 'GIANT KO', ic: 'mm_vs',       tone: 'red',    h: 'GIANT KILLER',        d: 'THE BIGGEST CARD ON THE BOARD IS OUT' },
+  { k: 'salarycap',lab: 'CAP',      ic: 'hex_lock',    tone: 'blue',   h: 'SALARY CAP',          d: 'THEIR 95+ PLAYERS GO BACK INTO THEIR DECK', s: 'THEIR 95+ PLAYERS → THEIR DECK' },
+  { k: 'copycat',  lab: 'COPYCAT',  ic: 'hex_swap',    tone: 'purple', h: 'COPYCAT CURSE',       d: 'THEIR BEST TURNS INTO YOUR WORST', s: 'THEIR BEST BECOMES YOUR WORST' },
+  { k: 'upsidedown',lab: 'UPSIDE DN',ic: 'hex_swap',   tone: 'purple', h: 'UPSIDE DOWN',         d: 'THEIR BEST AND WORST SWAP NUMBERS' },
+  { k: 'bust',     lab: 'BUST',     ic: 'c_under90',   tone: 'red',    h: 'DRAFT BUST',          d: 'THEIR NEWEST SIGNING WAS A BUST' },
+  { k: 'fastfwd',  lab: 'FAST FWD', ic: 'hex_time',    tone: 'gold',   h: 'FAST FORWARD',        d: 'LEGENDS ½ · TODAY’S PLAYERS ×2 — BOTH COURTS', s: 'LEGENDS ½ · TODAY’S ×2' },
+  { k: 'jerseyflip',lab: 'FLIP #',  ic: 'hex_5050',    tone: 'purple', h: 'JERSEY FLIP',         d: 'PICK ONE OF THEIRS: HIS NUMBER FLIPS — 92 BECOMES 29', s: 'ONE OF THEIRS FLIPS: 92 → 29', tgt: 'op' },
+  { k: 'parade',   lab: 'PARADE',   ic: 'pack_b',      tone: 'blue',   h: 'ROOKIE PARADE',       d: 'EVERY EMPTY SPOT ON BOTH COURTS GETS A ROOKIE', s: 'ROOKIES FILL EVERY EMPTY SPOT' },
+  { k: 'benches',  lab: 'BENCHES',  ic: 'mm_vs',       tone: 'red',    h: 'BENCHES CLEAR',       d: 'BOTH TEAMS’ 2 BEST ARE THROWN OUT' },
+  { k: 'showdown', lab: 'SHOWDOWN', ic: 'mm_vs',       tone: 'gold',   h: 'SHOWDOWN',            d: 'THE TWO BESTS FACE OFF: WINNER ×2, LOSER ½', s: 'BEST VS BEST: ×2 OR ½' },
+  { k: 'heroball', lab: 'HERO BALL',ic: 'hex_5050',    tone: 'gold',   h: 'HERO BALL',           d: 'PICK ONE OF YOURS · FLIP: ×3 OR HE’S OUT', s: 'ONE OF YOURS: ×3 OR OUT', tgt: 'me' },
+  { k: 'clonearmy',lab: 'CLONES',   ic: 'c_double',    tone: 'blue',   h: 'CLONE ARMY',          d: 'PICK ONE OF YOURS: HIS CLONES FILL YOUR EMPTY SPOTS, ALL ½', s: 'CLONES FILL YOUR EMPTY SPOTS', tgt: 'me' },
+  { k: 'bodydouble',lab: 'TWIN',    ic: 'c_double',    tone: 'purple', h: 'BODY DOUBLE',         d: 'PICK ONE OF THEIRS: HIS TWIN JOINS YOUR COURT', s: 'A TWIN OF THEIRS JOINS YOU', tgt: 'op' },
+  { k: 'chairs',   lab: 'CHAIRS',   ic: 'c_reshuffle', tone: 'purple', h: 'MUSICAL CHAIRS',      d: 'EVERYONE MOVES ONE SEAT — TWO PLAYERS SWITCH TEAMS', s: 'EVERYONE MOVES ONE SEAT' },
+  { k: 'retire',   lab: 'RETIRED',  ic: 'hex_time',    tone: 'red',    h: 'RETIREMENT PARTY',    d: 'EVERY PLAYER FROM BEFORE 2000 RETIRES — BOTH COURTS', s: 'EVERY PRE-2000 PLAYER RETIRES' },
+  { k: 'cinderella',lab: 'CINDRELLA',ic: 'c_legends',  tone: 'gold',   h: 'CINDERELLA STORY',    d: 'YOUR WORST BECOMES A HALL OF FAMER' },
+  { k: 'reverse',  lab: 'REVERSE',  ic: 'c_respin',    tone: 'purple', h: 'REVERSE DAY',         d: 'EVERY ×2 BECOMES ½ AND EVERY ½ BECOMES ×2 — BOTH COURTS', s: 'EVERY ×2 ⇄ ½, BOTH COURTS' },
+  { k: 'purge',    lab: 'PURGE',    ic: 'c_under90',   tone: 'red',    h: 'THE PURGE',           d: 'EVERY CARD UNDER 85 ON BOTH COURTS IS GONE', s: 'EVERY CARD UNDER 85 — GONE' },
+  { k: 'rumble',   lab: 'RUMBLE',   ic: 'mm_vs',       tone: 'red',    h: 'ROYAL RUMBLE',        d: 'EVERYONE DUELS THE PLAYER FACING HIM: WINNER ×2, LOSER OUT', s: 'FACE-OFFS: WINNER ×2, LOSER OUT' },
+  { k: 'greatshuffle',lab: 'SHUFFLE!',ic: 'c_reshuffle',tone: 'purple',h: 'THE GREAT SHUFFLE',   d: 'EVERY PLAYER ON THE BOARD IS DEALT AGAIN BETWEEN THE TEAMS', s: 'ALL PLAYERS DEALT AGAIN' },
+  { k: 'zombies',  lab: 'ZOMBIES',  ic: 'c_blind',     tone: 'purple', h: 'NIGHT OF THE LIVING DEAD', d: 'YOUR 3 BEST USED PLAYERS RISE ONTO YOUR COURT, ALL ½', s: 'YOUR 3 BEST DEAD RISE, ALL ½' },
   { k: 'leaguepass',lab: 'LG PASS', ic: 'pack_s',      tone: 'gold',   h: 'LEAGUE PASS',         d: 'DRAW 3 CARDS' })
-const XV44 = new Set(['gatorade', 'sneaker', 'ankles', 'heckler', 'dunkcon', 'hypeman', 'birthday', 'celeb', 'tshirt', 'holdout', 'tank', 'icebath', 'kisscam', 'flopyear', 'mascot', 'bandwagon', 'jinx', 'norefs', 'wrongjsy', 'nap', 'hotdog', 'fanfight', 'zone', 'blooper', 'buzzflip', 'cheer', 'enforcer', 'rally', 'icecold', 'wipeout', 'ddare', 'supersub', 'flu', 'supermax', 'ringnight', 'robbery', 'trainer', 'leaguepass'])
-XTIER.E.push('fanfight', 'zone', 'blooper', 'buzzflip', 'cheer', 'enforcer', 'rally', 'icecold', 'wipeout', 'ddare', 'supersub'); XTIER.L.push('flu', 'supermax', 'ringnight', 'robbery', 'trainer', 'leaguepass')
+const XV44 = new Set(['tshirt', 'holdout', 'icebath', 'kisscam', 'flopyear', 'norefs', 'hotdog', 'fanfight', 'zone', 'blooper', 'buzzflip', 'wipeout', 'ddare', 'flu', 'trainer', 'leaguepass', 'startax', 'giantkill', 'salarycap', 'copycat', 'upsidedown', 'bust', 'fastfwd', 'jerseyflip', 'parade', 'benches', 'showdown', 'heroball', 'clonearmy', 'bodydouble', 'chairs', 'retire', 'cinderella', 'reverse', 'purge', 'rumble', 'greatshuffle', 'zombies'])
+XTIER.E.push('fanfight', 'zone', 'blooper', 'buzzflip', 'wipeout', 'ddare', 'startax', 'benches', 'showdown', 'chairs', 'retire', 'copycat', 'clonearmy', 'bodydouble', 'rumble', 'reverse'); XTIER.L.push('flu', 'trainer', 'leaguepass', 'giantkill', 'salarycap', 'cinderella', 'fastfwd', 'greatshuffle', 'purge')
 XEV.forEach(e => { e.tier = XTIER.U.includes(e.k) ? 'U' : XTIER.L.includes(e.k) ? 'L' : XTIER.E.includes(e.k) ? 'E' : 'C'; e.gc = e.tier !== 'C'; if (e.tier === 'U') e.w = .1; else if (e.tier === 'L') e.w = .28; else if (e.tier === 'E') e.w = .5 })
 const XLABT = Object.fromEntries(XEV.map(e => [e.lab, e.tier]))
 const tintStrip = r => r._strip.querySelectorAll('.it').forEach(n => { const t = XLABT[n.textContent]; if (t === 'E' || t === 'L' || t === 'U') n.classList.add('t' + t) })
@@ -3646,77 +3648,99 @@ function resolvePack(g, side, ev, tg, out) { const me = g[side], op = g[foe(side
    next turn reset it to 1, so a stolen STREAK kept its ×2 but lost the second card (Or: "הייתי אמור לגנוב לו את הplay2 ושיגיע התור שלי אני יקבל לשים 2") */
 function xPicks(g, side, n) { const P = g[side]; if (g.turn === side) P.picks = Math.max(P.picks || 1, n); else P.picksNext = Math.max(P.picksNext | 0, n) }
 /* the 38 v44 events (see V44_EVENTS): is there something to change — and the change itself */
-function xv44ok(g, side, k) { const f = foe(side), P = g[side], F = g[f], mine = filled(g, side).length, theirs = open5(g, f).length, canDraw = Q => Q.deck.length > 0 && Q.hand.length < XHMAX
-  if (['gatorade', 'sneaker', 'dunkcon', 'hypeman', 'birthday', 'blooper', 'cheer', 'flu', 'supermax', 'ringnight', 'trainer'].includes(k)) return mine > 0
+function xv44ok(g, side, k, tg) { const f = foe(side), P = g[side], F = g[f], mine = filled(g, side).length, theirs = open5(g, f).length, canDraw = Q => Q.deck.length > 0 && Q.hand.length < XHMAX
+  const both = () => [...open5(g, side).map(p => [side, p]), ...open5(g, f).map(p => [f, p])]   /* every card an event may touch, on both courts */
+  const rate = ([sd, p]) => rateOf(g[sd].five[p].cid), era = ([sd, p]) => g[sd].five[p].e || CARDS[g[sd].five[p].cid].e
+  if (['blooper', 'flu', 'trainer', 'cinderella'].includes(k)) return mine > 0
+  if (k === 'heroball') return mine > 0
   const whole = sd => (sd === side ? filled(g, sd) : open5(g, sd)).filter(p => !g[sd].five[p].half).length   /* ½ events need someone who is not ½ already */
   if (k === 'hotdog') return whole(f) > 0
   if (k === 'flopyear' || k === 'fanfight') return whole(side) > 0 && whole(f) > 0
-  if (['ankles', 'heckler', 'celeb', 'icecold', 'enforcer', 'robbery'].includes(k)) return theirs > 0
-  if (['kisscam', 'ddare'].includes(k)) return mine > 0 && theirs > 0
-  if (k === 'tank') return mine >= 2
+  if (['kisscam', 'ddare', 'showdown', 'copycat'].includes(k)) return mine > 0 && theirs > 0
   if (k === 'tshirt') return canDraw(P) || canDraw(F)
   if (k === 'holdout') return canDraw(P) && filled(g, side).some(p => !P.five[p].half)
   if (k === 'leaguepass') return canDraw(P)
   if (k === 'icebath') return XP5.some(p => P.five[p] && P.five[p].half)
   if (k === 'norefs') return !(P.posless && F.posless) && ['me', 'op'].some(sd => XP5.some(p => g[sd].five[p] && !g[sd].five[p].ps.includes(p)))
-  if (k === 'wrongjsy') return !!(F.lastPos && F.five[F.lastPos] && !F.five[F.lastPos].lock)
-  if (k === 'nap') return !!(P.lastPos && P.five[P.lastPos])
-  if (k === 'zone' || k === 'supersub') return P.hand.length > 0 && XP5.some(p => !P.five[p])
+  if (k === 'zone') return P.hand.length > 0 && XP5.some(p => !P.five[p])
   if (k === 'wipeout') return !g.lastFor && open5(g, 'me').length + open5(g, 'op').length >= 3   /* never on a last turn / overtime: it would empty the final */
-  if (k === 'jinx' || k === 'bandwagon') return teamFP(g, 'me') !== teamFP(g, 'op')
+  if (k === 'startax') return both().some(c => rate(c) >= 95 && !g[c[0]].five[c[1]].half)
+  if (k === 'giantkill') return both().length > 0
+  if (k === 'salarycap') return open5(g, f).some(p => rateOf(F.five[p].cid) >= 95)
+  if (k === 'upsidedown') return theirs >= 2
+  if (k === 'bust') return !!(F.lastPos && F.five[F.lastPos] && !F.five[F.lastPos].lock)
+  if (k === 'fastfwd') return both().some(c => era(c) < '2000s' && !g[c[0]].five[c[1]].half) || both().some(c => era(c) >= '2010s')
+  if (k === 'jerseyflip') return theirs > 0
+  if (k === 'parade') return anyEmpty(g, side) || anyEmpty(g, f)
+  if (k === 'benches') return both().length >= 2
+  if (k === 'clonearmy') return mine > 0 && anyEmpty(g, side)
+  if (k === 'bodydouble') return theirs > 0 && anyEmpty(g, side)
+  if (k === 'chairs' || k === 'greatshuffle') return both().length >= 2
+  if (k === 'retire') return both().some(c => era(c) < '2000s')
+  if (k === 'reverse') return both().some(([sd, p]) => { const o = g[sd].five[p]; return !!o.half !== !!((o.mvp | 0) || o.trip) })
+  if (k === 'purge') return both().some(c => rate(c) < 85)
+  if (k === 'rumble') return XP5.some(p => P.five[p] && F.five[p] && !P.five[p].lock && !F.five[p].lock)
+  if (k === 'zombies') return P.used.length > 0 && anyEmpty(g, side)
   return true }
-function xv44(g, side, ev, out) { const f = foe(side), me = g[side], op = g[f], k = ev.k
-  if (!xv44ok(g, side, k)) { out.fizz = true; return out }   /* re-checked here too: a stolen / replayed / forced one may land on a board it no longer fits */
+function xv44(g, side, ev, out, tg) { const f = foe(side), me = g[side], op = g[f], k = ev.k
+  if (!xv44ok(g, side, k, tg)) { out.fizz = true; return out }   /* re-checked here too: a stolen / replayed / forced one may land on a board it no longer fits */
+  if (ev.tgt) { if (!tg || (ev.tgt === 'me' && !(tg.me && me.five[tg.me])) || (ev.tgt === 'op' && !(tg.op && op.five[tg.op]))) { out.fizz = true; return out } out.tg = tg }
   const byV = (sd, ps) => ps.slice().sort((a, b) => slotVal(g, sd, b) - slotVal(g, sd, a))
-  const mine = byV(side, filled(g, side)), theirs = byV(f, open5(g, f)), lead = teamFP(g, side) - teamFP(g, f)
-  const add = (sd, p, n) => { const o = p && g[sd].five[p]; if (o) o.flat = Math.round(((o.flat || 0) + n) * 10) / 10 }
-  const bonus = (sd, n) => { g[sd].bonus = Math.round(((g[sd].bonus || 0) + n) * 10) / 10 }
+  const mine = byV(side, filled(g, side)), theirs = byV(f, open5(g, f))
   const flip = () => { const hit = GRNG() < .5; (out.flips = out.flips || []).push(hit); return hit }
   const hw = (sd, ps) => ps.filter(p => !g[sd].five[p].half)
   const unhalf = () => XP5.forEach(p => { if (me.five[p] && me.five[p].half) me.five[p].half = false })
-  if (k === 'gatorade') mine.forEach(p => add(side, p, 4))
-  else if (k === 'sneaker') add(side, mine[0], 12)
-  else if (k === 'ankles') add(f, theirs[0], -10)
-  else if (k === 'heckler') theirs.slice(-2).forEach(p => add(f, p, -6))
-  else if (k === 'dunkcon') mine.slice(0, 2).forEach(p => add(side, p, 7))
-  else if (k === 'hypeman') add(side, mine[mine.length - 1], 14)
-  else if (k === 'birthday') add(side, mine[GRNG() * mine.length | 0], 16)
-  else if (k === 'celeb') add(f, theirs[0], -12)
-  else if (k === 'tshirt') { const a = draw(me); draw(op); out.drawn = a ? [a] : [] }
+  const both = () => [...open5(g, side).map(p => [side, p]), ...open5(g, f).map(p => [f, p])]
+  const gone = (sd, p) => { const o = g[sd].five[p]; if (o) { g[sd].used.push(o.cid); g[sd].five[p] = null } }
+  const era = (sd, p) => g[sd].five[p].e || CARDS[g[sd].five[p].cid].e
+  if (k === 'tshirt') { const a = draw(me); draw(op); out.drawn = a ? [a] : [] }
   else if (k === 'holdout') { me.five[hw(side, mine)[0]].half = true; out.drawn = [draw(me), draw(me)].filter(Boolean) }
-  else if (k === 'tank') { add(side, mine[mine.length - 1], -10); add(side, mine[0], 20) }
   else if (k === 'icebath') unhalf()
   else if (k === 'kisscam') { dbl(me.five[mine[0]]); dbl(op.five[theirs[0]]) }
   else if (k === 'flopyear') { if (flip()) op.five[hw(f, theirs)[0]].half = true; else me.five[hw(side, mine)[0]].half = true }
-  else if (k === 'mascot') bonus(side, 10)
-  else if (k === 'bandwagon') bonus(lead >= 0 ? side : f, 8)
-  else if (k === 'jinx') bonus(lead >= 0 ? side : f, -8)
   else if (k === 'norefs') { me.posless = true; op.posless = true }
-  else if (k === 'wrongjsy') add(f, op.lastPos, -6)
-  else if (k === 'nap') { add(side, me.lastPos, 15); me.frozen = true; me.frozenWhy = 'PRE-GAME NAP' }
   else if (k === 'hotdog') { const w = hw(f, theirs); op.five[w[w.length - 1]].half = true }
   else if (k === 'fanfight') { me.five[hw(side, mine)[0]].half = true; op.five[hw(f, theirs)[0]].half = true }
   else if (k === 'zone') me.streak = (me.streak || 0) + 2
-  else if (k === 'blooper') { const hit = flip(); mine.forEach(p => add(side, p, hit ? 8 : -8)) }
-  else if (k === 'buzzflip') bonus(flip() ? side : f, 20)
-  else if (k === 'cheer') mine.forEach(p => add(side, p, 6))
-  else if (k === 'enforcer') theirs.slice(0, 2).forEach(p => add(f, p, -8))
-  else if (k === 'rally') bonus(side, lead < 0 ? 25 : 8)
-  else if (k === 'icecold') theirs.forEach(p => add(f, p, -5))
-  else if (k === 'wipeout') { for (const sd of [side, f]) XP5.forEach(p => { const o = g[sd].five[p]; if (o && !o.lock) { g[sd].used.push(o.cid); g[sd].five[p] = null } }); out.wipeout = true }
+  else if (k === 'blooper') { const hit = flip(); mine.forEach(p => { const o = me.five[p]; o.flat = Math.round(((o.flat || 0) + (hit ? 8 : -8)) * 10) / 10 }) }
+  else if (k === 'buzzflip') { const s2 = flip() ? side : f; g[s2].bonus = Math.round(((g[s2].bonus || 0) + 20) * 10) / 10 }
+  else if (k === 'wipeout') { for (const sd of [side, f]) XP5.forEach(p => { const o = g[sd].five[p]; if (o && !o.lock) gone(sd, p) }); out.wipeout = true }
   else if (k === 'ddare') { if (flip()) dbl(me.five[mine[mine.length - 1]]); else dbl(op.five[theirs[theirs.length - 1]]) }
-  else if (k === 'supersub') { const d = draw(me); out.drawn = d ? [d] : []; me.heat = true }
   else if (k === 'flu') { const o = me.five[mine[0]]; if (o.trip) dbl(o); else o.trip = true }
-  else if (k === 'supermax') add(side, mine[0], 30)
-  else if (k === 'ringnight') mine.forEach(p => add(side, p, 10))
-  else if (k === 'robbery') theirs.slice(0, 2).forEach(p => add(f, p, -15))
-  else if (k === 'trainer') { unhalf(); mine.forEach(p => add(side, p, 6)) }
+  else if (k === 'trainer') { unhalf(); mine.forEach(p => { const o = me.five[p]; o.flat = Math.round(((o.flat || 0) + 6) * 10) / 10 }) }
   else if (k === 'leaguepass') out.drawn = [draw(me), draw(me), draw(me)].filter(Boolean)
+  /* ── v49: the broken-card nerfs ── */
+  else if (k === 'startax') both().forEach(([sd, p]) => { const o = g[sd].five[p]; if (rateOf(o.cid) >= 95) o.half = true })
+  else if (k === 'giantkill') { const c = both().sort((a, b) => rateOf(g[b[0]].five[b[1]].cid) - rateOf(g[a[0]].five[a[1]].cid) || slotVal(g, b[0], b[1]) - slotVal(g, a[0], a[1]))[0]; gone(c[0], c[1]); out.killed = c }
+  else if (k === 'salarycap') open5(g, f).forEach(p => { const o = op.five[p]; if (rateOf(o.cid) >= 95) { op.deck.push(o.cid); op.five[p] = null } })
+  else if (k === 'copycat') { const p = theirs[0], cid = me.five[mine[mine.length - 1]].cid; op.used.push(op.five[p].cid); op.five[p] = mkSlot(cid) }
+  else if (k === 'upsidedown') { const A = op.five[theirs[0]], B = op.five[theirs[theirs.length - 1]]; for (const k2 of ['s', 'flat', 'mvp', 'trip', 'half', 'prime']) { const t = A[k2]; A[k2] = B[k2]; B[k2] = t } }
+  else if (k === 'bust') { const busts = rankPool(leaguePool(g, f), 0, .12); op.used.push(op.five[op.lastPos].cid); op.five[op.lastPos] = mkSlot(busts[GRNG() * busts.length | 0]) }
+  /* ── v49: the psycho ones ── */
+  else if (k === 'fastfwd') both().forEach(([sd, p]) => { const o = g[sd].five[p], e = era(sd, p); if (e < '2000s') o.half = true; else if (e >= '2010s') dbl(o) })
+  else if (k === 'jerseyflip') { const o = op.five[tg.op], r = Math.round(rateOf(o.cid)), rv = parseInt(String(r).split('').reverse().join(''), 10) || 0, x = Math.max(rv, 10) / Math.max(r, 1)
+    for (const s2 in o.s) o.s[s2] = Math.round(o.s[s2] * x * 10) / 10; o.tag = `#${r} → ${rv}`; o.tagUp = rv > r }
+  else if (k === 'parade') for (const sd of [side, f]) { const pool = shuffle(leaguePool(g, sd).filter(id => CARDS[id].e === '2020s')); XP5.forEach(p => { if (!g[sd].five[p] && pool.length) g[sd].five[p] = mkSlot(pool.shift()) }) }
+  else if (k === 'benches') for (const sd of [side, f]) byV(sd, open5(g, sd)).slice(0, 2).forEach(p => gone(sd, p))
+  else if (k === 'showdown') { const a = mine[0], b = theirs[0], va = slotVal(g, side, a), vb = slotVal(g, f, b)
+    if (va >= vb) { dbl(me.five[a]); op.five[b].half = true } else { dbl(op.five[b]); if (!me.five[a].lock) me.five[a].half = true } }
+  else if (k === 'heroball') { const p = tg.me, o = me.five[p]; if (flip()) { if (o.trip) dbl(o); else o.trip = true } else gone(side, p) }
+  else if (k === 'clonearmy') { const cid = me.five[tg.me].cid; XP5.forEach(p => { if (!me.five[p]) { me.five[p] = mkSlot(cid); me.five[p].half = true } }) }
+  else if (k === 'bodydouble') { const cid = op.five[tg.op].cid, emp = XP5.filter(p => !me.five[p]), p = XLINE[cid].ps.find(q => emp.includes(q)) || emp[0]; me.five[p] = mkSlot(cid) }
+  else if (k === 'chairs') { const ring = [...XP5.map(p => [side, p]), ...XP5.slice().reverse().map(p => [f, p])].filter(([sd, p]) => !(g[sd].five[p] && g[sd].five[p].lock))
+    const occ = ring.map(([sd, p]) => g[sd].five[p]); ring.forEach(([sd, p], i) => { g[sd].five[p] = occ[(i - 1 + occ.length) % occ.length] }) }
+  else if (k === 'retire') both().forEach(([sd, p]) => { if (era(sd, p) < '2000s') gone(sd, p) })
+  else if (k === 'cinderella') { const p = weakestOf(g, side, true) || mine[mine.length - 1], legends = shuffle(leaguePool(g, side, true)); if (legends.length) { me.used.push(me.five[p].cid); me.five[p] = mkSlot(legends[0]) } }
+  else if (k === 'reverse') both().forEach(([sd, p]) => { const o = g[sd].five[p], up = (o.mvp | 0) > 0 || o.trip; if (o.half && !up) { o.half = false; o.mvp = 1 } else if (up && !o.half) { o.mvp = 0; o.trip = false; o.half = true } })
+  else if (k === 'purge') both().forEach(([sd, p]) => { if (rateOf(g[sd].five[p].cid) < 85) gone(sd, p) })
+  else if (k === 'rumble') XP5.forEach(p => { const A = me.five[p], B = op.five[p]; if (!A || !B || A.lock || B.lock) return; const va = slotVal(g, side, p), vb = slotVal(g, f, p); if (va > vb) { dbl(A); gone(f, p) } else if (vb > va) { dbl(B); gone(side, p) } })
+  else if (k === 'greatshuffle') { const slots = both(), occ = shuffle(slots.map(([sd, p]) => g[sd].five[p])); slots.forEach(([sd, p], i) => { g[sd].five[p] = occ[i] }) }
+  else if (k === 'zombies') { const dead = byOvr(me.used.filter(id => XLINE[id])).slice(0, 3); dead.forEach(id => { const emp = XP5.filter(p => !me.five[p]); if (!emp.length) return; const p = XLINE[id].ps.find(q => emp.includes(q)) || emp[0]; takeFrom(me.used, id); me.five[p] = mkSlot(id); me.five[p].half = true }) }
   return out }
 function resolveEv(g, side, ev, tg) { const me = g[side], op = g[foe(side)], out = { k: ev.k }
   if (XDISC[ev.k] || XPACK[ev.k]) return resolvePack(g, side, ev, tg, out)
   if (ev.once) (g.usedOnce = g.usedOnce || new Set()).add(ev.k)
-  if (XV44.has(ev.k)) return xv44(g, side, ev, out)
+  if (XV44.has(ev.k)) return xv44(g, side, ev, out, tg)
   if (ev.k === 'pick2') xPicks(g, side, 2)
   if (ev.k === 'draw2') out.drawn = [draw(me), draw(me)].filter(Boolean)
   /* NEW 5 deals a fresh hand of FIVE (Or v48: "כתוב new 5 … ולא מקבלים יד של 5 - מקבלים את אותו המספר" — it redrew as many as you held, min 3) */
@@ -4132,7 +4156,7 @@ function courtTone(g, side, p) { const o = g[side].five[p]; if (!o || o.out) ret
 function paintFive(g, side, hl) { const box = side === 'me' ? g.meB : g.opB, y = side === 'me' ? MEY : OPY; box.innerHTML = ''; (g.fEls = g.fEls || {})[side] = {}
   XP5.forEach((p, i) => { const o = g[side].five[p], x = fx(i)
     const sl = el(box, 'div', 'xslot s' + sideCol(g, side) + (o ? ' full' : ''), `left:${x}px;top:${y}px;width:${FW}px;height:${FH}px`); el(sl, 'div', 'xsp', '', p)
-    let c = null; if (o) { c = CARD(box, o.cid, x, y, FW); if (o.mvp) el(c, 'div', 'xtag mvp', '', dblTag(o.mvp)); else if (o.prime) el(c, 'div', 'xtag mvp prime', '', '🔥 PRIME'); if (o.lock) el(c, 'div', 'xtag lock', '', '🛡 SHIELD') /* was 🔒 LOCKED — Or v40: "לוקד מוזר ולא מובן · אני רוצה פרוטקטד או שילד" */; if (nightMul(g, o) > 1) { c.classList.add('xnight'); el(c, 'div', 'xtag night', '', nightTag(g)) } if (o.hot) el(c, 'div', 'xtag hot', '', 'ALLEY-OOP · DOUBLE'); if (o.flat) el(c, 'div', 'xtag ' + (o.flat > 0 ? 'up flat' : 'dn flat'), '', (o.flat > 0 ? '+' : '−') + Math.abs(o.flat)); if (o.trip) el(c, 'div', 'xtag mvp', '', 'TRIPLE'); if (o.half) el(c, 'div', 'xtag dn half', '', 'HALF'); if (o.out) { c.classList.add('xinj'); el(c, 'div', 'xtag inj', '', 'INJURED') } if (!o.ps.includes(p) && !g[side].posless) el(c, 'div', 'xtag oop', '', 'OUT OF POS')
+    let c = null; if (o) { c = CARD(box, o.cid, x, y, FW); if (o.mvp) el(c, 'div', 'xtag mvp', '', dblTag(o.mvp)); else if (o.prime) el(c, 'div', 'xtag mvp prime', '', '🔥 PRIME'); if (o.lock) el(c, 'div', 'xtag lock', '', '🛡 SHIELD'); if (o.tag) el(c, 'div', 'xtag ' + (o.tagUp ? 'up' : 'dn') + ' flat', '', o.tag) /* v49 JERSEY FLIP: '#92 → 29' */ /* was 🔒 LOCKED — Or v40: "לוקד מוזר ולא מובן · אני רוצה פרוטקטד או שילד" */; if (nightMul(g, o) > 1) { c.classList.add('xnight'); el(c, 'div', 'xtag night', '', nightTag(g)) } if (o.hot) el(c, 'div', 'xtag hot', '', 'ALLEY-OOP · DOUBLE'); if (o.flat) el(c, 'div', 'xtag ' + (o.flat > 0 ? 'up flat' : 'dn flat'), '', (o.flat > 0 ? '+' : '−') + Math.abs(o.flat)); if (o.trip) el(c, 'div', 'xtag mvp', '', 'TRIPLE'); if (o.half) el(c, 'div', 'xtag dn half', '', 'HALF'); if (o.out) { c.classList.add('xinj'); el(c, 'div', 'xtag inj', '', 'INJURED') } if (!o.ps.includes(p) && !g[side].posless) el(c, 'div', 'xtag oop', '', 'OUT OF POS')
       }
     const v = el(box, 'div', 'xfp' + (o ? courtTone(g, side, p) : ''), `left:${x}px;top:${y + FH + 2}px;width:${FW}px`, o ? '+' + slotVal(g, side, p).toFixed(1) : '')
     g.fEls[side][p] = { sl, c, v, x, y } }) }
@@ -4349,7 +4373,7 @@ function chooseTarget(g, ev) { return new Promise(res => { const steps = ev.tgt 
   const avail = sd => sd === 'op' ? open5(g, 'op') : filled(g, sd); if (steps.some(sd => !avail(sd).length)) return res(null)
   /* one candidate on every side = nothing to choose: it just happens (Or: "במצב כזה שזה יקרה פשוט · כי יש רק 2 שחקנים וזה חייב לקרות") */
   if (steps.every(sd => avail(sd).length === 1)) { steps.forEach(sd => { tg[sd] = avail(sd)[0] }); paintFive(g, 'me'); paintFive(g, 'op'); steps.forEach(sd => { const f = g.fEls[sd][tg[sd]]; if (f && f.c) { f.c.classList.add('picked'); const c = ctr(f.c); FX.flashAt(c.x, c.y, 90, '255,210,90', .7) } }); SND('z_select'); later(650, () => { paintFive(g, 'me'); paintFive(g, 'op'); res({ ...tg }) }); return }
-  const verb = { trade: 'DO THE TRADE', swap: 'SWAP THEIR NUMBERS', mirror: 'COPY HIS NUMBER', sswap: 'SWAP THEM', defector: 'TAKE HIM', expansion: 'TAKE HIM', buyout: 'BUY HIM OUT', injury: 'INJURE HIM', bench: 'BENCH HIM', heist: 'PICK HIS POCKET', lock: 'LOCK HIM', mvp: 'DOUBLE HIM', triple: 'TRIPLE HIM', prime: 'PRIME HIM', clone: 'CLONE HIM', iso: 'ISOLATE HIM', twoway: 'COPY HIM' }[ev.k] || ev.h
+  const verb = { trade: 'DO THE TRADE', swap: 'SWAP THEIR NUMBERS', mirror: 'COPY HIS NUMBER', sswap: 'SWAP THEM', defector: 'TAKE HIM', expansion: 'TAKE HIM', buyout: 'BUY HIM OUT', injury: 'INJURE HIM', bench: 'BENCH HIM', heist: 'PICK HIS POCKET', lock: 'LOCK HIM', mvp: 'DOUBLE HIM', triple: 'TRIPLE HIM', prime: 'PRIME HIM', clone: 'CLONE HIM', iso: 'ISOLATE HIM', twoway: 'COPY HIM', jerseyflip: 'FLIP HIS NUMBER', heroball: 'TAKE THE SHOT', clonearmy: 'CLONE HIM', bodydouble: 'TAKE HIS TWIN' }[ev.k] || ev.h
   const ready = () => steps.every(sd => tg[sd]), sgn = d => `${d > 0 ? '+' : d < 0 ? '−' : '±'}${Math.abs(d).toFixed(1)}`
   const go = () => { if (done || !ready()) return; done = true; if (bar) bar.remove(); g.evb.style.visibility = ''; SND('commit'); SND('g_vsign', { gain: .6 }); paintFive(g, 'me'); paintFive(g, 'op'); res({ ...tg }) }
   const arm = () => { paintFive(g, 'me'); paintFive(g, 'op'); if (bar) { bar.remove(); bar = null } g.evb.style.visibility = ''
@@ -4961,7 +4985,7 @@ function howTo() { ov((o) => { o.querySelector('.dim').onclick = () => closeOv()
    same taps = the same game on both screens. The CPU's decisions become the friend's.
    why: Or "אם אני רוצה מולטיפלייר" — option 2, the room code ════ */
 let MPG = null
-const MP_VER = '48'   /* the GAME protocol, not the build: two phones whose engine, dice or wire differ would roll different games, so the room refuses
+const MP_VER = '49'   /* the GAME protocol, not the build: two phones whose engine, dice or wire differ would roll different games, so the room refuses
    them — bump it only when one of those changes (v23 → '23'; v25 → '25': TIME OUT now plays on the last turn; v27 → '27': both play the opener's deck; v28 → '28': 29 new events). A UI-only update (v24: chat) keeps it, so nobody has to reopen together */
 /* the phones meet in OUR room server (build/server/worker.js on Cloudflare): a plain WebSocket, so it gets through any network (office Wi-Fi
    included — Bella could not get a direct WebRTC link through hers). Every tap carries a sequence number; after any drop the phone reconnects to
@@ -5134,7 +5158,7 @@ document.addEventListener('click', e => { let n = e.target; while (n && n !== do
 { const k0 = kick; kick = (n = 1) => { k0(n); if (SET.vib && n >= 2 && navigator.vibrate) try { navigator.vibrate(n >= 3 ? 28 : 14) } catch (e) {} } }
 
 /* ── the run log ── */
-function runNew(g, a) { const me = mpMe(); g.run = { id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6), v: '48', t: Date.now(), uid: me.id, name: me.name || '', mode: a.mp ? 'friend' : 'ai', opp: g.opp.name, oppId: (a.mp && typeof MPG !== 'undefined' && MPG && MPG.friend && MPG.friend.id) || '', L: [] } }
+function runNew(g, a) { const me = mpMe(); g.run = { id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6), v: '49', t: Date.now(), uid: me.id, name: me.name || '', mode: a.mp ? 'friend' : 'ai', opp: g.opp.name, oppId: (a.mp && typeof MPG !== 'undefined' && MPG && MPG.friend && MPG.friend.id) || '', L: [] } }
 function runLog(g, ...e) { if (g && g.run && !g.run.done && g.run.L.length < 1200) g.run.L.push([Math.round((Date.now() - g.run.t) / 100) / 10, ...e]) }
 const runFive = (g, sd) => XP5.map(p => { const o = g[sd].five[p]; return o ? `${p} ${CARDS[o.cid] ? CARDS[o.cid].n : o.cid} ${slotVal(g, sd, p).toFixed(1)}${o.out ? ' OUT' : ''}` : `${p} —` }).join(' · ')
 function runBoard(g) { if (!g || !g.run) return; runLog(g, 'B', 'me', runFive(g, 'me')); runLog(g, 'B', 'op', runFive(g, 'op')); runLog(g, '=', +scoreOf(g, 'me').toFixed(1), +scoreOf(g, 'op').toFixed(1)) }
@@ -5181,7 +5205,7 @@ function openSettings() { SND('z_menu_up', { gain: .7 }); ov(o => { o.querySelec
     all.forEach(r => { const d = el(list, 'div', 'xrun ' + (r.win ? 'w' : 'l')); el(d, 'em', '', '', r.win ? 'W' : 'L'); const t = el(d, 'span'); el(t, 'b', '', '', 'VS ' + escH(r.opp || '?')); el(t, 'small', '', '', `${r.rec || ''} · ${agoTxt(r.t)}${r.sent ? '' : ' · NOT SENT YET'}`); el(d, 'i', '', '', `${(+r.me || 0).toFixed(1)}–${(+r.op || 0).toFixed(1)}`); d.onclick = e => { e.stopPropagation(); runOpen(r) } }) }
   paint(histAdd(runsLocal()))
   try { fetch(RUNS_URL + me.id).then(x => x.ok ? x.json() : []).then(srv => { if (Array.isArray(srv) && srv.length && rl.isConnected) paint(histAdd(srv.map(x => ({ ...x, sent: true })))) }).catch(() => {}) } catch (e) {}
-  el(h, 'p', 'xsver', '', `DRAFT CHAOS v48`)
+  el(h, 'p', 'xsver', '', `DRAFT CHAOS v49`)
 }) }
 /* one run, move by move */
 function runView(r) { SND('z_menu_up', { gain: .6 }); ov(o => { o.querySelector('.dim').onclick = () => openSettings(); const h = el(o, 'div', 'howto xset xrv'); el(h, 'div', 'x', '', '‹').onclick = e => { e.stopPropagation(); openSettings() }
@@ -5335,7 +5359,7 @@ SCREENS.pack = (s, a = {}) => {
 
 /* ════════════════ DEV (side panel on desktop · ☰ on the phone) ════════════════ */
 function openDevSheet() { ov((o) => { o.querySelector('.dim').onclick = () => closeOv(); const sh = el(o, 'div', 'sheet'); el(sh, 'div', 'dev'); renderDev() }) }
-function devHTML() { return `<h3>DRAFT CHAOS · POC v48</h3>
+function devHTML() { return `<h3>DRAFT CHAOS · POC v49</h3>
 <p>Screens</p><div class="seg"><button data-dev="go:hub">HUB</button><button data-dev="go:mm">MATCHMAKING</button><button data-dev="go:chaos">MATCH</button><button data-dev="go:deck">MY DECK</button><button data-dev="go:cards">MY CARDS</button><button data-dev="go:store">PACKS</button></div>
 <p>Your next spin lands on</p><div class="seg">${XEV.map(e => `<button data-dev="ev:${e.k}">${e.lab}</button>`).join('')}</div>
 <p>Their next spin lands on</p><div class="seg">${XEV.map(e => `<button data-dev="eo:${e.k}">${e.lab}</button>`).join('')}</div>
