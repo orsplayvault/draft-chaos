@@ -1539,6 +1539,12 @@ img { display: block; -webkit-user-drag: none; user-select: none; }
    position were grey on navy and sank. Same cyan as the positions on the cards (v43). COLOUR ONLY — same size, same font, same dash */
 .xslot:not(.full) { border-color: rgba(43,232,255,.55); background: rgba(43,232,255,.06); }
 .xslot:not(.full) .xsp { color: rgba(43,232,255,.85); }
+/* v46 — THE EMPTY SLOT IN ITS OWNER'S COLOUR (Or: "מה אם אנחנו עושים שהמקומות החסרים של הקלפים יהיה כחול אצלי אדום אצל היריב (או בכללי לפי הצבעים של השמות)"):
+   the same blue/red as the names (sideCol: the room opener is blue on both phones, against the computer you are blue). Colour only — v45's cyan stays as the fallback */
+.xslot.sb:not(.full) { border-color: rgba(61,155,255,.6); background: rgba(61,155,255,.07); }
+.xslot.sb:not(.full) .xsp { color: rgba(61,155,255,.95); }
+.xslot.sr:not(.full) { border-color: rgba(255,77,94,.6); background: rgba(255,77,94,.07); }
+.xslot.sr:not(.full) .xsp { color: rgba(255,77,94,.95); }
 
 </style>
 </head>
@@ -4123,7 +4129,7 @@ function courtTone(g, side, p) { const o = g[side].five[p]; if (!o || o.out) ret
   return v > base + .05 ? ' bup' : v < base - .05 ? ' bdn' : '' }
 function paintFive(g, side, hl) { const box = side === 'me' ? g.meB : g.opB, y = side === 'me' ? MEY : OPY; box.innerHTML = ''; (g.fEls = g.fEls || {})[side] = {}
   XP5.forEach((p, i) => { const o = g[side].five[p], x = fx(i)
-    const sl = el(box, 'div', 'xslot' + (o ? ' full' : ''), `left:${x}px;top:${y}px;width:${FW}px;height:${FH}px`); el(sl, 'div', 'xsp', '', p)
+    const sl = el(box, 'div', 'xslot s' + sideCol(g, side) + (o ? ' full' : ''), `left:${x}px;top:${y}px;width:${FW}px;height:${FH}px`); el(sl, 'div', 'xsp', '', p)
     let c = null; if (o) { c = CARD(box, o.cid, x, y, FW); if (o.mvp) el(c, 'div', 'xtag mvp', '', dblTag(o.mvp)); else if (o.prime) el(c, 'div', 'xtag mvp prime', '', '🔥 PRIME'); if (o.lock) el(c, 'div', 'xtag lock', '', '🛡 SHIELD') /* was 🔒 LOCKED — Or v40: "לוקד מוזר ולא מובן · אני רוצה פרוטקטד או שילד" */; if (nightMul(g, o) > 1) { c.classList.add('xnight'); el(c, 'div', 'xtag night', '', nightTag(g)) } if (o.hot) el(c, 'div', 'xtag hot', '', 'ALLEY-OOP · DOUBLE'); if (o.flat) el(c, 'div', 'xtag ' + (o.flat > 0 ? 'up flat' : 'dn flat'), '', (o.flat > 0 ? '+' : '−') + Math.abs(o.flat)); if (o.trip) el(c, 'div', 'xtag mvp', '', 'TRIPLE'); if (o.half) el(c, 'div', 'xtag dn half', '', 'HALF'); if (o.out) { c.classList.add('xinj'); el(c, 'div', 'xtag inj', '', 'INJURED') } if (!o.ps.includes(p) && !g[side].posless) el(c, 'div', 'xtag oop', '', 'OUT OF POS')
       }
     const v = el(box, 'div', 'xfp' + (o ? courtTone(g, side, p) : ''), `left:${x}px;top:${y + FH + 2}px;width:${FW}px`, o ? '+' + slotVal(g, side, p).toFixed(1) : '')
@@ -5126,7 +5132,7 @@ document.addEventListener('click', e => { let n = e.target; while (n && n !== do
 { const k0 = kick; kick = (n = 1) => { k0(n); if (SET.vib && n >= 2 && navigator.vibrate) try { navigator.vibrate(n >= 3 ? 28 : 14) } catch (e) {} } }
 
 /* ── the run log ── */
-function runNew(g, a) { const me = mpMe(); g.run = { id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6), v: '45', t: Date.now(), uid: me.id, name: me.name || '', mode: a.mp ? 'friend' : 'ai', opp: g.opp.name, oppId: (a.mp && typeof MPG !== 'undefined' && MPG && MPG.friend && MPG.friend.id) || '', L: [] } }
+function runNew(g, a) { const me = mpMe(); g.run = { id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6), v: '46', t: Date.now(), uid: me.id, name: me.name || '', mode: a.mp ? 'friend' : 'ai', opp: g.opp.name, oppId: (a.mp && typeof MPG !== 'undefined' && MPG && MPG.friend && MPG.friend.id) || '', L: [] } }
 function runLog(g, ...e) { if (g && g.run && !g.run.done && g.run.L.length < 1200) g.run.L.push([Math.round((Date.now() - g.run.t) / 100) / 10, ...e]) }
 const runFive = (g, sd) => XP5.map(p => { const o = g[sd].five[p]; return o ? `${p} ${CARDS[o.cid] ? CARDS[o.cid].n : o.cid} ${slotVal(g, sd, p).toFixed(1)}${o.out ? ' OUT' : ''}` : `${p} —` }).join(' · ')
 function runBoard(g) { if (!g || !g.run) return; runLog(g, 'B', 'me', runFive(g, 'me')); runLog(g, 'B', 'op', runFive(g, 'op')); runLog(g, '=', +scoreOf(g, 'me').toFixed(1), +scoreOf(g, 'op').toFixed(1)) }
@@ -5173,7 +5179,7 @@ function openSettings() { SND('z_menu_up', { gain: .7 }); ov(o => { o.querySelec
     all.forEach(r => { const d = el(list, 'div', 'xrun ' + (r.win ? 'w' : 'l')); el(d, 'em', '', '', r.win ? 'W' : 'L'); const t = el(d, 'span'); el(t, 'b', '', '', 'VS ' + escH(r.opp || '?')); el(t, 'small', '', '', `${r.rec || ''} · ${agoTxt(r.t)}${r.sent ? '' : ' · NOT SENT YET'}`); el(d, 'i', '', '', `${(+r.me || 0).toFixed(1)}–${(+r.op || 0).toFixed(1)}`); d.onclick = e => { e.stopPropagation(); runOpen(r) } }) }
   paint(histAdd(runsLocal()))
   try { fetch(RUNS_URL + me.id).then(x => x.ok ? x.json() : []).then(srv => { if (Array.isArray(srv) && srv.length && rl.isConnected) paint(histAdd(srv.map(x => ({ ...x, sent: true })))) }).catch(() => {}) } catch (e) {}
-  el(h, 'p', 'xsver', '', `DRAFT CHAOS v45`)
+  el(h, 'p', 'xsver', '', `DRAFT CHAOS v46`)
 }) }
 /* one run, move by move */
 function runView(r) { SND('z_menu_up', { gain: .6 }); ov(o => { o.querySelector('.dim').onclick = () => openSettings(); const h = el(o, 'div', 'howto xset xrv'); el(h, 'div', 'x', '', '‹').onclick = e => { e.stopPropagation(); openSettings() }
@@ -5327,7 +5333,7 @@ SCREENS.pack = (s, a = {}) => {
 
 /* ════════════════ DEV (side panel on desktop · ☰ on the phone) ════════════════ */
 function openDevSheet() { ov((o) => { o.querySelector('.dim').onclick = () => closeOv(); const sh = el(o, 'div', 'sheet'); el(sh, 'div', 'dev'); renderDev() }) }
-function devHTML() { return `<h3>DRAFT CHAOS · POC v45</h3>
+function devHTML() { return `<h3>DRAFT CHAOS · POC v46</h3>
 <p>Screens</p><div class="seg"><button data-dev="go:hub">HUB</button><button data-dev="go:mm">MATCHMAKING</button><button data-dev="go:chaos">MATCH</button><button data-dev="go:deck">MY DECK</button><button data-dev="go:cards">MY CARDS</button><button data-dev="go:store">PACKS</button></div>
 <p>Your next spin lands on</p><div class="seg">${XEV.map(e => `<button data-dev="ev:${e.k}">${e.lab}</button>`).join('')}</div>
 <p>Their next spin lands on</p><div class="seg">${XEV.map(e => `<button data-dev="eo:${e.k}">${e.lab}</button>`).join('')}</div>
