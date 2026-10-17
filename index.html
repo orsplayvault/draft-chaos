@@ -3254,7 +3254,7 @@ function teamFP(g, side) { const T = { pts: 0, reb: 0, ast: 0, stl: 0, blk: 0 };
 const XEV = [
   // CARDS
   { k: 'pick2',   lab: 'PICK 2',  ic: 'c_double',    tone: 'gold',   h: 'DOUBLE PICK',   d: 'PLAY 2 CARDS' },
-  { k: 'shuffle', lab: 'NEW 5', ic: 'c_reshuffle', tone: 'blue',   h: 'NEW LINEUP',       d: 'A NEW HAND' },
+  { k: 'shuffle', lab: 'NEW 5', ic: 'c_reshuffle', tone: 'blue',   h: 'NEW LINEUP',       d: 'A NEW HAND OF 5' },
   { k: 'steal',   lab: 'STEAL',   ic: 'boost_stl',   tone: 'gold',   h: 'STEAL',         d: 'STEAL A CARD FROM THEM' },
   { k: 'draftn',  lab: 'WAIVER',    ic: 'pack_b',      tone: 'gold',   h: 'WAIVER CLAIM',          d: 'TAKE 1 OF THEIR TOP 3' },
   { k: 'sign',    lab: 'SIGN',    ic: 'boost_ast',   tone: 'purple', h: 'SIGN & TRADE',  d: 'TAKE 1 OF THEIRS · GIVE 1' },
@@ -3719,7 +3719,8 @@ function resolveEv(g, side, ev, tg) { const me = g[side], op = g[foe(side)], out
   if (XV44.has(ev.k)) return xv44(g, side, ev, out)
   if (ev.k === 'pick2') xPicks(g, side, 2)
   if (ev.k === 'draw2') out.drawn = [draw(me), draw(me)].filter(Boolean)
-  if (ev.k === 'shuffle') { me.deck = shuffle([...me.deck, ...me.hand]); const n = me.hand.length; me.hand = []; out.drawn = []; for (let i = 0; i < Math.max(n, 3); i++) { const d = draw(me); if (d) out.drawn.push(d) } }
+  /* NEW 5 deals a fresh hand of FIVE (Or v48: "כתוב new 5 … ולא מקבלים יד של 5 - מקבלים את אותו המספר" — it redrew as many as you held, min 3) */
+  if (ev.k === 'shuffle') { me.deck = shuffle([...me.deck, ...me.hand]); me.hand = []; out.drawn = []; for (let i = 0; i < XHMAX; i++) { const d = draw(me); if (d) out.drawn.push(d) } }
   if (ev.k === 'steal') { if (op.hand.length) { const id = op.hand.splice(GRNG() * op.hand.length | 0, 1)[0]; if (me.hand.length < XHMAX) { me.hand.push(id); out.stolen = id } else { me.used.push(id); out.burned = id } } else out.fizz = true }
   if (ev.k === 'tech') { if (me.hand.length) { const id = me.hand.splice(GRNG() * me.hand.length | 0, 1)[0]; me.used.push(id); out.lost = id } else out.fizz = true }
   if (ev.k === 'freeze') op.frozen = true
@@ -4960,7 +4961,7 @@ function howTo() { ov((o) => { o.querySelector('.dim').onclick = () => closeOv()
    same taps = the same game on both screens. The CPU's decisions become the friend's.
    why: Or "אם אני רוצה מולטיפלייר" — option 2, the room code ════ */
 let MPG = null
-const MP_VER = '44'   /* the GAME protocol, not the build: two phones whose engine, dice or wire differ would roll different games, so the room refuses
+const MP_VER = '48'   /* the GAME protocol, not the build: two phones whose engine, dice or wire differ would roll different games, so the room refuses
    them — bump it only when one of those changes (v23 → '23'; v25 → '25': TIME OUT now plays on the last turn; v27 → '27': both play the opener's deck; v28 → '28': 29 new events). A UI-only update (v24: chat) keeps it, so nobody has to reopen together */
 /* the phones meet in OUR room server (build/server/worker.js on Cloudflare): a plain WebSocket, so it gets through any network (office Wi-Fi
    included — Bella could not get a direct WebRTC link through hers). Every tap carries a sequence number; after any drop the phone reconnects to
@@ -5133,7 +5134,7 @@ document.addEventListener('click', e => { let n = e.target; while (n && n !== do
 { const k0 = kick; kick = (n = 1) => { k0(n); if (SET.vib && n >= 2 && navigator.vibrate) try { navigator.vibrate(n >= 3 ? 28 : 14) } catch (e) {} } }
 
 /* ── the run log ── */
-function runNew(g, a) { const me = mpMe(); g.run = { id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6), v: '47', t: Date.now(), uid: me.id, name: me.name || '', mode: a.mp ? 'friend' : 'ai', opp: g.opp.name, oppId: (a.mp && typeof MPG !== 'undefined' && MPG && MPG.friend && MPG.friend.id) || '', L: [] } }
+function runNew(g, a) { const me = mpMe(); g.run = { id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6), v: '48', t: Date.now(), uid: me.id, name: me.name || '', mode: a.mp ? 'friend' : 'ai', opp: g.opp.name, oppId: (a.mp && typeof MPG !== 'undefined' && MPG && MPG.friend && MPG.friend.id) || '', L: [] } }
 function runLog(g, ...e) { if (g && g.run && !g.run.done && g.run.L.length < 1200) g.run.L.push([Math.round((Date.now() - g.run.t) / 100) / 10, ...e]) }
 const runFive = (g, sd) => XP5.map(p => { const o = g[sd].five[p]; return o ? `${p} ${CARDS[o.cid] ? CARDS[o.cid].n : o.cid} ${slotVal(g, sd, p).toFixed(1)}${o.out ? ' OUT' : ''}` : `${p} —` }).join(' · ')
 function runBoard(g) { if (!g || !g.run) return; runLog(g, 'B', 'me', runFive(g, 'me')); runLog(g, 'B', 'op', runFive(g, 'op')); runLog(g, '=', +scoreOf(g, 'me').toFixed(1), +scoreOf(g, 'op').toFixed(1)) }
@@ -5180,7 +5181,7 @@ function openSettings() { SND('z_menu_up', { gain: .7 }); ov(o => { o.querySelec
     all.forEach(r => { const d = el(list, 'div', 'xrun ' + (r.win ? 'w' : 'l')); el(d, 'em', '', '', r.win ? 'W' : 'L'); const t = el(d, 'span'); el(t, 'b', '', '', 'VS ' + escH(r.opp || '?')); el(t, 'small', '', '', `${r.rec || ''} · ${agoTxt(r.t)}${r.sent ? '' : ' · NOT SENT YET'}`); el(d, 'i', '', '', `${(+r.me || 0).toFixed(1)}–${(+r.op || 0).toFixed(1)}`); d.onclick = e => { e.stopPropagation(); runOpen(r) } }) }
   paint(histAdd(runsLocal()))
   try { fetch(RUNS_URL + me.id).then(x => x.ok ? x.json() : []).then(srv => { if (Array.isArray(srv) && srv.length && rl.isConnected) paint(histAdd(srv.map(x => ({ ...x, sent: true })))) }).catch(() => {}) } catch (e) {}
-  el(h, 'p', 'xsver', '', `DRAFT CHAOS v47`)
+  el(h, 'p', 'xsver', '', `DRAFT CHAOS v48`)
 }) }
 /* one run, move by move */
 function runView(r) { SND('z_menu_up', { gain: .6 }); ov(o => { o.querySelector('.dim').onclick = () => openSettings(); const h = el(o, 'div', 'howto xset xrv'); el(h, 'div', 'x', '', '‹').onclick = e => { e.stopPropagation(); openSettings() }
@@ -5334,7 +5335,7 @@ SCREENS.pack = (s, a = {}) => {
 
 /* ════════════════ DEV (side panel on desktop · ☰ on the phone) ════════════════ */
 function openDevSheet() { ov((o) => { o.querySelector('.dim').onclick = () => closeOv(); const sh = el(o, 'div', 'sheet'); el(sh, 'div', 'dev'); renderDev() }) }
-function devHTML() { return `<h3>DRAFT CHAOS · POC v47</h3>
+function devHTML() { return `<h3>DRAFT CHAOS · POC v48</h3>
 <p>Screens</p><div class="seg"><button data-dev="go:hub">HUB</button><button data-dev="go:mm">MATCHMAKING</button><button data-dev="go:chaos">MATCH</button><button data-dev="go:deck">MY DECK</button><button data-dev="go:cards">MY CARDS</button><button data-dev="go:store">PACKS</button></div>
 <p>Your next spin lands on</p><div class="seg">${XEV.map(e => `<button data-dev="ev:${e.k}">${e.lab}</button>`).join('')}</div>
 <p>Their next spin lands on</p><div class="seg">${XEV.map(e => `<button data-dev="eo:${e.k}">${e.lab}</button>`).join('')}</div>
