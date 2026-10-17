@@ -3179,14 +3179,14 @@ function howCards() { ov((o) => { o.querySelector('.dim').onclick = () => closeO
 /*@spec DRAFT_CHAOS = 1v1, turn by turn. Each player brings a deck of 10 of their own cards and holds a hand. Both fives are on the board, face-up. Your
    turn: draw one → SPIN THE EVENT WHEEL (PICK 2 · DRAW 2 · SHUFFLE · STEAL from their hand · HEIST half a player's stats · SWAP STATS · FREEZE · INJURY ·
    MVP · BENCH · +200 · TECHNICAL; nothing to hit = draw 1) → place a card into your five (an empty spot, or over one of yours) → their turn. ONE spin
-   per turn, strictly one after the other, until a five is complete (then the other side's last turn). HOME COURT +3 OVR for the side that plays SECOND
+   per turn, strictly one after the other, until a five is complete (then the other side's last turn). HOME COURT +4 OVR (v50, was +3) for the side that plays SECOND
    (the race favours the opener, who fills first: sim 54.6% at 0 → +3 to the second player → 50.0 / 51.1 — Or: "למה לכל אחד יש 2 ספינים · אני רוצה שיהיה לכל אחד ספין אחד ואז לשים קלף ואז תורו", so the fix can't break the rhythm). The five
    with the bigger number — real season stats — takes the pile | why: Or 2026-10-15, in his words: "כל שחקן צריך לבנות חמישייה עם
    הקלפים שיש לו · אתה רואה את החמישייה שלי, אתה רואה את החמישייה של האויב · כל פעם מישהו עושה ספין לאיבנט · take player stats, swap stats, freeze ·
    שיהיה ים איבנטים · אחרי X תורות, מי שיש לו את הקבוצה יותר חזקה עם סטטים, הוא מנצח · כל תור אתה באמת שם קלף, אבל לפני ששם קלף, יש לך ספין · פיק 2 ·
    שפל · take from opponent hand · ככה זה תור שלך" | breaks: a turn without the wheel, or a score you can't read off the board */
 let G = null
-const XP5 = ['PG', 'SG', 'SF', 'PF', 'C'], XTURNS = 12, XHAND0 = 3, XHMAX = 5, XMS = 25000, XHOME = 3
+const XP5 = ['PG', 'SG', 'SF', 'PF', 'C'], XTURNS = 12, XHAND0 = 3, XHMAX = 5, XMS = 25000, XHOME = 4   /* v50: was 3. Or 2026-10-18 "אני רוצה להגיע למצב שהסיכויים הם 50 50" → "יאללה תשנה ל4" — the same 8000 sim games: the starter wins 51.2% at +3, 50.3% at +4 (sim/finish_first.mjs SWEEP=1) */
 
 /* ── ENGINE (no DOM — build/sim/sim_chaos.mjs runs this part headless) ── */
 /* in a match with a friend the guest walks the two sides in the HOST's order, so every roll lands on the same thing on both phones */
@@ -3308,7 +3308,7 @@ const XEV = [
   { k: 'posswap', lab: 'MATCHUP', ic: 'mm_vs',       tone: 'purple', h: 'MATCHUP',       d: 'SWAP ONE POSITION' },
   { k: 'callup',  lab: 'CALL-UP', ic: 'c_respin',    tone: 'blue',   h: 'CALL-UP',       d: 'A USED CARD → COURT' },
   { k: 'trash',   lab: 'TRASH',   ic: 'boost_blk',   tone: 'red',    h: 'TRASH TALK',    d: 'THEIR BEST CARD IS TOSSED' },
-  { k: 'homect',  lab: 'HOME',    ic: 'c_home',      tone: 'gold',   h: 'HOME COURT',    d: 'HOME +3 IS YOURS' },
+  { k: 'homect',  lab: 'HOME',    ic: 'c_home',      tone: 'gold',   h: 'HOME COURT',    d: `HOME +${XHOME} IS YOURS` },
   { k: 'dribble', lab: 'DRIBBLE', ic: 'c_blind',     tone: 'red',    h: 'DOUBLE DRIBBLE',d: 'YOU SKIP A SPIN' },
   { k: 'choose3', lab: 'PICK 1/3',ic: 'c_double',    tone: 'gold',   h: 'PICK YOUR PLAY', d: 'PICK 1 OF 3 EVENTS' },
   { k: 'lottery', lab: 'PICK 3',  ic: 'pack_s',      tone: 'gold',   h: 'PICK 3',        d: 'KEEP 1 OF 3 RANDOM PLAYERS' },
@@ -4141,7 +4141,7 @@ function paintScore(g, anim) { for (const [sd, e] of [['me', g.hMe], ['op', g.hO
 /*@spec HEADER = the BIG number is the RECORD the five is worth out of 82 (the 82-0 result: 68-14), the TEAM OVR small under it; HOME COURT is a tag that
      is added at the buzzer, not a number that sits on an empty five | why: Or "למה הוא מתחיל עם זה? ואני רוצה שדווקא המספר הגדול יהיה התוצאה והניקוד למטה"
      — the rival opened at 3.0 with no players */
-  for (const sd of ['me', 'op']) { const e = sd === 'me' ? g.sMe : g.sOp, n = XP5.filter(p => g[sd].five[p]).length, v = n ? scoreOf(g, sd) : 0, was = +(e.dataset.v || 0), rc = sd === 'me' ? g.rMe : g.rOp, [w, l] = recordOf(v)   /* HOME +3 counted the moment there are players — the top number IS the result (Or: "ברגע האחרון מופיע לי תוצאה פחות משלו… ב-Result Screen מתחשב התוצאה האמיתית") */
+  for (const sd of ['me', 'op']) { const e = sd === 'me' ? g.sMe : g.sOp, n = XP5.filter(p => g[sd].five[p]).length, v = n ? scoreOf(g, sd) : 0, was = +(e.dataset.v || 0), rc = sd === 'me' ? g.rMe : g.rOp, [w, l] = recordOf(v)   /* HOME +XHOME counted the moment there are players — the top number IS the result (Or: "ברגע האחרון מופיע לי תוצאה פחות משלו… ב-Result Screen מתחשב התוצאה האמיתית") */
     e.textContent = n ? `${w}-${l}` : '–'; rc.textContent = n ? `${v.toFixed(1)} OVR` : ''
     if (anim && v !== was && n) { SND('z_score_tik', { gain: .7 }); later(90, () => SND('z_score_tik', { gain: .5 })); e.classList.remove('up', 'dn'); e.offsetWidth; e.classList.add(v > was ? 'up' : 'dn'); const c = ctr(rc); chipF(v > was ? 'g' : 'r', (v > was ? '+' : '−') + Math.abs(v - was).toFixed(1) + ' OVR', c.x, c.y + 22, { rise: -14 }) }
     e.dataset.v = v }
@@ -4707,7 +4707,7 @@ async function playOut(g, side, ev, out, S0) { const who = side === 'me' ? 'YOU'
   if (out.trash) { SND('kn_l'); info(g, `<b class="h">TRASH TALK</b><span>${mine ? 'THEY THROW AWAY' : 'YOU THROW AWAY'} ${N2(out.trash)}</span>`, 'red') }
   if (out.waived) info(g, `<b class="h">WAIVED</b><span>${N2(out.waived)} — BACK TO ${mine ? 'YOUR' : 'THEIR'} HAND</span>`, 'red')
   if (out.tank) info(g, `<b class="h">TANK</b><span>−10 TO ${mine ? 'YOU' : g.opp.name} · ${out.drawn.length} CARDS DRAWN</span>`, 'blue')
-  if (out.home) { SND('y_found'); info(g, `<b class="h">HOME COURT</b><span>THE HOME +3 BELONGS TO ${mine ? 'YOU' : g.opp.name} NOW</span>`, 'gold') }
+  if (out.home) { SND('y_found'); info(g, `<b class="h">HOME COURT</b><span>THE HOME +${XHOME} BELONGS TO ${mine ? 'YOU' : g.opp.name} NOW</span>`, 'gold') }
   if (ev.k === 'dribble') info(g, `<b class="h">DOUBLE DRIBBLE</b><span>${mine ? 'YOU SKIP YOUR' : g.opp.name + ' SKIPS THEIR'} NEXT SPIN</span>`, 'red')
   if (out.ddouble) { SND('y_trophy'); info(g, `<b class="h">DOUBLE-DOUBLE</b><span>${out.ddouble.map(p2 => N2(g[side].five[p2].cid)).join(' & ')} — BOTH DOUBLE</span>`, 'gold') }
   /* OVERTIME banks a round for the END — say it big when it happens, and the header keeps "+1 OT" until it is played (Or v33: "לא עבד לי הוואן אקסטרה ראונד" — nothing on screen showed it was banked) */
@@ -4780,7 +4780,7 @@ function placePhase(g, i, n) { return new Promise(res => { const me = g.me; g.se
 
 /* WHO STARTS = a coin toss in the middle of the screen (Or v40: "בוא נעשה שההתחלה של המשחק זה הטלת מטבע · מי מתחיל"). The opener was
    already drawn from GRNG in xrun, so this is presentation only: both phones toss the same coin and the protocol does not change.
-   It lands in the starter's colour (you blue, the rival red) and stamps WHO STARTS + who gets HOME +3 for going second */
+   It lands in the starter's colour (you blue, the rival red) and stamps WHO STARTS + who gets HOME +XHOME for going second */
 async function coinToss(g, first) { const mine = first === 'me', col = colS(g, first).rgb, x = 195, y = 400
   const c = el(g.s, 'div', 'xcoin xtoss'); el(c, 'img').src = IMG.coin1; SND('s_coin', { gain: .9 }); SND('m_flutter', { gain: .6, at: 60 }); SND('m_roll', { gain: .9, at: 140 })
   await c.animate([{ transform: 'translateY(0) rotateY(0) scale(1)' }, { transform: 'translateY(-170px) rotateY(1800deg) scale(1.3)', offset: .5 }, { transform: 'translateY(0) rotateY(3600deg) scale(1)' }], { duration: 1600, easing: 'cubic-bezier(.3,.6,.4,1)' }).finished
@@ -4985,7 +4985,7 @@ function howTo() { ov((o) => { o.querySelector('.dim').onclick = () => closeOv()
    same taps = the same game on both screens. The CPU's decisions become the friend's.
    why: Or "אם אני רוצה מולטיפלייר" — option 2, the room code ════ */
 let MPG = null
-const MP_VER = '49'   /* the GAME protocol, not the build: two phones whose engine, dice or wire differ would roll different games, so the room refuses
+const MP_VER = '50'   /* the GAME protocol, not the build: two phones whose engine, dice or wire differ would roll different games, so the room refuses
    them — bump it only when one of those changes (v23 → '23'; v25 → '25': TIME OUT now plays on the last turn; v27 → '27': both play the opener's deck; v28 → '28': 29 new events). A UI-only update (v24: chat) keeps it, so nobody has to reopen together */
 /* the phones meet in OUR room server (build/server/worker.js on Cloudflare): a plain WebSocket, so it gets through any network (office Wi-Fi
    included — Bella could not get a direct WebRTC link through hers). Every tap carries a sequence number; after any drop the phone reconnects to
@@ -5158,7 +5158,7 @@ document.addEventListener('click', e => { let n = e.target; while (n && n !== do
 { const k0 = kick; kick = (n = 1) => { k0(n); if (SET.vib && n >= 2 && navigator.vibrate) try { navigator.vibrate(n >= 3 ? 28 : 14) } catch (e) {} } }
 
 /* ── the run log ── */
-function runNew(g, a) { const me = mpMe(); g.run = { id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6), v: '49', t: Date.now(), uid: me.id, name: me.name || '', mode: a.mp ? 'friend' : 'ai', opp: g.opp.name, oppId: (a.mp && typeof MPG !== 'undefined' && MPG && MPG.friend && MPG.friend.id) || '', L: [] } }
+function runNew(g, a) { const me = mpMe(); g.run = { id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6), v: '50', t: Date.now(), uid: me.id, name: me.name || '', mode: a.mp ? 'friend' : 'ai', opp: g.opp.name, oppId: (a.mp && typeof MPG !== 'undefined' && MPG && MPG.friend && MPG.friend.id) || '', L: [] } }
 function runLog(g, ...e) { if (g && g.run && !g.run.done && g.run.L.length < 1200) g.run.L.push([Math.round((Date.now() - g.run.t) / 100) / 10, ...e]) }
 const runFive = (g, sd) => XP5.map(p => { const o = g[sd].five[p]; return o ? `${p} ${CARDS[o.cid] ? CARDS[o.cid].n : o.cid} ${slotVal(g, sd, p).toFixed(1)}${o.out ? ' OUT' : ''}` : `${p} —` }).join(' · ')
 function runBoard(g) { if (!g || !g.run) return; runLog(g, 'B', 'me', runFive(g, 'me')); runLog(g, 'B', 'op', runFive(g, 'op')); runLog(g, '=', +scoreOf(g, 'me').toFixed(1), +scoreOf(g, 'op').toFixed(1)) }
@@ -5205,7 +5205,7 @@ function openSettings() { SND('z_menu_up', { gain: .7 }); ov(o => { o.querySelec
     all.forEach(r => { const d = el(list, 'div', 'xrun ' + (r.win ? 'w' : 'l')); el(d, 'em', '', '', r.win ? 'W' : 'L'); const t = el(d, 'span'); el(t, 'b', '', '', 'VS ' + escH(r.opp || '?')); el(t, 'small', '', '', `${r.rec || ''} · ${agoTxt(r.t)}${r.sent ? '' : ' · NOT SENT YET'}`); el(d, 'i', '', '', `${(+r.me || 0).toFixed(1)}–${(+r.op || 0).toFixed(1)}`); d.onclick = e => { e.stopPropagation(); runOpen(r) } }) }
   paint(histAdd(runsLocal()))
   try { fetch(RUNS_URL + me.id).then(x => x.ok ? x.json() : []).then(srv => { if (Array.isArray(srv) && srv.length && rl.isConnected) paint(histAdd(srv.map(x => ({ ...x, sent: true })))) }).catch(() => {}) } catch (e) {}
-  el(h, 'p', 'xsver', '', `DRAFT CHAOS v49`)
+  el(h, 'p', 'xsver', '', `DRAFT CHAOS v50`)
 }) }
 /* one run, move by move */
 function runView(r) { SND('z_menu_up', { gain: .6 }); ov(o => { o.querySelector('.dim').onclick = () => openSettings(); const h = el(o, 'div', 'howto xset xrv'); el(h, 'div', 'x', '', '‹').onclick = e => { e.stopPropagation(); openSettings() }
@@ -5359,7 +5359,7 @@ SCREENS.pack = (s, a = {}) => {
 
 /* ════════════════ DEV (side panel on desktop · ☰ on the phone) ════════════════ */
 function openDevSheet() { ov((o) => { o.querySelector('.dim').onclick = () => closeOv(); const sh = el(o, 'div', 'sheet'); el(sh, 'div', 'dev'); renderDev() }) }
-function devHTML() { return `<h3>DRAFT CHAOS · POC v49</h3>
+function devHTML() { return `<h3>DRAFT CHAOS · POC v50</h3>
 <p>Screens</p><div class="seg"><button data-dev="go:hub">HUB</button><button data-dev="go:mm">MATCHMAKING</button><button data-dev="go:chaos">MATCH</button><button data-dev="go:deck">MY DECK</button><button data-dev="go:cards">MY CARDS</button><button data-dev="go:store">PACKS</button></div>
 <p>Your next spin lands on</p><div class="seg">${XEV.map(e => `<button data-dev="ev:${e.k}">${e.lab}</button>`).join('')}</div>
 <p>Their next spin lands on</p><div class="seg">${XEV.map(e => `<button data-dev="eo:${e.k}">${e.lab}</button>`).join('')}</div>
