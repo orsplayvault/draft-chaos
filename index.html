@@ -1552,6 +1552,10 @@ img { display: block; -webkit-user-drag: none; user-select: none; }
 .xrdy.on { border-color: #6be59a; background: rgba(16,52,36,.85); box-shadow: 0 0 26px rgba(107,229,154,.45), inset 0 0 18px rgba(107,229,154,.12); }
 .xrdy.on .ck { border: none; background: #6be59a; color: #0b1020; box-shadow: 0 0 18px rgba(107,229,154,.85); }
 
+/* v52 FINAL MATH — the HOME 4 inside the home side's OVR line, and the line that says it decided the match */
+.xfr p small.xhm { display: block; margin-top: 5px; font: 700 22px/1 Teko; letter-spacing: 1px; color: #ffd24a; text-shadow: 0 0 12px rgba(255,200,60,.6); white-space: nowrap; } .xfr p small.xhm.off { visibility: hidden; }
+.xfin span.xdec { color: #ffd24a; text-shadow: 0 0 12px rgba(255,200,60,.6); }
+
 </style>
 </head>
 <body>
@@ -3263,7 +3267,7 @@ const XEV = [
   { k: 'shuffle', lab: 'NEW 5', ic: 'c_reshuffle', tone: 'blue',   h: 'NEW LINEUP',       d: 'A NEW HAND OF 5' },
   { k: 'steal',   lab: 'STEAL',   ic: 'boost_stl',   tone: 'gold',   h: 'STEAL',         d: 'STEAL A CARD FROM THEM' },
   { k: 'draftn',  lab: 'WAIVER',    ic: 'pack_b',      tone: 'gold',   h: 'WAIVER CLAIM',          d: 'TAKE 1 OF THEIR TOP 3' },
-  { k: 'sign',    lab: 'SIGN',    ic: 'boost_ast',   tone: 'purple', h: 'SIGN & TRADE',  d: 'TAKE 1 OF THEIRS · GIVE 1' },
+  { k: 'sign',    lab: 'SIGN',    ic: 'boost_ast',   tone: 'purple', h: 'SIGN & TRADE',  d: 'TAKE 1 FROM THEIR HAND · A RANDOM 1 FROM YOURS GOES TO THEM', s: 'THEIR HAND ⇄ YOUR HAND' },
   { k: 'hands',   lab: 'BLOCKBUST',   ic: 'c_reshuffle', tone: 'purple', h: 'BLOCKBUSTER',     d: 'SWAP HANDS' },
   { k: 'second',  lab: '2ND',     ic: 'c_respin',    tone: 'blue',   h: 'SECOND CHANCE', d: 'A USED CARD COMES BACK' },
   { k: 'deep',    lab: 'DEEP',    ic: 'c_bench',     tone: 'blue',   h: 'DEEP BENCH',    d: '1 OF YOUR TOP 3 → COURT' },
@@ -3282,7 +3286,7 @@ const XEV = [
   { k: 'heist',   lab: 'PICKPKT',     ic: 'boost_pts',   tone: 'red',    h: 'PICKPOCKET',           d: 'STEAL HALF OF ONE', tgt: 'op' },
   { k: 'swap',    lab: 'MISMATCH',    ic: 'hex_swap',    tone: 'purple', h: 'MISMATCH',  d: 'SWAP 2 PLAYERS’ NUMBERS', tgt: 'both' },
   { k: 'mirror',  lab: 'SIGNATURE',    ic: 'hex_swap',    tone: 'purple', h: 'SIGNATURE MOVE',       d: 'COPY ONE OF THEIR NUMBERS', tgt: 'both' },
-  { k: 'trade',   lab: 'TRADE',   ic: 'boost_ast',   tone: 'purple', h: 'TRADE',         d: 'TRADE A PLAYER', tgt: 'both' },
+  { k: 'trade',   lab: 'TRADE',   ic: 'boost_ast',   tone: 'purple', h: 'TRADE',         d: 'ONE ON YOUR COURT ⇄ ONE ON THEIR COURT', s: 'YOUR COURT ⇄ THEIR COURT', tgt: 'both' },
   { k: 'injury',  lab: 'INJURY',  ic: 'c_under90',   tone: 'red',    h: 'INJURY',        d: 'ONE OF THEIRS IS OUT', tgt: 'op' },
   { k: 'bench',   lab: 'BENCHED',   ic: 'c_bench',     tone: 'red',    h: 'BENCHED',         d: 'ONE OF THEIRS → HAND', tgt: 'op' },
   { k: 'posless', lab: 'NO POS',  ic: 'hex_swap',    tone: 'blue',   h: 'POSITIONLESS',  d: 'NO POSITION PENALTY' },
@@ -3329,8 +3333,8 @@ const XEV = [
   { k: 'pick3',   lab: 'PLAY 3',  ic: 'c_double',    tone: 'gold',   h: 'TRIPLE PLAY',   d: 'PLAY 3 CARDS', w: .5 },
   { k: 'shotclock',lab: 'CLOCK',  ic: 'hex_time',    tone: 'red',    h: 'SHOT CLOCK',    d: 'THEY MUST PLAY THE WORST CARD' },
   { k: 'anywhere',lab: 'ANYWHERE',ic: 'hex_swap',    tone: 'blue',   h: 'ANYWHERE',      d: 'NEXT CARD — ANY SPOT' },
-  { k: 'defector',lab: 'DEFECT',  ic: 'mm_vs',       tone: 'purple', h: 'DEFECTOR',      d: 'ONE OF THEIRS JOINS YOU', tgt: 'op' },
-  { k: 'expansion',lab: 'EXPAND', ic: 'pack_b',      tone: 'purple', h: 'EXPANSION DRAFT', d: 'ONE OF THEIRS → YOUR HAND', tgt: 'op' },
+  { k: 'defector',lab: 'DEFECT',  ic: 'mm_vs',       tone: 'purple', h: 'DEFECTOR',      d: 'ONE FROM THEIR COURT → YOUR COURT', s: 'THEIR COURT → YOURS', tgt: 'op' },
+  { k: 'expansion',lab: 'EXPAND', ic: 'pack_b',      tone: 'purple', h: 'EXPANSION DRAFT', d: 'ONE FROM THEIR COURT → YOUR HAND', s: 'THEIR COURT → YOUR HAND', tgt: 'op' },
   { k: 'buyout',  lab: 'BUYOUT',  ic: 'c_bench',     tone: 'red',    h: 'BUYOUT',        d: 'SEND ONE OF THEIRS AWAY', tgt: 'op' },
   { k: 'review',  lab: 'REVIEW',  ic: 'c_blind',     tone: 'red',    h: 'REPLAY REVIEW', d: 'THEIR LAST PLAYER → HAND' },
   { k: 'merge',   lab: 'COMBO',   ic: 'hex_swap',    tone: 'blue',   h: 'COMBO PLAYER',  d: 'MERGE YOUR 2 WORST' },
@@ -3347,7 +3351,7 @@ const XEV = [
   { k: 'icedeck', lab: 'COLD',    ic: 'c_blind',     tone: 'red',    h: 'COLD DECK',     d: 'BURN THEIR TOP 2' },
   { k: 'freeagent',lab: 'SIGNING',ic: 'pack_s',      tone: 'gold',   h: 'FREE AGENT',    d: '1 OF 3 FROM THEIR USED' },
   { k: 'clonehand',lab: 'COPY',   ic: 'hex_swap',    tone: 'purple', h: 'CLONE A CARD', d: 'COPY 1 OF 3 OF THEIRS' },
-  { k: 'hotpotato',lab: 'POTATO', ic: 'c_hot',       tone: 'red',    h: 'HOT POTATO',    d: 'YOUR WORST CARD → THEM' },
+  { k: 'hotpotato',lab: 'POTATO', ic: 'c_hot',       tone: 'red',    h: 'HOT POTATO',    d: 'THE WORST CARD IN YOUR HAND → THEIR HAND', s: 'YOUR HAND\'S WORST → THEIRS' },
   // GAME CHANGERS (rare)
   { k: 'mirror5', lab: 'MIRROR',  ic: 'hex_swap',    tone: 'purple', h: 'MIRROR IMAGE',  d: 'COPY THE FIVE ACROSS', w: .3, gc: true },
   { k: 'deckswap',lab: 'DECKS',   ic: 'pack_s',      tone: 'purple', h: 'DECK SWAP',     d: 'SWAP DECKS', w: .3, gc: true },
@@ -3398,7 +3402,7 @@ const XEV = [
   { k: 'absorb',    lab: 'ABSORB',    ic: 'hex_swap',    tone: 'purple', h: 'ABSORB',            d: 'YOUR WEAKEST EATS THE NEXT DRAW' },
   { k: 'dynasty',   lab: 'DYNASTY',   ic: 'trophy',      tone: 'gold',   h: 'DYNASTY',           d: 'YOU CHOOSE THE TEAM NIGHT' },
   { k: 'golden',    lab: 'GOLDEN',    ic: 'pack_s',      tone: 'gold',   h: 'GOLDEN TICKET',     d: 'SCOUT A TOP PLAYER' },
-  { k: 'blockbuster',lab: 'BLOCKBST', ic: 'mm_vs',       tone: 'purple', h: 'BLOCKBUSTER TRADE', d: 'PICK ONE OF THEIRS → SWAP WITH YOUR WEAKEST', s: 'ONE OF THEIRS ⇄ YOUR WEAKEST' },
+  { k: 'blockbuster',lab: 'BLOCKBST', ic: 'mm_vs',       tone: 'purple', h: 'BLOCKBUSTER TRADE', d: 'PICK ONE ON THEIR COURT ⇄ YOUR WEAKEST ON YOURS', s: 'THEIR COURT ⇄ YOUR WEAKEST' },
   { k: 'primepick', lab: 'PRIME+',    ic: 'c_hot',       tone: 'gold',   h: 'PRIME TIME',        d: 'PICK ONE OF YOURS → BEST SEASON +5', s: 'ONE OF YOURS → BEST SEASON +5' },
   { k: 'pickpass',  lab: 'PASS',      ic: 'pack_b',      tone: 'purple', h: 'PICK & PASS',       d: 'SCOUT 1 · THEY GET ONE OF THE OTHER 2' },
   { k: 'cursed',    lab: 'CURSED',    ic: 'c_under90',   tone: 'red',    h: 'CURSED GIFT',       d: 'PICK A BUST → INTO THEIR HAND' },
@@ -3429,8 +3433,8 @@ XEV.push(
   { k: 'cstorm',    lab: 'STORM',     ic: 'coin1',       tone: 'gold',   h: 'COIN STORM',        d: 'A COIN ON EVERY CARD — YOURS ×2 · THEIRS ½', s: 'A COIN ON EVERY CARD: ×2 OR ½', big: 'COIN STORM' },
   { k: 'lottery82', lab: 'LOTTERY',   ic: 'hex_swap',    tone: 'gold',   h: 'DRAFT LOTTERY',     d: 'EVERY CARD FLIES — LANDS ANYWHERE', big: 'LOTTERY' },
   { k: 'dyn82',     lab: 'SUPER 5', ic: 'trophy',      tone: 'gold',   h: 'SUPERTEAM',         d: 'YOUR WHOLE FIVE BECOMES ITS BEST PLAYER', s: 'ALL FIVE BECOME YOUR BEST', big: 'SUPERTEAM' },
-  { k: 'blindtr',   lab: 'BLIND',     ic: 'c_reshuffle', tone: 'purple', h: 'BLIND TRADE',       d: 'ONE OF YOURS ↔ A RANDOM CARD FROM THEIR HAND', s: 'BLIND TRADE WITH THEIR HAND', tgt: 'me' },
-  { k: 'signtr',    lab: 'SIGN',      ic: 'mm_vs',       tone: 'purple', h: 'SIGN & TRADE',      d: 'ONE OF THEIRS JOINS YOU — A RANDOM CARD OF YOURS GOES TO THEM', s: 'SIGN ONE OF THEIRS · GIVE ONE', tgt: 'op' },
+  { k: 'blindtr',   lab: 'BLIND',     ic: 'c_reshuffle', tone: 'purple', h: 'BLIND TRADE',       d: 'ONE ON YOUR COURT ⇄ A RANDOM CARD FROM THEIR HAND', s: 'YOUR COURT ⇄ THEIR HAND', tgt: 'me' },
+  { k: 'signtr',    lab: 'SIGN',      ic: 'mm_vs',       tone: 'purple', h: 'SIGN & TRADE',      d: 'ONE FROM THEIR COURT → YOUR EMPTY SPOT · A RANDOM CARD FROM YOUR HAND TAKES HIS PLACE', s: 'THEIR COURT ⇄ YOUR HAND', tgt: 'op' },
   { k: 'deadline',  lab: 'DEADLINE',  ic: 'hex_5050',    tone: 'purple', h: 'TRADE DEADLINE',    d: 'FLIP: WIN = YOUR WORST FOR THEIR BEST · LOSE = YOUR BEST FOR THEIR WORST', s: 'FLIP: GET THEIR BEST / LOSE YOURS' },
   { k: 'allstarwk', lab: 'ALL-STAR',  ic: 'c_legends',   tone: 'gold',   h: 'ALL-STAR WEEKEND',  d: '3 LEGENDARY EVENTS IN A ROW — ALL YOURS', big: 'ALL-STAR' })
 const XTIER = { L: ['timemac', 'star', 'switch', 'deckswap', 'mirror5', 'clear', 'allstar', 'ko', 'purse', 'legendspin', 'ring', 'showtime', 'defense', 'goat'], E: ['melee', 'jumpball', 'dteam', 'hofclass', 'franchise', 'streak', 'poster2', 'playbook', 'pick1', 'ddouble', 'ot', 'sudden', 'mayhem', 'reset', 'superspin', 'sswap', 'triple', 'pile2', 'pick3', 'stealshow', 'defector', 'don', 'rivalry', 'quake', 'tornado', 'hands', 'blind3',
@@ -4850,7 +4854,13 @@ async function xfinish(g) { g.turn = null; g.evb.classList.remove('on'); SND('m_
   runEnd(g, win, m, o)
   const st = el(g.s, 'div', 'xfin ' + (win ? 'won' : 'lost'), `top:${STY - 40}px`)
   const ttl = win ? 'YOU WIN!' : g.opp.name + ' WINS'
-  st.innerHTML = `<b style="font-size:${ttl.length <= 10 ? 58 : Math.max(30, Math.floor(600 / ttl.length))}px">${escH(ttl)}</b><div class="xfr"><p class="me"><i>YOU</i>${recordOf(m).join('-')}<em>${m.toFixed(1)} OVR</em></p><u>VS</u><p class="op"><i>${escH(g.opp.name)}</i>${recordOf(o).join('-')}<em>${o.toFixed(1)} OVR</em></p></div>${g.home ? `<span>HOME +${XHOME} ${g.home === 'me' ? 'YOURS' : 'THEIRS'}</span>` : ''}`
+  /*@spec FINAL MATH = the home side's line reads "<team OVR> OVR +4 HOME" (the record above it is worked out from the sum), so a match HOME decides shows
+     why; the bottom line says HOME +4 DECIDED IT when the winner had the lower or equal team OVR, and DEAD EVEN — COIN FLIP on an exact tie |
+     why: Or "אני והאויב היינו בדיוק על אותו אוברול רייטינג ואני ניצחתי כי היה לי home+4 · מוזר שלא רואים את ה-home+4 בחישוב" — v50 folded the 4 into one number */
+  const ovrL = sd => g.home === sd ? `<em>${teamFP(g, sd).toFixed(1)} OVR</em><small class="xhm">+${XHOME} HOME</small>` : `<em>${scoreOf(g, sd).toFixed(1)} OVR</em>${g.home ? '<small class="xhm off">&nbsp;</small>' : ''}`
+  const wsd = win ? 'me' : 'op', byHome = g.home === wsd && m !== o && teamFP(g, wsd) <= teamFP(g, foe(wsd))
+  const foot = m === o ? 'DEAD EVEN — COIN FLIP' : byHome ? `HOME +${XHOME} DECIDED IT` : g.home ? `HOME +${XHOME} ${g.home === 'me' ? 'YOURS' : 'THEIRS'}` : ''
+  st.innerHTML = `<b style="font-size:${ttl.length <= 10 ? 58 : Math.max(30, Math.floor(600 / ttl.length))}px">${escH(ttl)}</b><div class="xfr"><p class="me"><i>YOU</i>${recordOf(m).join('-')}${ovrL('me')}</p><u>VS</u><p class="op"><i>${escH(g.opp.name)}</i>${recordOf(o).join('-')}${ovrL('op')}</p></div>${foot ? `<span${byHome || m === o ? ' class="xdec"' : ''}>${foot}</span>` : ''}`
   A(st, 'a-bigslam', 0); kick(3); SND(win ? 'z_win' : 'z_lost', { gain: .9 }); if (win) { later(500, () => SND('z_fireworks', { gain: .7 })); later(300, () => CONF.burst(195, STY + 30, 70)); SND('m_roar', { gain: .4, at: 200 }) } else SND('m_aww', { gain: .4, at: 200 })
   { const r = recordOf(m).join('-'); if (r === '82-0') later(400, () => SND('g_82stack', { gain: .8 })); else if (r === '81-1') later(400, () => SND('g_811', { gain: .7 })) } FX.flashAt(195, STY + 30, 260, win ? '255,215,90' : '255,90,110', .8)
   await xnap(1700); if (!xalive(g)) return
@@ -4858,7 +4868,7 @@ async function xfinish(g) { g.turn = null; g.evb.classList.remove('on'); SND('m_
   const av = ctr(win ? g.avMe : g.avOp), P = await potMoment(g, g.pot, g.pot, '', { keep: true, hold: 650 }); if (!xalive(g)) return
   const p = ctr(P.pl); for (const e of [P.amt, P.glow, P.dim]) e.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 260, fill: 'forwards' }); P.pl.style.visibility = 'hidden'; SND('y_whoosh', { gain: .7 })
   await flyTo(P.pl, p, { x: av.x, y: av.y, w: 64 }, 600, { lift: 30 }); P.box.remove(); FX.flashAt(av.x, av.y, 140, '255,210,110', .9); kick(3); SND('y_coin', { gain: .9 }); if (win) CONF.burst(av.x, av.y, 60)
-  g.over = true; later(900, () => go('result', { win, me: m, them: o, opp: g.opp.name, pot: g.pot, five: g.me.five, five2: g.op.five, mp: !!g.mp })) }
+  g.over = true; later(900, () => go('result', { win, me: m, them: o, opp: g.opp.name, pot: g.pot, five: g.me.five, five2: g.op.five, mp: !!g.mp, home: g.home })) }
 
 /* ════════════════ 01 · HUB ════════════════ */
 SCREENS.hub = (s) => {
@@ -4957,7 +4967,8 @@ SCREENS.result = (s, a = {}) => {
   if (win) { later(250, () => { CONF.cannon(20, 760, 1, 90); CONF.cannon(370, 760, -1, 90) }); later(300, () => CONF.drizzle(3200)) }
   A(teko(s, win ? 'VICTORY' : 'DEFEAT', 0, 92, 390, 90, 86, win ? C.Y : '#c9d3ea', 'c', { glow: win ? '255,176,0' : '120,140,190', gr: 18 }), 'a-bigslam', 120)
   later(390, () => { kick(win ? 3 : 1); SND(win ? 'g_winall' : 'g_loseall', { gain: .85 }) })
-  A(lab(s, `YOU ${recordOf(+(a.me || 0)).join('-')} (${(+(a.me || 0)).toFixed(1)}) – ${recordOf(+(a.them || 0)).join('-')} (${(+(a.them || 0)).toFixed(1)}) ${a.opp || 'RIVAL'}`, 0, 186, 390, 12, C.CR, 'c', { fit: true }), 'a-fade', 480)
+  const ovS = (v, sd) => a.home === sd ? `${(v - XHOME).toFixed(1)} +${XHOME} HOME` : v.toFixed(1)   /* the HOME 4 shown, not folded in (v52) */
+  A(lab(s, `YOU ${recordOf(+(a.me || 0)).join('-')} (${ovS(+(a.me || 0), 'me')}) – ${recordOf(+(a.them || 0)).join('-')} (${ovS(+(a.them || 0), 'op')}) ${a.opp || 'RIVAL'}`, 0, 186, 390, 12, C.CR, 'c', { fit: true }), 'a-fade', 480)
   ;[[a.five || {}, 214, 'YOUR FIVE'], [a.five2 || {}, 356, `${a.opp || 'RIVAL'}’S FIVE`]].forEach(([five, y, t], r) => { A(lab(s, t, 0, y, 390, 9, C.S, 'c'), 'a-fade', 500 + r * 200)
     XP5.forEach((p, i) => { const o = five[p], x = fx(i); if (!o) return; const c = CARD(s, o.cid, x, y + 16, FW); A(c, 'a-pop', 560 + r * 200 + i * 50); el(s, 'div', 'xfp', `left:${x}px;top:${y + 16 + FH + 2}px;width:${FW}px`, (ovrOf(o.s) * (o.out ? 0 : (1 + (o.mvp | 0)) * (o.ps.includes(p) ? 1 : .75))).toFixed(1)) }) })
   if (a.mp && MPG && MPG.friend) return mpResult(s, a, win)
@@ -5172,7 +5183,7 @@ document.addEventListener('click', e => { let n = e.target; while (n && n !== do
 { const k0 = kick; kick = (n = 1) => { k0(n); if (SET.vib && n >= 2 && navigator.vibrate) try { navigator.vibrate(n >= 3 ? 28 : 14) } catch (e) {} } }
 
 /* ── the run log ── */
-function runNew(g, a) { const me = mpMe(); g.run = { id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6), v: '51', t: Date.now(), uid: me.id, name: me.name || '', mode: a.mp ? 'friend' : 'ai', opp: g.opp.name, oppId: (a.mp && typeof MPG !== 'undefined' && MPG && MPG.friend && MPG.friend.id) || '', L: [] } }
+function runNew(g, a) { const me = mpMe(); g.run = { id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6), v: '52', t: Date.now(), uid: me.id, name: me.name || '', mode: a.mp ? 'friend' : 'ai', opp: g.opp.name, oppId: (a.mp && typeof MPG !== 'undefined' && MPG && MPG.friend && MPG.friend.id) || '', L: [] } }
 function runLog(g, ...e) { if (g && g.run && !g.run.done && g.run.L.length < 1200) g.run.L.push([Math.round((Date.now() - g.run.t) / 100) / 10, ...e]) }
 const runFive = (g, sd) => XP5.map(p => { const o = g[sd].five[p]; return o ? `${p} ${CARDS[o.cid] ? CARDS[o.cid].n : o.cid} ${slotVal(g, sd, p).toFixed(1)}${o.out ? ' OUT' : ''}` : `${p} —` }).join(' · ')
 function runBoard(g) { if (!g || !g.run) return; runLog(g, 'B', 'me', runFive(g, 'me')); runLog(g, 'B', 'op', runFive(g, 'op')); runLog(g, '=', +scoreOf(g, 'me').toFixed(1), +scoreOf(g, 'op').toFixed(1)) }
@@ -5219,7 +5230,7 @@ function openSettings() { SND('z_menu_up', { gain: .7 }); ov(o => { o.querySelec
     all.forEach(r => { const d = el(list, 'div', 'xrun ' + (r.win ? 'w' : 'l')); el(d, 'em', '', '', r.win ? 'W' : 'L'); const t = el(d, 'span'); el(t, 'b', '', '', 'VS ' + escH(r.opp || '?')); el(t, 'small', '', '', `${r.rec || ''} · ${agoTxt(r.t)}${r.sent ? '' : ' · NOT SENT YET'}`); el(d, 'i', '', '', `${(+r.me || 0).toFixed(1)}–${(+r.op || 0).toFixed(1)}`); d.onclick = e => { e.stopPropagation(); runOpen(r) } }) }
   paint(histAdd(runsLocal()))
   try { fetch(RUNS_URL + me.id).then(x => x.ok ? x.json() : []).then(srv => { if (Array.isArray(srv) && srv.length && rl.isConnected) paint(histAdd(srv.map(x => ({ ...x, sent: true })))) }).catch(() => {}) } catch (e) {}
-  el(h, 'p', 'xsver', '', `DRAFT CHAOS v51`)
+  el(h, 'p', 'xsver', '', `DRAFT CHAOS v52`)
 }) }
 /* one run, move by move */
 function runView(r) { SND('z_menu_up', { gain: .6 }); ov(o => { o.querySelector('.dim').onclick = () => openSettings(); const h = el(o, 'div', 'howto xset xrv'); el(h, 'div', 'x', '', '‹').onclick = e => { e.stopPropagation(); openSettings() }
@@ -5373,7 +5384,7 @@ SCREENS.pack = (s, a = {}) => {
 
 /* ════════════════ DEV (side panel on desktop · ☰ on the phone) ════════════════ */
 function openDevSheet() { ov((o) => { o.querySelector('.dim').onclick = () => closeOv(); const sh = el(o, 'div', 'sheet'); el(sh, 'div', 'dev'); renderDev() }) }
-function devHTML() { return `<h3>DRAFT CHAOS · POC v51</h3>
+function devHTML() { return `<h3>DRAFT CHAOS · POC v52</h3>
 <p>Screens</p><div class="seg"><button data-dev="go:hub">HUB</button><button data-dev="go:mm">MATCHMAKING</button><button data-dev="go:chaos">MATCH</button><button data-dev="go:deck">MY DECK</button><button data-dev="go:cards">MY CARDS</button><button data-dev="go:store">PACKS</button></div>
 <p>Your next spin lands on</p><div class="seg">${XEV.map(e => `<button data-dev="ev:${e.k}">${e.lab}</button>`).join('')}</div>
 <p>Their next spin lands on</p><div class="seg">${XEV.map(e => `<button data-dev="eo:${e.k}">${e.lab}</button>`).join('')}</div>
