@@ -1546,6 +1546,12 @@ img { display: block; -webkit-user-drag: none; user-select: none; }
 .xslot.sr:not(.full) { border-color: rgba(255,77,94,.6); background: rgba(255,77,94,.07); }
 .xslot.sr:not(.full) .xsp { color: rgba(255,77,94,.95); }
 
+/* v51 REMATCH READY — a card per player in the empty strip of a friend's result; green ✓ + READY once that player taps REMATCH (Or 2026-10-18: "V ו-V") */
+.xrdy { position: absolute; width: 140px; height: 72px; border-radius: 16px; background: rgba(8,14,32,.8); border: 2px solid rgba(255,255,255,.16); box-sizing: border-box; transition: border-color .25s, box-shadow .25s, background .25s; }
+.xrdy .ck { position: absolute; left: 10px; top: 15px; width: 38px; height: 38px; border-radius: 50%; border: 3px dashed rgba(255,255,255,.28); box-sizing: border-box; display: flex; align-items: center; justify-content: center; font: 900 22px/1 system-ui, -apple-system, Arial, sans-serif; font-style: normal; color: rgba(255,255,255,.16); }
+.xrdy.on { border-color: #6be59a; background: rgba(16,52,36,.85); box-shadow: 0 0 26px rgba(107,229,154,.45), inset 0 0 18px rgba(107,229,154,.12); }
+.xrdy.on .ck { border: none; background: #6be59a; color: #0b1020; box-shadow: 0 0 18px rgba(107,229,154,.85); }
+
 </style>
 </head>
 <body>
@@ -4899,12 +4905,20 @@ function mpResult(s, a, win) { const f = MPG.friend; NET.flush(['again', 'start'
   teko(hg, 'YOU', 14, 38, 110, 40, 30, C.W, 'c'); teko(hg, f.name, 226, 38, 110, 40, f.name.length > 6 ? 22 : 30, C.W, 'c', { fit: true })
   const sc = el(hg, 'div', 'xh2h'), bw = el(sc, 'b', '', '', String(a.rec0[0])); el(sc, 'i', '', '', '–'); const bl = el(sc, 'b', '', '', String(a.rec0[1]))
   later(1300, () => { const t = win ? bw : bl; t.textContent = String(win ? a.rec[0] : a.rec[1]); t.classList.add(win ? 'up' : 'dn'); t.animate([{ transform: 'scale(1.9)', filter: 'brightness(2.2)' }, { transform: 'scale(1)', filter: 'none' }], { duration: 420, easing: 'cubic-bezier(.2,1.4,.4,1)' }); kick(win ? 2 : 1); SND(win ? 'y_coin' : 'tok', { gain: .8 }) })
-  const st = A(lab(s, '', 0, 724, 390, 12, C.CR, 'c'), 'a-fade', 1200)
+  /*@spec REMATCH READY = two cards in the empty strip beside the chat button, YOU left / the friend right (as in HEAD TO HEAD), each name in its
+     player colour; a card turns green with a ✓ and READY the moment that player taps REMATCH, and the match starts 0.7 s after the second ✓ |
+     why: Or "שיהיה V ו-V · מי שעושה רימאץ' הוא כבר ב-V · היה כתוב באותיות ממש קטנות … is ready for rematch · שזה יותר מעוצב" — v50 had one 12px line */
+  const RDY = (x, who, nm) => { const c = colS({ mp: true }, who), b = A(el(s, 'div', 'xrdy', `left:${x}px;top:650px`), 'a-up', 1100), ck = el(b, 'i', 'ck', '', '✓')
+      teko(b, nm, 58, 12, 72, 28, nm.length > 7 ? 20 : 26, c.hex, 'l', { fit: true }); const t = lab(b, 'NOT YET', 58, 44, 72, 10, C.S, 'l')
+      return () => { if (b.classList.contains('on')) return; b.classList.add('on'); t.textContent = 'READY'; t.style.color = '#6be59a'
+        b.animate([{ transform: 'scale(1)' }, { transform: 'scale(1.12)' }, { transform: 'scale(1)' }], { duration: 380, easing: 'cubic-bezier(.2,1.4,.4,1)' })
+        ck.animate([{ transform: 'scale(0) rotate(-45deg)' }, { transform: 'scale(1) rotate(0)' }], { duration: 420, easing: 'cubic-bezier(.2,1.6,.4,1)' }); kick(1) } }
+  const okMe = RDY(24, 'me', 'YOU'), okOp = RDY(226, 'op', f.name)
   mpChat(s, { x: 24, y: 620, side: 'l' }, { x: 24, y: 620, side: 'r' }, { x: 175, y: 672 })
   const fr = NET.recv('again'); let mine = false
-  fr.then(() => { if (!mine && curKey === 'result') { st.textContent = f.name + ' WANTS A REMATCH'; SND('y_tip', { gain: .8 }) } })
-  PAIR(s, 764, ['A', 150, 56, 'REMATCH', { cta: true, on: async () => { if (mine) return; if (!MPG || MPG.gone) { toast(f.name + ' left'); return } mine = true; NET.send('again', 1); st.textContent = 'WAITING FOR ' + f.name + '…'
-      await fr; if (curKey !== 'result' || !MPG) return; if (!MPG.guest) { const seed = Math.random() * 2 ** 31 | 0; NET.send('start', { seed }); mpBegin(seed) } else { const m = await NET.recv('start'); if (MPG) mpBegin(m.seed) } } }],
+  fr.then(() => { if (curKey === 'result') { okOp(); if (!mine) SND('y_tip', { gain: .8 }) } })
+  PAIR(s, 764, ['A', 150, 56, 'REMATCH', { cta: true, on: async () => { if (mine) return; if (!MPG || MPG.gone) { toast(f.name + ' left'); return } mine = true; NET.send('again', 1); okMe(); SND('y_found', { gain: .7 })
+      await fr; if (curKey !== 'result' || !MPG) return; await xnap(700); if (curKey !== 'result' || !MPG) return; if (!MPG.guest) { const seed = Math.random() * 2 ** 31 | 0; NET.send('start', { seed }); mpBegin(seed) } else { const m = await NET.recv('start'); if (MPG) mpBegin(m.seed) } } }],
     ['T', 140, 52, 'HUB', { on: () => { mpLeave(); go('hub', { back: true }) } }])
 }
 /* ════════════════ 02 · MY DECK — 10 cards ════════════════ */
@@ -5158,7 +5172,7 @@ document.addEventListener('click', e => { let n = e.target; while (n && n !== do
 { const k0 = kick; kick = (n = 1) => { k0(n); if (SET.vib && n >= 2 && navigator.vibrate) try { navigator.vibrate(n >= 3 ? 28 : 14) } catch (e) {} } }
 
 /* ── the run log ── */
-function runNew(g, a) { const me = mpMe(); g.run = { id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6), v: '50', t: Date.now(), uid: me.id, name: me.name || '', mode: a.mp ? 'friend' : 'ai', opp: g.opp.name, oppId: (a.mp && typeof MPG !== 'undefined' && MPG && MPG.friend && MPG.friend.id) || '', L: [] } }
+function runNew(g, a) { const me = mpMe(); g.run = { id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6), v: '51', t: Date.now(), uid: me.id, name: me.name || '', mode: a.mp ? 'friend' : 'ai', opp: g.opp.name, oppId: (a.mp && typeof MPG !== 'undefined' && MPG && MPG.friend && MPG.friend.id) || '', L: [] } }
 function runLog(g, ...e) { if (g && g.run && !g.run.done && g.run.L.length < 1200) g.run.L.push([Math.round((Date.now() - g.run.t) / 100) / 10, ...e]) }
 const runFive = (g, sd) => XP5.map(p => { const o = g[sd].five[p]; return o ? `${p} ${CARDS[o.cid] ? CARDS[o.cid].n : o.cid} ${slotVal(g, sd, p).toFixed(1)}${o.out ? ' OUT' : ''}` : `${p} —` }).join(' · ')
 function runBoard(g) { if (!g || !g.run) return; runLog(g, 'B', 'me', runFive(g, 'me')); runLog(g, 'B', 'op', runFive(g, 'op')); runLog(g, '=', +scoreOf(g, 'me').toFixed(1), +scoreOf(g, 'op').toFixed(1)) }
@@ -5205,7 +5219,7 @@ function openSettings() { SND('z_menu_up', { gain: .7 }); ov(o => { o.querySelec
     all.forEach(r => { const d = el(list, 'div', 'xrun ' + (r.win ? 'w' : 'l')); el(d, 'em', '', '', r.win ? 'W' : 'L'); const t = el(d, 'span'); el(t, 'b', '', '', 'VS ' + escH(r.opp || '?')); el(t, 'small', '', '', `${r.rec || ''} · ${agoTxt(r.t)}${r.sent ? '' : ' · NOT SENT YET'}`); el(d, 'i', '', '', `${(+r.me || 0).toFixed(1)}–${(+r.op || 0).toFixed(1)}`); d.onclick = e => { e.stopPropagation(); runOpen(r) } }) }
   paint(histAdd(runsLocal()))
   try { fetch(RUNS_URL + me.id).then(x => x.ok ? x.json() : []).then(srv => { if (Array.isArray(srv) && srv.length && rl.isConnected) paint(histAdd(srv.map(x => ({ ...x, sent: true })))) }).catch(() => {}) } catch (e) {}
-  el(h, 'p', 'xsver', '', `DRAFT CHAOS v50`)
+  el(h, 'p', 'xsver', '', `DRAFT CHAOS v51`)
 }) }
 /* one run, move by move */
 function runView(r) { SND('z_menu_up', { gain: .6 }); ov(o => { o.querySelector('.dim').onclick = () => openSettings(); const h = el(o, 'div', 'howto xset xrv'); el(h, 'div', 'x', '', '‹').onclick = e => { e.stopPropagation(); openSettings() }
@@ -5359,7 +5373,7 @@ SCREENS.pack = (s, a = {}) => {
 
 /* ════════════════ DEV (side panel on desktop · ☰ on the phone) ════════════════ */
 function openDevSheet() { ov((o) => { o.querySelector('.dim').onclick = () => closeOv(); const sh = el(o, 'div', 'sheet'); el(sh, 'div', 'dev'); renderDev() }) }
-function devHTML() { return `<h3>DRAFT CHAOS · POC v50</h3>
+function devHTML() { return `<h3>DRAFT CHAOS · POC v51</h3>
 <p>Screens</p><div class="seg"><button data-dev="go:hub">HUB</button><button data-dev="go:mm">MATCHMAKING</button><button data-dev="go:chaos">MATCH</button><button data-dev="go:deck">MY DECK</button><button data-dev="go:cards">MY CARDS</button><button data-dev="go:store">PACKS</button></div>
 <p>Your next spin lands on</p><div class="seg">${XEV.map(e => `<button data-dev="ev:${e.k}">${e.lab}</button>`).join('')}</div>
 <p>Their next spin lands on</p><div class="seg">${XEV.map(e => `<button data-dev="eo:${e.k}">${e.lab}</button>`).join('')}</div>
